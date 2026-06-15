@@ -16,12 +16,12 @@ def buscar_contexto_expandido(pergunta: str) -> tuple[str, set[str]]:
     # 1. Defina um limite de corte (Threshold)
     # No LanceDB (usando distância L2/Euclidiana), quanto MENOR a distância, mais parecido é o texto.
     # Valores entre 0.7 e 1.1 costumam ser ideais. Ajuste conforme seu modelo de embedding.
-    LIMITE_DISTANCIA_MAXIMA = 0.95 
+    LIMITE_DISTANCIA_MAXIMA = 1.1
     
     # 2. Executa a busca trazendo a distância
     # Certifique-se de que sua busca não está usando apenas .to_list(), mas inspecionando os metadados
     resultados = (
-        table.search(pergunta)
+        table.search(pergunta, query_type="hybrid")
         .metric("l2") # ou "cosine", dependendo de como criou
         .limit(3)
         .to_list()
@@ -33,15 +33,21 @@ def buscar_contexto_expandido(pergunta: str) -> tuple[str, set[str]]:
     for res in resultados:
         # O LanceDB injeta o campo '_distance' automaticamente no dicionário de retorno
         distancia = res.get("_distance", 0.0)
+        #print(f"Distância: {distancia}") # Melhorando o log para debug
         
         # 🛡️ TRAVA VETORIAL: Se a distância for maior que o limite, ignora o bloco
-        if distancia > LIMITE_DISTANCIA_MAXIMA:
-            # Imprime no terminal em modo debug se quiser rastrear o que foi bloqueado:
-            # print(f"DEBUG: Bloco descartado. Distância muito alta: {distancia:.2f}")
+        if "_distance" in res and distancia > LIMITE_DISTANCIA_MAXIMA:
             continue
-            
+        
+        # 🔍 CORREÇÃO AQUI: Os campos estão na raiz do dicionário 'res'
+        nome_documento = res.get("nome_arquivo", "Documento Sem Título")
+        tags_documento = res.get("tags", [])
+        
+        # Debug opcional para você ver os metadados no terminal:
+        #print(f"Metadados encontrados -> Arquivo: {nome_documento} | Tags: {tags_documento}")
+        
         blocos_validos.append(res["text"])
-        fontes_validas.add(res.get("metadata", {}).get("titulo", "Documento Sem Título"))
+        fontes_validas.add(nome_documento)
         
     # 3. Retorna apenas se encontrou algo realmente relevante
     if not blocos_validos:

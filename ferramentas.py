@@ -70,7 +70,7 @@ DEFINICAO_FERRAMENTAS = [
         "function": {
             "name": "adicionar_conteudo_arquivo",
             "description": (
-                "CRITICAL: USE APENas para atualizar, editar ou anexar novas informações ao final de um documento que já existe na base. "
+                "CRITICAL: USE APENAS para atualizar, editar ou anexar novas informações ao final de um documento que já existe na base. "
                 "NÃO USE se o usuário estiver apenas conversando ou fazendo perguntas sobre os dados. "
                 "Exemplo de uso correto: 'Adicione a dose de ataque do sulfato de magnésio no arquivo de pré-eclâmpsia'."
             ),

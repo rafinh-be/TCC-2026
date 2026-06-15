@@ -25,10 +25,11 @@ def indexar_repositorio():
         for para in paragrafos:
             chunks_para_salvar.append({
                 "text": para,
-                "nome_arquivo": arquivo_md.name,
+                "nome_arquivo": post.get("titulo", arquivo_md.stem),  # Usa o título do YAML ou o nome do arquivo sem extensão
                 "tags": tags
             })
-            
+            print(para, tags)
+        
     if not chunks_para_salvar:
         print("⚠️ Nenhum arquivo ou parágrafo encontrado para indexar.")
         return
