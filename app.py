@@ -11,11 +11,13 @@ import ferramentas
 
 PROMPT_CRITICA = (
     "Você é um revisor médico sênior. Analise a RESPOSTA DO ASSISTENTE fornecida para a PERGUNTA DO USUÁRIO.\n"
-    "Avalie se a mensagem do usuário necessita de uma resposta bem estruturada ou é apenas uma saudacao ou mensagem simples. Se for, nao critique a resposta"
-    "Avalie se a resposta está clara, bem estruturada e se utilizou bem o CONTEXTO LOCAL fornecido.\n"
-    "Identifique falhas, omissões ou pontos que podem ser melhorados.\n"
-    "Lembre-se de que voce nao está falando com um médico, o usuário pode não entender termos técnicos, então clareza e explicação de termos técnicos são fundamentais.\n"
-    "Responda APENAS com uma lista de pontos a melhorar ou diga 'PERFEITO' se não houver o que mudar. Não responda com a lista e com PERFEITO ao mesmo tempo"
+    "Avalie se a mensagem do usuário necessita de uma resposta bem estruturada ou é apenas uma saudacao ou mensagem simples. Se for, nao critique a resposta.\n\n"
+    "🚨 VERIFICAÇÃO DE ANCORAGEM RESTRITA (CRÍTICO):\n"
+    "Examine o CONTEXTO LOCAL fornecido. Se a resposta do assistente contiver condutas, orientações, dosagens ou explicações "
+    "que NÃO ESTÃO explicitamente escritas no CONTEXTO LOCAL, a resposta está ALUCINADA.\n"
+    "Se o contexto fornecido era insuficiente para responder à pergunta, o assistente deveria ter dito que não possuía a informação na base local. "
+    "Se ele tentou 'adivinhar' ou usar conhecimento externo, critique exigindo a remoção do conteúdo extra ou a alteração para uma mensagem de negação.\n\n"
+    "Responda APENAS com uma lista de pontos a melhorar ou diga 'PERFEITO' se não houver o que mudar. Não responda com a lista e com PERFEITO ao mesmo tempo."
 )
 
 PROMPT_REFINAMENTO = (
@@ -194,11 +196,13 @@ def iniciar_terminal():
                     texto_resposta = f"Entendido. Executei a ferramenta para você. {resultado_acao}"
 
             else:
-                # 🔄 INÍCIO DO LOOP DE APRIMORAMENTO (Cai aqui se nunca foi ferramenta OU se a ferramenta foi convertida em texto)
+                # 🔄 INÍCIO DO LOOP DE APRIMORAMENTO (Apenas para respostas de texto)
                 print(f"\n{YELLOW}🔍 Revisando e aprimorando a resposta de texto...{RESET}")
                 
                 MAX_INTERACOES_REFINAMENTO = 3
+                
                 for i in range(MAX_INTERACOES_REFINAMENTO):
+                    # Passo A: Pedir a Crítica
                     payload_critica = [
                         {"role": "system", "content": PROMPT_CRITICA},
                         {"role": "user", "content": f"CONTEXTO LOCAL:\n{contexto}\n\nPERGUNTA: {pergunta}\n\nRESPOSTA DO ASSISTENTE:\n{texto_resposta}"}
@@ -208,12 +212,15 @@ def iniciar_terminal():
                     resposta_critica = ollama.chat(model="qwen2.5:7b", messages=payload_critica)
                     critica = resposta_critica['message'].get('content', '').strip()
                     
-                    if "PERFEITO" in critica.upper() and len(critica) < 20:
-                        print(f"  {GREEN}✓ Resposta aprovada na revisão!{RESET}")
+                    # 🛡️ TRAVA DE PARADA EXPANDIDA:
+                    # Se o revisor aprovar ou indicar que é apenas uma saudação/mensagem simples, aceitamos a inicial imediatamente
+                    if "PERFEITO" in critica.upper() or "SAUDAÇÃO" in critica.upper() or "AGRADECIMENTO" in critica.upper():
+                        print(f"  {GREEN}✓ Resposta inicial aceita (sem necessidade de refinamento).{RESET}")
                         break
                         
                     print(f"  {YELLOW}✗ Crítica recebida: {critica}{RESET}")
                     
+                    # Passo B: Aplicar o Refinamento se houver críticas reais
                     payload_refinamento = [
                         {"role": "system", "content": f"{system_prompt}\n\nCONTEXTO LOCAL:\n{contexto}\n\n{PROMPT_REFINAMENTO}"},
                         {"role": "user", "content": f"PERGUNTA: {pergunta}\n\nRESPOSTA ANTERIOR:\n{texto_resposta}\n\nCRÍTICA:\n{critica}"}
@@ -223,7 +230,8 @@ def iniciar_terminal():
                     resposta_refinada = ollama.chat(model="qwen2.5:7b", messages=payload_refinamento)
                     texto_resposta = resposta_refinada['message'].get('content', '')
 
-                print(f"\n{BOLD}🤖 Agente OBGYN (Resposta Final) > {RESET}", end="")
+                # Exibe o resultado para o usuário
+                print(f"\n{BOLD}🤖 Agente OBGYN (Resposta Final) > {RESET}")
                 print(texto_resposta)
             
             print("-" * 50 + "\n")
