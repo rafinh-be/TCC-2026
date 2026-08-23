@@ -1,53 +1,60 @@
 # buscador.py
-from config import conectar_banco, DocumentoOBGYN
+from config import conectar_banco, DocumentoOBGYN, embedding_model
+
+
+def _codificar_query(pergunta: str) -> list[float]:
+    """Codifica a pergunta usando o paraphrase-multilingual-MiniLM-L12-v2.
+
+    Usar o mesmo modelo de embeddings do índice garante que o vetor da query
+    esteja no mesmo espaço vetorial dos documentos armazenados, maximizando
+    a precisão da busca semântica.
+    """
+    # compute_query_embeddings retorna list[list[float]] — já é Python puro, sem .tolist()
+    return embedding_model.compute_query_embeddings(pergunta)[0]
+
 
 def buscar_contexto_expandido(pergunta: str) -> tuple[str, set[str]]:
     db = conectar_banco()
-    
+
     # Verifica se a tabela já existe no disco
     if "notas_medicas" not in db.table_names():
         return "", set()
-        
+
     table = db.open_table("notas_medicas")
-    
-    # 1. Busca Semântica Inicial para identificar o assunto principal e capturar a Tag
-    # ... código de conexão com o banco e tabela ...
-    
-    # 1. Defina um limite de corte (Threshold)
-    # No LanceDB (usando distância L2/Euclidiana), quanto MENOR a distância, mais parecido é o texto.
-    # Valores entre 0.7 e 1.1 costumam ser ideais. Ajuste conforme seu modelo de embedding.
-    LIMITE_DISTANCIA_MAXIMA = 1.1
-    
-    # 2. Executa a busca trazendo a distância
-    # Certifique-se de que sua busca não está usando apenas .to_list(), mas inspecionando os metadados
+
+    vetor_query = _codificar_query(pergunta)
+
+    # Busca híbrida retorna _relevance_score via RRF (Reciprocal Rank Fusion):
+    # quanto MAIOR o score, mais relevante. Diferente de _distance (menor = melhor),
+    # que é exclusivo da busca vetorial pura.
+    # Scores RRF típicos ficam entre 0.01 e 0.07 — ajuste conforme a densidade da base.
+    SCORE_MINIMO = 0.02
+
+    # Executa a busca híbrida: vetor explícito (semântica) + texto original (BM25/FTS)
     resultados = (
-        table.search(pergunta, query_type="hybrid")
-        .metric("l2") # ou "cosine", dependendo de como criou
-        .limit(3)
+        table.search(query_type="hybrid")
+        .vector(vetor_query)
+        .text(pergunta)
+        .metric("l2")
+        .limit(10)
         .to_list()
     )
-    
+
     blocos_validos = []
     fontes_validas = set()
-    
+
     for res in resultados:
-        # O LanceDB injeta o campo '_distance' automaticamente no dicionário de retorno
-        distancia = res.get("_distance", 0.0)
-        #print(f"Distância: {distancia}") # Melhorando o log para debug
+        score = res.get("_relevance_score", 0.0)
         
-        # 🛡️ TRAVA VETORIAL: Se a distância for maior que o limite, ignora o bloco
-        if "_distance" in res and distancia > LIMITE_DISTANCIA_MAXIMA:
+        if score < SCORE_MINIMO:
             continue
-        
-        # 🔍 CORREÇÃO AQUI: Os campos estão na raiz do dicionário 'res'
+
         nome_documento = res.get("nome_arquivo", "Documento Sem Título")
-        tags_documento = res.get("tags", [])
-        
-        # Debug opcional para você ver os metadados no terminal:
-        #print(f"Metadados encontrados -> Arquivo: {nome_documento} | Tags: {tags_documento}")
-        
+        #print(f"Metadados encontrados -> Arquivo: {nome_documento} | Score: {score:.4f}")
+
         blocos_validos.append(res["text"])
-        fontes_validas.add(nome_documento)
+        if (nome_documento not in fontes_validas):
+            fontes_validas.add(nome_documento)
         
     # 3. Retorna apenas se encontrou algo realmente relevante
     if not blocos_validos:
