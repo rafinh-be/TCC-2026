@@ -2,12 +2,18 @@
 import sys
 import json
 from pathlib import Path
+
+from pydantic import BaseModel
 import ollama
 from buscador import buscar_contexto_expandido
 from memoria import verificar_precisa_indexar
 from indexador import indexar_repositorio
 
 import ferramentas
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.middleware.cors import CORSMiddleware
+import asyncio
 
 # Fix 5: single constant — change the model in one place, not six
 MODEL = "qwen2.5:7b"
@@ -73,6 +79,9 @@ BOLD = "\033[1m"
 MEMORIA_PATH = Path("./patient_notes/MEMORIA.md")
 MAX_MEMORIA_LINHAS = 50
 
+arrived = False
+historico_conversas = []
+pergunta = ""
 
 def carregar_memoria() -> str:
     """Lê MEMORIA.md e retorna o conteúdo truncado a MAX_MEMORIA_LINHAS."""
@@ -87,12 +96,50 @@ def carregar_memoria() -> str:
         conteudo = "\n".join(linhas) + "\n\n[AVISO: Memória truncada em 50 linhas. Consulte o arquivo completo se necessário.]"
     return conteudo
 
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"], # Next.js default port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-def iniciar_terminal():
+@app.get("/api/data")
+def get_data():
+    return {"message": historico_conversas}
+
+class TextPayload(BaseModel):
+    message: str
+
+@app.post("/api/data")
+async def post_data(payload: TextPayload):
+    global arrived
+    global pergunta
+    
+    print(payload)
+    
+    pergunta = payload.message.strip()
+    arrived = True
+    
+    return {"message": "Data received successfully."}
+
+@app.post("/api/")
+
+
+@app.websocket("/ws/chat")
+async def iniciar_terminal(websocket: WebSocket):
     print(f"{BOLD}{BLUE}==================================================")
     print("  AGENTE OBGYN AVANÇADO - OPERADOR DE FERRAMENTAS ")
     print(f"=================================================={RESET}")
 
+    #global arrived
+    #global historico_conversas
+    #global pergunta
+    
+    await websocket.accept()
+    print(f"{GREEN}Conexão WebSocket estabelecida com o frontend.{RESET}")
+    
     if verificar_precisa_indexar():
         print(f"{YELLOW}⚠️ Atualizando LanceDB...{RESET}")
         indexar_repositorio()
@@ -108,8 +155,6 @@ def iniciar_terminal():
     # mensagem do usuário como <aviso_sistema> — sem turno fake de assistant.
     memoria_sessao = carregar_memoria()
 
-    historico_conversas = []
-
     print(f"\n{GREEN}Modo de Ferramentas Ativo!{RESET}")
     print("Você pode pedir coisas como: 'Crie um arquivo chamado resumo_caso.md com os dados...'")
     print("-" * 50)
@@ -117,7 +162,8 @@ def iniciar_terminal():
     contexto, fontes = "", []
     while True:
         try:
-            pergunta = input(f"{BOLD}👤 Usuário > {RESET}").strip()
+            #pergunta = input(f"{BOLD}👤 Usuário > {RESET}").strip()
+            pergunta = await websocket.receive_text()
             if not pergunta:
                 continue
             if pergunta.lower() == '/sair':
@@ -213,6 +259,9 @@ def iniciar_terminal():
                 print("-" * 50 + "\n")
 
                 historico_conversas.append({"user": pergunta, "assistant": texto_resposta})
+                
+                await websocket.send_text(json.dumps({"user": pergunta, "assistant": texto_resposta}))
+
                 if len(historico_conversas) > 10:
                     historico_conversas.pop(0)
                 continue
@@ -398,12 +447,22 @@ def iniciar_terminal():
             print("-" * 50 + "\n")
 
             historico_conversas.append({"user": pergunta, "assistant": texto_resposta})
+            
+            # ENVIAR MENSAGEM AQUI EU ACHO
+            await websocket.send_text(json.dumps({"user": pergunta, "assistant": texto_resposta}))
+            
             if len(historico_conversas) > 10:
                 historico_conversas.pop(0)
 
+
         except KeyboardInterrupt:
             sys.exit(0)
+            
+        except WebSocketDisconnect:
+            print(f"{YELLOW}⚠️ Conexão WebSocket encerrada pelo frontend.{RESET}")
+            break
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
+    #print("oi!@")
     iniciar_terminal()
