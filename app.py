@@ -9,6 +9,9 @@ from indexador import indexar_repositorio
 
 import ferramentas
 
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 # Fix 5: single constant — change the model in one place, not six
 MODEL = "qwen2.5:7b"
 
@@ -87,6 +90,18 @@ def carregar_memoria() -> str:
         conteudo = "\n".join(linhas) + "\n\n[AVISO: Memória truncada em 50 linhas. Consulte o arquivo completo se necessário.]"
     return conteudo
 
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"], # Next.js default port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/api/data")
+def get_data():
+    return {"message": "Hello from the Python backend!"}
 
 def iniciar_terminal():
     print(f"{BOLD}{BLUE}==================================================")
@@ -405,5 +420,6 @@ def iniciar_terminal():
             sys.exit(0)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
+    #print("oi!@")
     iniciar_terminal()
