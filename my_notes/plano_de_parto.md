@@ -27,7 +27,7 @@ O manejo da fase expulsiva deve priorizar o protagonismo da gestante e o respeit
 * **Posição de Parto:** Preferência por posições verticalizadas ou semiverticalizadas (sentada, semi-reclinada, quatro apoios ou de lado), evitando a posição de litotomia ginecológica clássica (deitada de costas com as pernas elevadas), exceto se clinicamente indicado.
 * **Puxos Fisiológicos:** Liberdade para realizar os puxos de forma espontânea (quando sentir vontade), em oposição aos puxos dirigidos (comandados pela equipe médica).
 * **Procedimentos Restritivos:** * **Episiotomia:** Recusa ao uso rotineiro do corte no pericneo. O procedimento deve ser restrito a indicações médicas estritas (como sofrimento fetal agudo) e sempre com consentimento informado.
-    * **Manobra de Kristeller:** Recusa absoluta a esta prática (pressão na parte superior do útero), considerada prejudicial e obsoleta pela OMS.
+* **Manobra de Kristeller:** Recusa absoluta a esta prática (pressão na parte superior do útero), considerada prejudicial e obsoleta pela OMS.
 
 ---
 
