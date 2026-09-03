@@ -1,4 +1,8 @@
-10/11/2022
+---
+id: visita_monitorada_hu
+titulo: "Visita Monitorada à Maternidade"
+tags: [planejamento, humanizacao, fisiologia, conduta_obstetrica]
+---
 
 Desde o ano 2000, o HU-USP oferece às gestantes e 1 acompanhante a Visita Monitorada à Maternidade.
 
