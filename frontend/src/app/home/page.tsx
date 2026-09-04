@@ -1,6 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 
+import { Sidebar } from '../components/sidebar/sidebar';
+import { SidebarItem } from '../components/sidebar/sidebarItem.tsx';
+import { Chatbox } from '../components/chatbox/chatbox.tsx';
+
 function AsyncMessenger() {
   const [inputMessage, setInputMessage] = useState("");
   const [serverStatus, setServerStatus] = useState("Disconnected");
@@ -9,7 +13,6 @@ function AsyncMessenger() {
   
   const socketRef = useRef(null);
 
-  // Initialize WebSocket connection on component load
   useEffect(() => {
     socketRef.current = new WebSocket("ws://127.0.0.1:8000/ws/chat");
 
@@ -17,17 +20,15 @@ function AsyncMessenger() {
       setServerStatus("Connected & Ready");
     };
 
-    // THIS IS WHERE THE FRONTEND AWAITS THE BACKEND PUSH
     socketRef.current.onmessage = (event) => {
       setReceivedMessage(event.data);
-      setIsProcessing(false); // Backend finished, remove loading state
+      setIsProcessing(false); 
     };
 
     socketRef.current.onclose = () => {
       setServerStatus("Disconnected");
     };
 
-    // Clean up connection when user leaves the page
     return () => {
       if (socketRef.current) socketRef.current.close();
     };
@@ -46,9 +47,10 @@ function AsyncMessenger() {
     }
   };
 
-  return (
-    <div style={{ padding: '30px', fontFamily: 'Arial, sans-serif' }}>
-      <h2>Async Delayed Response Pattern</h2>
+  const pageContentent = () => {
+    return (
+    <div>
+      {/*<h2>Async Delayed Response Pattern</h2>
       <p>System Status: <strong>{serverStatus}</strong></p>
 
       <div style={{ marginBottom: '20px' }}>
@@ -76,7 +78,16 @@ function AsyncMessenger() {
           <h4>📩 Received from Backend:</h4>
           <p>{receivedMessage}</p>
         </div>
-      )}
+      )}*/}
+      <Chatbox messages={[{ content: "Hello, how can I assist you today?", sender: "bot" }, { content: "I need help with my account.", sender: "user" }]} onSendMessage={handleSendMessage} />
+    </div>
+    );}
+
+  return (
+    <div style={{ fontFamily: 'Arial, sans-serif' }}>
+      <Sidebar content={pageContentent()}>
+        <SidebarItem onClick={() => alert("Home clicked")} icon="message" label="Teste" />
+      </Sidebar>
     </div>
   );
 }
