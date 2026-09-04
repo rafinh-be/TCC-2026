@@ -5,13 +5,26 @@ import { Sidebar } from '../components/sidebar/sidebar';
 import { SidebarItem } from '../components/sidebar/sidebarItem.tsx';
 import { Chatbox } from '../components/chatbox/chatbox.tsx';
 
+import { messageType } from '../components/chatbox/chatbox.tsx';
+
 function AsyncMessenger() {
-  const [inputMessage, setInputMessage] = useState("");
+  //const [inputMessage, setInputMessage] = useState("");
   const [serverStatus, setServerStatus] = useState("Disconnected");
   const [receivedMessage, setReceivedMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+
+  const [messages, setMessages] = useState<messageType[]>([]);
   
   const socketRef = useRef(null);
+
+  const onReceiveMessage = (message: any) => {
+    //console.log(message)
+    let newMessages : messageType[] = messages;
+    newMessages.pop();
+    newMessages.push({ content: message.assistant, sender: "bot"});
+
+    setMessages(newMessages);
+  }
 
   useEffect(() => {
     socketRef.current = new WebSocket("ws://127.0.0.1:8000/ws/chat");
@@ -21,7 +34,9 @@ function AsyncMessenger() {
     };
 
     socketRef.current.onmessage = (event) => {
-      setReceivedMessage(event.data);
+      //setReceivedMessage(event.data);
+      const parsedData = JSON.parse(event.data);
+      onReceiveMessage(parsedData);
       setIsProcessing(false); 
     };
 
@@ -34,10 +49,13 @@ function AsyncMessenger() {
     };
   }, []);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (inputMessage: string | null) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      if (!inputMessage.trim()) return;
+      if (!inputMessage?.trim()) return;
 
+      let newMessages : messageType[] = messages
+      newMessages.push({content: inputMessage, sender: "user" }, {content: "Aguarde, estou processando sua solicitação...", sender: "bot"});
+      setMessages(newMessages);
       // Send the initial message to backend
       socketRef.current.send(inputMessage);
       setIsProcessing(true); // Put frontend into a waiting/loading state
@@ -79,7 +97,7 @@ function AsyncMessenger() {
           <p>{receivedMessage}</p>
         </div>
       )}*/}
-      <Chatbox messages={[{ content: "Hello, how can I assist you today?", sender: "bot" }, { content: "I need help with my account.", sender: "user" }]} onSendMessage={handleSendMessage} />
+      <Chatbox messages={messages} isProcessing={isProcessing} onSendMessage={handleSendMessage} />
     </div>
     );}
 

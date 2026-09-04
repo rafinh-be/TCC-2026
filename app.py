@@ -260,7 +260,7 @@ async def iniciar_terminal(websocket: WebSocket):
 
                 historico_conversas.append({"user": pergunta, "assistant": texto_resposta})
                 
-                await websocket.send_text(json.dumps({"user": pergunta, "assistant": texto_resposta}))
+                await websocket.send_text(json.dumps({"user": pergunta, "assistant": texto_resposta}, ensure_ascii=False))
 
                 if len(historico_conversas) > 10:
                     historico_conversas.pop(0)
@@ -449,7 +449,7 @@ async def iniciar_terminal(websocket: WebSocket):
             historico_conversas.append({"user": pergunta, "assistant": texto_resposta})
             
             # ENVIAR MENSAGEM AQUI EU ACHO
-            await websocket.send_text(json.dumps({"user": pergunta, "assistant": texto_resposta}))
+            await websocket.send_text(json.dumps({"user": pergunta, "assistant": texto_resposta}, ensure_ascii=False))
             
             if len(historico_conversas) > 10:
                 historico_conversas.pop(0)
@@ -470,3 +470,4 @@ async def iniciar_terminal(websocket: WebSocket):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
+    iniciar_terminal()
