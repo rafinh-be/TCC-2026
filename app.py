@@ -462,7 +462,11 @@ async def iniciar_terminal(websocket: WebSocket):
             print(f"{YELLOW}⚠️ Conexão WebSocket encerrada pelo frontend.{RESET}")
             break
 
-
-if __name__ == "__main__":    
+#if __name__ == "__main__":    
     #print("oi!@")
-    iniciar_terminal()
+ #   iniciar_terminal()
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app:app", host="127.0.0.1", port=8000, reload=True)
