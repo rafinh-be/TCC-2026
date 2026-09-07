@@ -7,7 +7,7 @@ async def get_message(local=True, websocket: WebSocket = None):
         message = input("Digite sua mensagem: ")
         return message
     else:
-        message = await websocket.accept()
+        message = await websocket.receive_text()
         return message
 
 commands = {

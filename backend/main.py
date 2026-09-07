@@ -42,14 +42,15 @@ async def start_agent(websocket: WebSocket = None):
     debug_model = args.debug_model
     debug_rag = args.debug_rag
     
+    if (not local):    
+        await websocket.accept()
+        print("WebSocket connection established")
+        print(websocket)
+        
     if needs_indexing((verbose or debug_rag)):
         if (verbose or debug_rag):
             print("Updating LanceDB index...")
         index_data((verbose or debug_rag))
-        
-    if (not local):    
-        await websocket.accept()
-        print("WebSocket connection established")
     
     contexto, fontes = "", []
     historico_conversa = []
@@ -98,5 +99,7 @@ async def start_agent(websocket: WebSocket = None):
                 
 
 if __name__ == "__main__":
-    #uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
-    asyncio.run(start_agent(websocket=None))  # For testing without WebSocket
+    if (not args.local):
+        uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True, reload_excludes=["*.db", "*.sqlite", "lancedb/*", "*.lancedb"])
+    else:
+        asyncio.run(start_agent(websocket=None))  # For testing without WebSocket
