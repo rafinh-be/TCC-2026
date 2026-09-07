@@ -1,13 +1,31 @@
 ---
 id: visita_monitorada_hu
-titulo: "Visita Monitorada à Maternidade"
-tags: [planejamento, humanizacao, fisiologia, conduta_obstetrica]
+titulo: "Visita Monitorada à Maternidade do HU-USP"
+tags: [visita_monitorada, estrutura_hu, acolhimento, gestacao, orientacao_maternidade]
 ---
 
-Desde o ano 2000, o HU-USP oferece às gestantes e 1 acompanhante a Visita Monitorada à Maternidade.
+# Visita Monitorada à Maternidade do HU-USP
 
-Nesta ocasião, a enfermeira apresenta o local onde a mulher dará a luz, as enfermarias e quartos, tira as dúvidas e fornece as informações necessárias  para favorecer a promoção de  uma experiência positiva no parto.
+Oferecida desde o ano 2000, a **Visita Monitorada à Maternidade do HU-USP** é uma atividade de acolhimento direcionada às gestantes e seus acompanhantes. O objetivo é familiarizar a mulher com a infraestrutura do hospital, esclarecer dúvidas assistenciais e promover uma experiência positiva durante o parto.
 
-Se você tem interesse em dar a luz em nosso hospital, faça o agendamento da visita à Maternidade do HU-USP, a partir da 28ª semana de gestação. [Clique Aqui.](https://docs.google.com/forms/d/1rdqnAqNwGcqVVHucozmz6Z4BQuK1uA8cRRXglMuiemU/edit)
+---
 
-![](https://www.hu.usp.br/wp-content/uploads/sites/367/2022/11/VisitaMonitoradaMaternidade.jpg)
+## 1. Informações da Visita e Participantes
+* **Público-Alvo:** Gestantes a partir da 28ª semana de gestação (7º mês).
+* **Acompanhantes:** Direito ao agendamento para a gestante e 1 (um) acompanhante.
+* **Condução:** Acompanhada por enfermeiras obstétricas da equipe do HU-USP.
+
+---
+
+## 2. Locais Apresentados e Objetivos
+Durante o percurso monitorado, a equipe apresenta a estrutura física e as rotinas do serviço:
+
+* Centro Obstétrico (salas de parto).
+* Quarto Pré-Parto, Parto e Puerpério (PPP) e enfermarias.
+* Esclarecimento de dúvidas sobre a admissão, pertences e fluxos de atendimento.
+
+---
+
+## 3. Agendamento
+* **Inscrição On-line:** O agendamento é obrigatório e realizado via formulário digital.
+* **Link de Cadastro:** [Agendar Visita Monitorada à Maternidade do HU](https://docs.google.com/forms/d/1rdqnAqNwGcqVVHucozmz6Z4BQuK1uA8cRRXglMuiemU/edit)
