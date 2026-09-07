@@ -27,27 +27,31 @@ function AsyncMessenger() {
   }
 
   useEffect(() => {
-    socketRef.current = new WebSocket("ws://127.0.0.1:8000/ws/chat");
+    const ws = new WebSocket("ws://127.0.0.1:8000/ws/chat");
+    socketRef.current = ws;
 
-    socketRef.current.onopen = () => {
+    ws.onopen = () => {
       setServerStatus("Connected & Ready");
     };
 
-    socketRef.current.onmessage = (event) => {
-      //setReceivedMessage(event.data);
+    ws.onmessage = (event) => {
       const parsedData = JSON.parse(event.data);
       onReceiveMessage(parsedData);
       setIsProcessing(false); 
     };
 
-    socketRef.current.onclose = () => {
+    ws.onclose = () => {
       setServerStatus("Disconnected");
-    };
+  };
 
-    return () => {
-      if (socketRef.current) socketRef.current.close();
-    };
-  }, []);
+  return () => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.close();
+    } else if (ws.readyState === WebSocket.CONNECTING) {
+      ws.onopen = () => ws.close();
+    }
+  };
+}, []);
 
   const handleSendMessage = (inputMessage: string | null) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
