@@ -45,5 +45,5 @@ async def complete_step(historico_conversa, message, answer, local=True, websock
         print(answer)
     else:
         await websocket.send_text(json.dumps({"user": message, "assistant": answer}, ensure_ascii=False))
-        
+    
     return
