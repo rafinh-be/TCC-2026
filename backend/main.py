@@ -6,10 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
 
-#from memoria import needs_indexing
-#from indexador import index_data
-
-from ollama_interaction import create_payload
+from database_utility import needs_indexing, index_data, retrieve_context
 
 from ollama_interaction import create_payload, chat_with_thought_limit  
 from user_prompt_proccessing import get_message, get_command, execute_command, complete_step
@@ -32,9 +29,9 @@ app.add_middleware(
 
 @app.websocket("/ws/chat")
 async def start_agent(websocket: WebSocket):
-    #if needs_indexing():
-        #print("Updating LanceDB index...")
-        #index_data()
+    if needs_indexing():
+        print("Updating LanceDB index...")
+        index_data()
         
         
     #await websocket.accept()
@@ -54,17 +51,23 @@ async def start_agent(websocket: WebSocket):
                 response = execute_command(command, historico_conversa)
                 if (response == "continue"):
                     continue
+                
+            contexto_novo, fontes_novas = retrieve_context(message)
+            if contexto_novo and contexto_novo not in contexto:
+                contexto = (contexto + "\n\n---\n\n" + contexto_novo).strip()
+            for fonte in fontes_novas:
+                if fonte not in fontes:
+                    fontes.append(fonte)
 
-            #contexto_novo, fontes_novas = buscar_contexto_expandido(pergunta)
             payload = create_payload(historico_conversa, message, contexto, fontes)
 
             answer = chat_with_thought_limit(payload)
             
-            complete_step(historico_conversa, message, answer['message']['content'])
+            await complete_step(historico_conversa, message, answer['message']['content'])
+            
             print("Payload enviado para o modelo:\n", payload)
             print("\nResposta recebida pelo modelo:\n", answer)
                 
-            
             
         except KeyboardInterrupt:
             sys.exit(0)
