@@ -53,7 +53,7 @@ def chat_with_thought_limit(payload, MAX_THINK_TOKENS=300, verbose=False, debug_
         stream=False
     )
     
-    if (stream['message']['content'].strip() == ""):
+    if (stream['message']['content'].strip() == "" or stream["done_reason"] != 'stop'):
         if (verbose or debug_model):
             print("Loop detected. Fetching non-streaming final response...")
         
