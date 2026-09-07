@@ -1,4 +1,6 @@
-import json, os, lancedb, configparser, frontmatter
+import json, os, lancedb, configparser, frontmatter, contextlib
+
+os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 
 from pathlib import Path
 from dotenv import load_dotenv
@@ -11,13 +13,27 @@ huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
 
 login(token=huggingface_token)
 
+config = configparser.ConfigParser()
+config.read('config.ini', encoding='utf-8')
+
 NOTES_DIR = config.get("database", "NOTES_DIR")
 MEMORY_FILE = config.get("database", "MEMORY_FILE")
 DB_PATH = config.get("database", "DB_PATH")
 
 embedding_model = None
+registry = None
 
-def needs_indexing() -> bool:
+def load_embedding_model():
+    global embedding_model
+    global registry
+    
+    registry = get_registry()
+    embedding_model = registry.get("sentence-transformers").create(
+        name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", 
+        device="cpu",
+    )
+
+def needs_indexing(verbose=False) -> bool:
     path_dir = Path(NOTES_DIR)
     if not path_dir.exists():
         path_dir.mkdir(exist_ok=True)
@@ -45,8 +61,12 @@ def needs_indexing() -> bool:
 
     for nome_arq, mtime_atual in estado_atual.items():
         if nome_arq not in memoria_salva:
+            if (verbose):
+                print("Found new file for database")
             return True  
         if mtime_atual > memoria_salva[nome_arq]:
+            if (verbose):
+                print("Found file that has been edited since last sync")
             return True 
 
     return False
@@ -64,18 +84,15 @@ def conectar_banco():
     Path(DB_PATH).mkdir(exist_ok=True)
     return lancedb.connect(DB_PATH)
         
-def index_data():
+def index_data(verbose=False):
     db = conectar_banco()
     path_dir = Path(NOTES_DIR)
     path_dir.mkdir(exist_ok=True)
     
-    registry = get_registry()
     global embedding_model
-    if (not embedding_model):    
-        embedding_model = registry.get("sentence-transformers").create(
-            name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", 
-            device="cpu"
-        )
+    global registry
+    if (not embedding_model):
+        load_embedding_model
 
     class DocumentoOBGYN(LanceModel):
         text: str = embedding_model.SourceField()
@@ -93,13 +110,17 @@ def index_data():
         
         paragrafos = [p.strip() for p in conteudo_limpo.split("\n\n") if p.strip()]
         
+        if (verbose):
+            print("Indexing:", post.get("titulo", arquivo_md.stem))
+        
         for para in paragrafos:
             chunks_to_save.append({
                 "text": para,
                 "nome_arquivo": post.get("titulo", arquivo_md.stem),  
                 "tags": tags
             })
-            print(para, tags)
+            if (verbose):
+                print(para, tags)
         
     if not chunks_to_save:
         print("⚠️ Nenhum arquivo ou parágrafo encontrado para indexar.")
@@ -112,21 +133,15 @@ def index_data():
     
     update_memory()
     
-    
-
 def _tokenize_query(pergunta: str) -> list[float]:
-    registry = get_registry()
     global embedding_model
-    if (not embedding_model):    
-        embedding_model = registry.get("sentence-transformers").create(
-            name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", 
-            device="cpu"
-        )
+    global registry
+    if (not embedding_model):
+        load_embedding_model()
     
     return embedding_model.compute_query_embeddings(pergunta)[0]
 
-
-def retrieve_context(pergunta: str) -> tuple[str, set[str]]:
+def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
     db = conectar_banco()
 
     if "notas_medicas" not in db.table_names():
@@ -161,6 +176,9 @@ def retrieve_context(pergunta: str) -> tuple[str, set[str]]:
         blocos_validos.append(res["text"])
         if (nome_documento not in fontes_validas):
             fontes_validas.add(nome_documento)
+        
+        if (debug_rag):
+            print("Found this document with score of", score, "and title:", nome_documento, "\n\n", res["text"])
         
     if not blocos_validos:
         return None, []

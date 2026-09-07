@@ -1,4 +1,4 @@
-import configparser, sys, json, ollama, asyncio, uvicorn
+import configparser, sys, json, ollama, asyncio, uvicorn, argparse
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,30 +21,44 @@ prompt_validacao_ferramenta = config.get('prompts', 'prompt_validacao_ferramenta
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], # Next.js default port
+    allow_origins=["http://localhost:3000"], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+parser = argparse.ArgumentParser("main")
+parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output for debugging")
+parser.add_argument("--debug_rag", action="store_true", help="Enables extra verbose output for the RAG sections of the code")
+parser.add_argument("--debug_model", action="store_true", help="Enables extra verbose output for the LLM Model processing sections of the code")
+parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
+args = parser.parse_args()
+
 @app.websocket("/ws/chat")
-async def start_agent(websocket: WebSocket):
-    if needs_indexing():
-        print("Updating LanceDB index...")
-        index_data()
+async def start_agent(websocket: WebSocket = None):
+    global args
+    local = args.local
+    verbose = args.verbose
+    debug_model = args.debug_model
+    debug_rag = args.debug_rag
+    
+    if needs_indexing((verbose or debug_rag)):
+        if (verbose or debug_rag):
+            print("Updating LanceDB index...")
+        index_data((verbose or debug_rag))
         
-        
-    #await websocket.accept()
-    print("WebSocket connection established")
+    if (not local):    
+        await websocket.accept()
+        print("WebSocket connection established")
     
     contexto, fontes = "", []
     historico_conversa = []
     while True:
         try:
             # Recebe mensagem do usuario
-            message = await get_message()
+            message = await get_message(local, websocket)
             # Verifica se foi digitado um comando e recebe o comando
-            command = get_command(message)
+            command = get_command(message, verbose)
             if command:
                 # Executa o comando e envia a resposta para o usuario
                 # Alguns comandos que "terminam" o processo devem usar 'continue' para nao encerrar o loop
@@ -52,28 +66,35 @@ async def start_agent(websocket: WebSocket):
                 if (response == "continue"):
                     continue
                 
-            contexto_novo, fontes_novas = retrieve_context(message)
+            contexto_novo, fontes_novas = retrieve_context(message, debug_rag)
             if contexto_novo and contexto_novo not in contexto:
                 contexto = (contexto + "\n\n---\n\n" + contexto_novo).strip()
             for fonte in fontes_novas:
                 if fonte not in fontes:
                     fontes.append(fonte)
 
+            # Debatendo ainda se deveria passar contexto total ou apenas contexto novo. Nao decidi ainda. Vou deixar contexto total por enquanto
             payload = create_payload(historico_conversa, message, contexto, fontes)
 
             answer = chat_with_thought_limit(payload)
             
-            await complete_step(historico_conversa, message, answer['message']['content'])
+            await complete_step(historico_conversa, message, answer['message']['content'], local, websocket)
             
-            print("Payload enviado para o modelo:\n", payload)
-            print("\nResposta recebida pelo modelo:\n", answer)
+            if (verbose or debug_model):
+                print("\n\nPayload sent to the model:\n", payload)
+                print("\nPayload received by the model:\n", answer)
                 
             
         except KeyboardInterrupt:
+            if (verbose):
+                print("Program finish triggered by KeyboardInterrupt")
             sys.exit(0)
-        #except WebSocketDisconnect:
-        #    print("WebSocket connection closed")
-        #    break
+
+        except Exception as e:
+            if (not local):
+                if (type(e) == WebSocketDisconnect):
+                    print("WebSocket connection closed")
+                    break
                 
 
 if __name__ == "__main__":

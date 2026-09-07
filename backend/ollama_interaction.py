@@ -33,12 +33,15 @@ def create_payload(historico_conversa, message, contexto, fontes):
     return payload
 
 
-def chat_with_thought_limit(payload, MAX_THINK_TOKENS=300):
+def chat_with_thought_limit(payload, MAX_THINK_TOKENS=300, verbose=False, debug_model=False):
     messages = payload.copy()
     
     # Safely retrieve model name with explicit fallback syntax
     model_name = config.get("model", "model_test", fallback="qwen3.5:9b")
     
+    if (debug_model):
+        print("Starting model", model_name)
+        
     stream = ollama.chat(
         model=model_name,
         messages=messages,
@@ -51,19 +54,21 @@ def chat_with_thought_limit(payload, MAX_THINK_TOKENS=300):
     )
     
     if (stream['message']['content'].strip() == ""):
-        print("Loop detected. Fetching non-streaming final response...")
+        if (verbose or debug_model):
+            print("Loop detected. Fetching non-streaming final response...")
         
         accumulated_thought = stream['message'].get('thinking', '')
         if not accumulated_thought.startswith("<think>"):
             accumulated_thought = "<think>\n" + accumulated_thought
             
         forced_context = accumulated_thought.strip() + "\n</think>\n"
+        if (debug_model):
+            print("Final thought matrix before loop detection:\n", forced_context)
         
         answer_messages = payload.copy()
         answer_messages.append({'role': 'assistant', 'content': forced_context})
         answer_messages.append({'role': 'user', 'content': 'Based on your reasoning above, provide your direct final answer now.'})
 
-        # Non-streaming synchronous request
         final_response = ollama.chat(
             model=model_name,
             messages=answer_messages,
