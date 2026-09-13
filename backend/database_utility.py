@@ -92,7 +92,7 @@ def index_data(verbose=False):
     global embedding_model
     global registry
     if (not embedding_model):
-        load_embedding_model
+        load_embedding_model()
 
     class DocumentoOBGYN(LanceModel):
         text: str = embedding_model.SourceField()
