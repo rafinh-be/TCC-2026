@@ -8,10 +8,10 @@ from lancedb.pydantic import LanceModel, Vector
 from lancedb.embeddings import get_registry
 from huggingface_hub import login
 
-load_dotenv() 
-huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
+#load_dotenv() 
+#huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
 
-login(token=huggingface_token)
+#login(token=huggingface_token)
 
 config = configparser.ConfigParser()
 config.read('config.ini', encoding='utf-8')

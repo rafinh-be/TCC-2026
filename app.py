@@ -208,6 +208,7 @@ async def iniciar_terminal(websocket: WebSocket):
                     model=MODEL,
                     messages=mensagens_payload,
                     tools=ferramentas.DEFINICAO_FERRAMENTAS,
+                    options={"temperature": 0.0} # <--- Adicione isso, 
                 )
 
                 texto_resposta = resposta_geral['message'].get('content', '')
