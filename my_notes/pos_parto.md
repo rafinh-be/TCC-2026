@@ -1,7 +1,15 @@
 ---
-id: pos_parto_hu
-titulo: "Pós-Parto, Cuidados com o Recém-Nascido e Amamentação: Guia HU-USP"
-tags: [pos_parto, alojamento_conjunto, amamentacao, cuidados_recem_nascido, planejamento_reprodutivo]
+id: "DOC-OBST-DMG"
+titulo: "Diabetes Mellitus Gestacional (DMG): Rastreio e Conduta"
+categoria: "Patologia Obstétrica / Endocrinopatia"
+escopo: "Geral"
+versao: "1.0"
+tags:
+  - alto-risco
+  - metabolico
+  - patologia
+  - conduta-obstetrica
+  - diabetes-gestacional
 ---
 
 # Pós-Parto, Cuidados com o Recém-Nascido e Amamentação: Guia HU-USP

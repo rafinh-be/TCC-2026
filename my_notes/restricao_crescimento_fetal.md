@@ -1,7 +1,17 @@
 ---
 id: restricao_crescimento_fetal
 titulo: "Restrição de Crescimento Fetal (RCF) e Insuficiência Placentária"
-tags: [alto_risco, fetal, patologia, conduta_obstetrica]
+categoria: "Medicina Fetal / Patologia Obstétrica"
+escopo: "Geral"
+versao: "1.0"
+tags:
+  - alto-risco
+  - fetal
+  - patologia
+  - conduta-obstetrica
+  - restricao-crescimento-fetal
+  - insuficiencia-placentaria
+  - dopplerfluxometria
 ---
 
 # Restrição de Crescimento Fetal (RCF)
