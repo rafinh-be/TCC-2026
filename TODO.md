@@ -7,3 +7,5 @@
 + [ ] Melhorar frontend (cores, animaçoes, cellphone friendly, etc)
 + [ ] Ver de hospedar o backend e frontend
 + [ ] Falar com o Lobo
++ [ ] Testar dividr arquivos por paragrafos ou alimentar tudo
++ [ ] Testar prompts de re-equilibrio depois de limite de thinking

@@ -92,7 +92,7 @@ def index_data(verbose=False):
     global embedding_model
     global registry
     if (not embedding_model):
-        load_embedding_model
+        load_embedding_model()
 
     class DocumentoOBGYN(LanceModel):
         text: str = embedding_model.SourceField()
@@ -108,7 +108,8 @@ def index_data(verbose=False):
         tags = post.get("tags", [])
         conteudo_limpo = post.content
         
-        paragrafos = [p.strip() for p in conteudo_limpo.split("\n\n") if p.strip()]
+        paragrafos = [conteudo_limpo]
+        # paragrafos = [p.strip() for p in conteudo_limpo.split("\n\n") if p.strip()]
         
         if (verbose):
             print("Indexing:", post.get("titulo", arquivo_md.stem))
@@ -148,10 +149,9 @@ def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
         return "", set()
 
     table = db.open_table("notas_medicas")
-
     vetor_query = _tokenize_query(pergunta)
 
-    SCORE_MINIMO = 0.02
+    SCORE_MINIMO = 0.015
 
     resultados = (
         table.search(query_type="hybrid")
@@ -167,18 +167,18 @@ def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
 
     for res in resultados:
         score = res.get("_relevance_score", 0.0)
-        
+
         if score < SCORE_MINIMO:
             continue
-
+        
         nome_documento = res.get("nome_arquivo", "Documento Sem Título")
-
+        if (debug_rag):
+            print("Found this document with score of", score, "and title:", nome_documento)
+                
         blocos_validos.append(res["text"])
         if (nome_documento not in fontes_validas):
             fontes_validas.add(nome_documento)
         
-        if (debug_rag):
-            print("Found this document with score of", score, "and title:", nome_documento, "\n\n", res["text"])
         
     if not blocos_validos:
         return None, []
