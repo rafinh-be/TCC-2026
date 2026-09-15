@@ -9,6 +9,7 @@ from buscador import buscar_contexto_expandido
 from memoria import verificar_precisa_indexar
 from indexador import indexar_repositorio
 
+
 import ferramentas
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -82,6 +83,7 @@ MAX_MEMORIA_LINHAS = 50
 arrived = False
 historico_conversas = []
 pergunta = ""
+
 
 def carregar_memoria() -> str:
     """Lê MEMORIA.md e retorna o conteúdo truncado a MAX_MEMORIA_LINHAS."""
@@ -208,6 +210,7 @@ async def iniciar_terminal(websocket: WebSocket):
                     model=MODEL,
                     messages=mensagens_payload,
                     tools=ferramentas.DEFINICAO_FERRAMENTAS,
+                    
                 )
 
                 texto_resposta = resposta_geral['message'].get('content', '')

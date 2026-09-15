@@ -1,7 +1,15 @@
 ---
-id: diabetes_gestacional
+id: "diabetes_gestacional"
 titulo: "Diabetes Mellitus Gestacional (DMG): Rastreio e Conduta"
-tags: [alto_risco, metabolico, patologia, conduta_obstetrica]
+categoria: "Patologia Obstétrica / Endocrinopatia"
+escopo: "Geral"
+versao: "1.0"
+tags:
+  - alto-risco
+  - metabolico
+  - patologia
+  - conduta-obstetrica
+  - diabetes-gestacional
 ---
 
 # Diabetes Mellitus Gestacional (DMG): Rastreio e Conduta

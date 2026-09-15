@@ -1,7 +1,17 @@
 ---
 id: pre_eclampsia
 titulo: "Pré-eclâmpsia: Diagnóstico, Fatores de Risco e Manejo Clínico"
-tags: [alto_risco, hipertensao, patologia, conduta_obstetrica]
+categoria: "Emergência Obstétrica / Hipertensão"
+escopo: "Geral"
+versao: "1.0"
+tags:
+  - alto-risco
+  - hipertensao
+  - patologia
+  - conduta-obstetrica
+  - pre-eclampsia
+  - eclampsia
+  - sulfato-de-magnesio
 ---
 
 # Pré-eclâmpsia: Diagnóstico, Fatores de Risco e Manejo Clínico
