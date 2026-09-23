@@ -1,7 +1,16 @@
 ---
 id: visita_monitorada_hu
 titulo: "Visita Monitorada à Maternidade do HU-USP"
-tags: [visita_monitorada, estrutura_hu, acolhimento, gestacao, orientacao_maternidade]
+categoria: "Protocolo Institucional / Acolhimento"
+escopo: "HU-USP"
+versao: "1.0"
+tags:
+  - visita-monitorada
+  - estrutura-hu
+  - acolhimento
+  - gestacao
+  - orientacao-maternidade
+  - protocolo-hu
 ---
 
 # Visita Monitorada à Maternidade do HU-USP

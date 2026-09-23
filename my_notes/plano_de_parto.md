@@ -1,7 +1,16 @@
 ---
 id: plano_de_parto
 titulo: "Plano de Parto: Diretrizes e Alinhamento de Expectativas"
-tags: [planejamento, humanizacao, fisiologia, conduta_obstetrica]
+categoria: "Assistência ao Parto / Humanização"
+escopo: "Geral"
+versao: "1.0"
+tags:
+  - planejamento
+  - humanizacao
+  - fisiologia
+  - conduta-obstetrica
+  - plano-de-parto
+  - autonomia-materna
 ---
 
 # Plano de Parto: Diretrizes e Alinhamento de Expectativas
