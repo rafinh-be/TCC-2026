@@ -108,8 +108,8 @@ def index_data(verbose=False):
         tags = post.get("tags", [])
         conteudo_limpo = post.content
         
-        paragrafos = [conteudo_limpo]
-        # paragrafos = [p.strip() for p in conteudo_limpo.split("\n\n") if p.strip()]
+        # paragrafos = [conteudo_limpo]
+        paragrafos = [p.strip() for p in conteudo_limpo.split("\n\n") if p.strip()]
         
         if (verbose):
             print("Indexing:", post.get("titulo", arquivo_md.stem))
