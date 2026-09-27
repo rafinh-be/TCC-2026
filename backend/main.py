@@ -65,8 +65,9 @@ async def start_agent(websocket: WebSocket = None):
                 # Alguns comandos que "terminam" o processo devem usar 'continue' para nao encerrar o loop
                 response = execute_command(command, historico_conversa)
                 if (response == "continue"):
+                    print("Continuando...")
                     continue
-                
+            
             contexto_novo, fontes_novas = retrieve_context(message, debug_rag)
             if contexto_novo and contexto_novo not in contexto:
                 contexto = (contexto + "\n\n---\n\n" + contexto_novo).strip()

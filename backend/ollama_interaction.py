@@ -5,7 +5,7 @@ config.read('config.ini', encoding='utf-8')
 
 def create_payload(historico_conversa, message, contexto, fontes):
     payload = []
-    
+
     # Prompt inicial
     try:
         with open("config_agent.md", "r", encoding="utf-8") as f:
@@ -29,7 +29,7 @@ def create_payload(historico_conversa, message, contexto, fontes):
     
     # Mensagem nova
     payload.append({"role": "user", "content": message})
-    
+
     return payload
 
 
@@ -67,7 +67,7 @@ def chat_with_thought_limit(payload, MAX_THINK_TOKENS=300, verbose=False, debug_
         
         answer_messages = payload.copy()
         answer_messages.append({'role': 'assistant', 'content': forced_context})
-        answer_messages.append({'role': 'user', 'content': 'Based on your reasoning above, provide your direct final answer now.'})
+        answer_messages.append({'role': 'user', 'content': 'Dado o raciocinio do agente acima, continue a resposta e gere uma sintese com base na ultima mensagem do usuario, sistema e o raciocinio'})
 
         final_response = ollama.chat(
             model=model_name,
