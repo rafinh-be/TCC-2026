@@ -1,11 +1,9 @@
-import { Children } from "react";
-
-export function Sidebar({ children, content }: { children?: React.ReactNode, content?: any }) {
+export function Sidebar({ children, content }: { children?: React.ReactNode, content?: React.ReactNode }) {
 
     return (
         <div className="drawer lg:drawer-open">
             <input id="my-drawer-4" type="checkbox" className="drawer-toggle inline"/>
-            <div className="drawer-content">
+            <div className="drawer-content flex h-screen flex-col">
                 {/* Navbar */}
                 <nav className="navbar w-full bg-base-300" style={{background:"#a52828", padding: "0.2em"}}>
                 <div className="navbar w-full grow" style={{background: '#cc3434', borderRadius: '0.2rem'}}>
@@ -13,18 +11,18 @@ export function Sidebar({ children, content }: { children?: React.ReactNode, con
                         {/* Sidebar toggle icon */}
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
                     </label>
-                    <div className="px-4">Navbar Title</div>
+                    <div className="px-4" style={{color: "white"}}>Navbar Title</div>
                 </div>
                 </nav>
                 {/* Page content here */}
-                <div className="p-4">{content}</div>
+                <div className="flex-1 overflow-hidden p-4">{content}</div>
             </div>
 
             <div className="drawer-side is-drawer-close:overflow-visible">
                 <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
                 <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-16 is-drawer-open:w-64">
                 {/* Sidebar content here */}
-                <div className="menu w-full grow" style={{background:"#a52828", padding: "0.29em"}}>
+                <div className="menu w-full grow" style={{background:"#a52828", padding: "0.29em", color: "white"}}>
                     <ul className="menu w-full grow" style={{background: '#cc3434', borderRadius: '0.2rem',  borderWidth: '0px', borderColor: '#a52828'}} >
                         {/* List item */}
                         <li>

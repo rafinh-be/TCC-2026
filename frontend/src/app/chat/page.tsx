@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import { Sidebar } from '../components/sidebar/sidebar';
-import { SidebarItem } from '../components/sidebar/sidebarItem.tsx';
-import { Chatbox } from '../components/chatbox/chatbox.tsx';
+import { SidebarItem } from '../components/sidebar/sidebarItem';
+import { Chatbox } from '../components/chatbox/chatbox';
 
-import { messageType } from '../components/chatbox/chatbox.tsx';
+import { messageType } from '../components/chatbox/chatbox';
 
 function AsyncMessenger() {
   //const [inputMessage, setInputMessage] = useState("");
@@ -17,13 +17,8 @@ function AsyncMessenger() {
   
   const socketRef = useRef(null);
 
-  const onReceiveMessage = (message: any) => {
-    //console.log(message)
-    let newMessages : messageType[] = messages;
-    newMessages.pop();
-    newMessages.push({ content: message.assistant, sender: "bot"});
-
-    setMessages(newMessages);
+  const onReceiveMessage = (message: { assistant: string }) => {
+    setMessages((prev) => [...prev.slice(0, -1), { content: message.assistant, sender: "bot" }]);
   }
 
   useEffect(() => {
@@ -45,11 +40,7 @@ function AsyncMessenger() {
   };
 
   return () => {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.close();
-    } else if (ws.readyState === WebSocket.CONNECTING) {
-      ws.onopen = () => ws.close();
-    }
+    ws.close();
   };
 }, []);
 
@@ -57,9 +48,11 @@ function AsyncMessenger() {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       if (!inputMessage?.trim()) return;
 
-      let newMessages : messageType[] = messages
-      newMessages.push({content: inputMessage, sender: "user" }, {content: "Aguarde, estou processando sua solicitação...", sender: "bot"});
-      setMessages(newMessages);
+      setMessages((prev) => [
+        ...prev,
+        { content: inputMessage, sender: "user" },
+        { content: "Aguarde, estou processando sua solicitação...", sender: "bot" },
+      ]);
       // Send the initial message to backend
       socketRef.current.send(inputMessage);
       setIsProcessing(true); // Put frontend into a waiting/loading state
@@ -69,9 +62,9 @@ function AsyncMessenger() {
     }
   };
 
-  const pageContentent = () => {
+  const pageContent = () => {
     return (
-    <div>
+    <div style={{ height: "100%" }}>
       {/*<h2>Async Delayed Response Pattern</h2>
       <p>System Status: <strong>{serverStatus}</strong></p>
 
@@ -107,7 +100,7 @@ function AsyncMessenger() {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif' }}>
-      <Sidebar content={pageContentent()}>
+      <Sidebar content={pageContent()}>
         <SidebarItem onClick={() => alert("Home clicked")} icon="message" label="Teste" />
       </Sidebar>
     </div>
