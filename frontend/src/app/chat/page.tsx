@@ -18,11 +18,7 @@ function AsyncMessenger() {
   const socketRef = useRef(null);
 
   const onReceiveMessage = (message: { assistant: string }) => {
-    const newMessages : messageType[] = messages;
-    newMessages.pop();
-    newMessages.push({ content: message.assistant, sender: "bot"});
-
-    setMessages(newMessages);
+    setMessages((prev) => [...prev.slice(0, -1), { content: message.assistant, sender: "bot" }]);
   }
 
   useEffect(() => {
@@ -44,11 +40,7 @@ function AsyncMessenger() {
   };
 
   return () => {
-    if (ws.readyState === WebSocket.OPEN) {
-      ws.close();
-    } else if (ws.readyState === WebSocket.CONNECTING) {
-      ws.onopen = () => ws.close();
-    }
+    ws.close();
   };
 }, []);
 
@@ -56,9 +48,11 @@ function AsyncMessenger() {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       if (!inputMessage?.trim()) return;
 
-      const newMessages : messageType[] = messages
-      newMessages.push({content: inputMessage, sender: "user" }, {content: "Aguarde, estou processando sua solicitação...", sender: "bot"});
-      setMessages(newMessages);
+      setMessages((prev) => [
+        ...prev,
+        { content: inputMessage, sender: "user" },
+        { content: "Aguarde, estou processando sua solicitação...", sender: "bot" },
+      ]);
       // Send the initial message to backend
       socketRef.current.send(inputMessage);
       setIsProcessing(true); // Put frontend into a waiting/loading state

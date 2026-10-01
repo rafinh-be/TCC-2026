@@ -83,7 +83,7 @@ export function ChatInput({ onSendMessage }: { onSendMessage: (message: string) 
                 />
                 <button
                     ref={buttonRef}
-                    style={{padding: "10px 20px", borderRadius: "9999px", backgroundColor: "#cc3434", alignSelf: isMultiline ? "flex-end" : "center", marginTop: isMultiline ? "6px" : "0"}}
+                    style={{padding: "10px 20px", borderRadius: "9999px", backgroundColor: "#cc3434", color: "white", alignSelf: isMultiline ? "flex-end" : "center", marginTop: isMultiline ? "6px" : "0"}}
                     onClick={handleSend}
                 >
                     Enviar

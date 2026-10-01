@@ -1,3 +1,6 @@
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import { ChatInput } from "./chatInput";
 
 export type messageType = { content: string, sender: "user" | "bot" };
@@ -17,8 +20,10 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
         } else if (message.sender == "bot") {
             chatItems.push(
                 <div className="chat chat-start">
-                    <div className="chat-bubble chat-bubble-secondary">
-                        {message.content}
+                    <div className="chat-bubble chat-bubble-secondary prose prose-sm max-w-none">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {message.content}
+                        </ReactMarkdown>
                     </div>
                 </div>
             )
