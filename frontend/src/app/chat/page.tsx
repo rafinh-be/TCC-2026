@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import { Sidebar } from '../components/sidebar/sidebar';
-import { SidebarItem } from '../components/sidebar/sidebarItem.tsx';
-import { Chatbox } from '../components/chatbox/chatbox.tsx';
+import { SidebarItem } from '../components/sidebar/sidebarItem';
+import { Chatbox } from '../components/chatbox/chatbox';
 
-import { messageType } from '../components/chatbox/chatbox.tsx';
+import { messageType } from '../components/chatbox/chatbox';
 
 function AsyncMessenger() {
   //const [inputMessage, setInputMessage] = useState("");
@@ -17,9 +17,8 @@ function AsyncMessenger() {
   
   const socketRef = useRef(null);
 
-  const onReceiveMessage = (message: any) => {
-    //console.log(message)
-    let newMessages : messageType[] = messages;
+  const onReceiveMessage = (message: { assistant: string }) => {
+    const newMessages : messageType[] = messages;
     newMessages.pop();
     newMessages.push({ content: message.assistant, sender: "bot"});
 
@@ -57,7 +56,7 @@ function AsyncMessenger() {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       if (!inputMessage?.trim()) return;
 
-      let newMessages : messageType[] = messages
+      const newMessages : messageType[] = messages
       newMessages.push({content: inputMessage, sender: "user" }, {content: "Aguarde, estou processando sua solicitação...", sender: "bot"});
       setMessages(newMessages);
       // Send the initial message to backend
@@ -69,7 +68,7 @@ function AsyncMessenger() {
     }
   };
 
-  const pageContentent = () => {
+  const pageContent = () => {
     return (
     <div>
       {/*<h2>Async Delayed Response Pattern</h2>
@@ -107,7 +106,7 @@ function AsyncMessenger() {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif' }}>
-      <Sidebar content={pageContentent()}>
+      <Sidebar content={pageContent()}>
         <SidebarItem onClick={() => alert("Home clicked")} icon="message" label="Teste" />
       </Sidebar>
     </div>

@@ -1,6 +1,4 @@
-import { Children } from "react";
-
-export function Sidebar({ children, content }: { children?: React.ReactNode, content?: any }) {
+export function Sidebar({ children, content }: { children?: React.ReactNode, content?: React.ReactNode }) {
 
     return (
         <div className="drawer lg:drawer-open">
