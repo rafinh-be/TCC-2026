@@ -31,9 +31,9 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
     }, [isProcessing])*/
 
     return (
-        <div>
-            <div>
-                {chatItems}   
+        <div style={{display: "flex", flexDirection: "column", height: "100%"}}>
+            <div style={{flexGrow: 1, overflowY: "auto"}}>
+                {chatItems}
             </div>
             <ChatInput onSendMessage={onSendMessage} />
         </div>

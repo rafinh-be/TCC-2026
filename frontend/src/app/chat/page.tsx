@@ -70,7 +70,7 @@ function AsyncMessenger() {
 
   const pageContent = () => {
     return (
-    <div>
+    <div style={{ height: "100%" }}>
       {/*<h2>Async Delayed Response Pattern</h2>
       <p>System Status: <strong>{serverStatus}</strong></p>
 

@@ -3,7 +3,7 @@ export function Sidebar({ children, content }: { children?: React.ReactNode, con
     return (
         <div className="drawer lg:drawer-open">
             <input id="my-drawer-4" type="checkbox" className="drawer-toggle inline"/>
-            <div className="drawer-content">
+            <div className="drawer-content flex h-screen flex-col">
                 {/* Navbar */}
                 <nav className="navbar w-full bg-base-300" style={{background:"#a52828", padding: "0.2em"}}>
                 <div className="navbar w-full grow" style={{background: '#cc3434', borderRadius: '0.2rem'}}>
@@ -15,7 +15,7 @@ export function Sidebar({ children, content }: { children?: React.ReactNode, con
                 </div>
                 </nav>
                 {/* Page content here */}
-                <div className="p-4">{content}</div>
+                <div className="flex-1 overflow-hidden p-4">{content}</div>
             </div>
 
             <div className="drawer-side is-drawer-close:overflow-visible">
