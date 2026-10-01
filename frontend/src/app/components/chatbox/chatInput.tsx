@@ -69,7 +69,9 @@ export function ChatInput({ onSendMessage }: { onSendMessage: (message: string) 
     return (
         <div style={{width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", paddingLeft: "10px", paddingRight: "10px", paddingBottom: "10px"}}>
             <div ref={wrapperRef} style={{width: "95%", display: "flex", flexDirection: isMultiline ? "column" : "row", alignItems: isMultiline ? "stretch" : "center", borderRadius: isMultiline ? "24px" : "9999px", borderColor: "#F0F0F0", borderWidth: "2px", borderStyle: "solid", backgroundColor: "#FCFCFC", paddingLeft: "20px", paddingRight: "10px", paddingTop: "6px", paddingBottom: "6px"}}>
-                <span ref={measureRef} style={{position: "absolute", visibility: "hidden", whiteSpace: "pre", pointerEvents: "none", fontFamily: "inherit", fontSize: "inherit"}} />
+                <div style={{position: "absolute", width: 0, height: 0, overflow: "hidden"}}>
+                    <span ref={measureRef} style={{whiteSpace: "pre", fontFamily: "inherit", fontSize: "inherit"}} />
+                </div>
                 <textarea
                     ref={textareaRef}
                     onKeyDown={handleKeyDown}
