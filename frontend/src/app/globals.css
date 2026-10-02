@@ -10,8 +10,29 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-chat-user: #cc3434;
+  --color-chat-bot: #fcfcfc;
+  --color-chat-border: #f0f0f0;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+@keyframes dot-jump {
+  0%, 40%, 100% { transform: translateY(0); }
+  20% { transform: translateY(-9px); }
+}
+
+.typing-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: currentColor;
+  animation: dot-jump 1.4s cubic-bezier(.41,-0.78,.86,1.55) infinite;
+}
+
+.chat-bubble.prose strong,
+.chat-bubble.prose em {
+  color: #000;
 }
 
 body {
