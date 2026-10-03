@@ -15,7 +15,7 @@ export function Sidebar({ children, content }: { children?: React.ReactNode, con
                 </div>
                 </nav>
                 {/* Page content here */}
-                <div className="flex-1 overflow-hidden p-4">{content}</div>
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{content}</div>
             </div>
 
             <div className="drawer-side is-drawer-close:overflow-visible">

@@ -64,7 +64,7 @@ function AsyncMessenger() {
 
   const pageContent = () => {
     return (
-    <div style={{ height: "100%" }}>
+    <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
       {/*<h2>Async Delayed Response Pattern</h2>
       <p>System Status: <strong>{serverStatus}</strong></p>
 
