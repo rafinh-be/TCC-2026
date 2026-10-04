@@ -1,3 +1,15 @@
+"""
+Script para Geração de Dataset Sintético de Teste (Testset RAG).
+
+Este script lê documentos Markdown contendo notas/diretrizes médicas da pasta 'my_notes',
+e utiliza um modelo LLM rodando via Ollama local para gerar um conjunto de teste com 3 categorias:
+1. Perguntas simples e diretas (fato específico).
+2. Perguntas clínicas com raciocínio (diagnóstico/conduta).
+3. Perguntas fora do escopo (para testar a taxa de recusa/alucinação do RAG).
+
+Os resultados são salvos em 'testset_sintetico_tcc.csv' e 'testset_sintetico_tcc.json'.
+"""
+
 import os
 import glob
 import json
@@ -6,9 +18,10 @@ from pydantic import BaseModel, Field
 import ollama
 
 # -----------------------------------------------------------------------------
-# 1. ESTRUTURA PARA GERAÇÃO SINTÉTICA DE PERGUNTAS (Estilo Ragas Testset)
+# 1. Estrutura Pydantic para Geração Sintética Estruturada
 # -----------------------------------------------------------------------------
 class SyntheticQA(BaseModel):
+    """Esquema de saída estruturada para a geração de perguntas e respostas via LLM."""
     pergunta_simples: str = Field(
         description="Uma pergunta direta sobre um fato especifico do texto."
     )
@@ -25,9 +38,13 @@ class SyntheticQA(BaseModel):
         description="Uma pergunta plausivel sobre medicina mas cuja resposta NAO esta no texto (para testar recusa)."
     )
 
+# -----------------------------------------------------------------------------
+# 2. Funções Auxiliares de Gerenciamento do Ollama e Arquivos
+# -----------------------------------------------------------------------------
 def obter_modelo_disponivel():
     """
     Obtém automaticamente um modelo instalado no Ollama local.
+    Prioriza modelos recomendados como qwen3.5:9b ou qwen2.5:7b.
     """
     try:
         modelos_resp = ollama.list()
@@ -52,7 +69,10 @@ def obter_modelo_disponivel():
 
 def carregar_markdowns(diretorio: str = "my_notes"):
     """
-    Carrega todos os arquivos Markdown do diretorio especificado.
+    Carrega todos os arquivos Markdown (.md) do diretório especificado.
+    
+    :param diretorio: Pasta onde estão os arquivos Markdown.
+    :return: Lista de dicionários com 'fonte' (nome do arquivo) e 'conteudo' (texto do arquivo).
     """
     arquivos = glob.glob(os.path.join(diretorio, "*.md"))
     documentos = []
@@ -69,7 +89,8 @@ def carregar_markdowns(diretorio: str = "my_notes"):
 
 def gerar_perguntas_sinteticas_por_chunk(fonte: str, chunk_texto: str, model_name: str):
     """
-    Gera variacoes sinteticas de QA (Simples, Raciocinio, Recusa) para um trecho de texto.
+    Gera variações sintéticas de QA (Simples, Raciocínio e Recusa) para um trecho de texto
+    utilizando a API do Ollama com formato JSON Schema Pydantic.
     """
     prompt = f"""
     Voce eh um gerador de datasets sinteticos de teste para RAG medico (Obstetricia e Ginecologia).
@@ -96,9 +117,13 @@ def gerar_perguntas_sinteticas_por_chunk(fonte: str, chunk_texto: str, model_nam
         print(f"[-] Aviso ao gerar para {fonte}: {e}")
         return None
 
+# -----------------------------------------------------------------------------
+# 3. Construção Final do Dataset e Exportação
+# -----------------------------------------------------------------------------
 def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documentos: int = 3):
     """
-    Processa os arquivos Markdown e monta o Testset no formato de avaliacao RAG.
+    Processa os arquivos Markdown e monta o Testset no formato de avaliação RAG.
+    Salva os resultados em CSV e JSON.
     """
     modelo = obter_modelo_disponivel()
     print(f"[*] Usando modelo Ollama: '{modelo}'")
@@ -109,13 +134,13 @@ def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documento
 
     dataset_sintetico = []
 
-    # Processa ate max_documentos
+    # Processa até max_documentos
     docs_para_processar = docs[:max_documentos]
 
     for idx, doc in enumerate(docs_para_processar, 1):
         fonte = doc["fonte"]
         conteudo = doc["conteudo"]
-        print(f"[-] [{idx}/{len(docs_para_processar)}] Gerando perguntas sinteticas para '{fonte}'...")
+        print(f"[-] [{idx}/{len(docs_para_processar)}] Gerando perguntas sintéticas para '{fonte}'...")
         
         qa_sintetico = gerar_perguntas_sinteticas_por_chunk(fonte, conteudo, model_name=modelo)
         
@@ -169,3 +194,4 @@ def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documento
 
 if __name__ == "__main__":
     construir_testset_sintetico()
+

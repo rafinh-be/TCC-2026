@@ -1,5 +1,5 @@
 ﻿fonte_documento,evolution_type,question,ground_truth,context,expected_refusal
-abordagem_pré_natal.md,simple,Qual é a garantia legal referente à presença de uma pessoa escolhida pela gestante durante os cuidados pré-natais?,"Existe garantia legal da presença do acompanhante de escolha da gestante durante o pré-natal, parto e puerpério.","---
+abordagem_pré_natal.md,simple,"Qual direito legal é garantido à gestante durante o pré-natal, parto e puerpério?",Garantia legal da presença do acompanhante de escolha da gestante.,"---
 id: ""abordagem_pré_natal""
 titulo: ""Abordagem Geral e Diretrizes da Assistência Pré-Natal""
 categoria: ""Assistência Pré-Natal / Promocao da Saude""
@@ -31,7 +31,7 @@ Conforme preconizado pela Organização Mundial da Saúde (OMS), o acompanhament
 É fundamental capacitar a gestante para que exerça papel ativo no processo gestacional e no parto, promovendo o envolvimento da família e da comunidade:
 
 *   **Direito ao Acompanhante:** Garantia legal da presença do acompanhante de escolha da gestante durante o pré-natal, parto e puer",False
-abordagem_pré_natal.md,reasoning,Uma gestante busca entender como a assistência pré-natal de qualidade contribui para uma experiência positiva e quais são as medidas de segurança do paciente aplicáveis neste contexto segundo o documento.,"A assistência deve promover uma experiência positiva na gestação, fundamentada em: avaliações clínicas e laboratoriais (monitoramento materno-fetal), acompanhamento nutricional (ganho ponderal e suplementação) e estímulo a atividades físicas/imunização. Concomitantemente, essa interface com a segurança do paciente otimiza práticas assistenciais críticas como identificação correta da paciente, segurança na administração de medicamentos, higienização das mãos e prevenção de infecções.","---
+abordagem_pré_natal.md,reasoning,Uma gestante deseja iniciar atividade física e receber orientações nutricionais. Como o texto fundamenta a necessidade de essas condutas dentro dos pilares da assistência integral?,"Segundo os pilares da Assistência Integral descritos no documento, essas condutas são atendidas sob 'Estilo de Vida e Prevenção' (estímulo à prática regular de atividades físicas) e 'Acompanhamento Nutricional' (orientação sobre ganho ponderal adequado e prescrição de suplementação quando indicada). Essas ações contribuem para a experiência positiva na gestação, fundamento das condutas da OMS.","---
 id: ""abordagem_pré_natal""
 titulo: ""Abordagem Geral e Diretrizes da Assistência Pré-Natal""
 categoria: ""Assistência Pré-Natal / Promocao da Saude""
@@ -63,7 +63,7 @@ Conforme preconizado pela Organização Mundial da Saúde (OMS), o acompanhament
 É fundamental capacitar a gestante para que exerça papel ativo no processo gestacional e no parto, promovendo o envolvimento da família e da comunidade:
 
 *   **Direito ao Acompanhante:** Garantia legal da presença do acompanhante de escolha da gestante durante o pré-natal, parto e puer",False
-abordagem_pré_natal.md,unanswerable_refusal,"Quais são os nomes específicos das vacinas incluídas no programa de imunização completa para gestantes segundo a legislação vigente descrita no texto? ou Qual o número exato de consultas recomendadas para o pré-natal padrão nesta região específica segundo este documento? (Nota: Usei uma questão plausível sobre parâmetros clínicos específicos, pois o documento trata de princípios gerais como 'imunização completa' e 'rastreamento contínuo', mas não detalha protocolos específicos como número de consultas ou lista vacinal exata). Vou usar a pergunta que é realmente implausível responder com base no texto: ",Informacao nao disponivel nos documentos.,"---
+abordagem_pré_natal.md,unanswerable_refusal,Qual é o nome específico do medicamento utilizado para prevenir preeclâmpsia que deve ser iniciado entre as semanas 12 e 14 da gestação conforme protocolo padrão nacional citado no texto?,Informacao nao disponivel nos documentos.,"---
 id: ""abordagem_pré_natal""
 titulo: ""Abordagem Geral e Diretrizes da Assistência Pré-Natal""
 categoria: ""Assistência Pré-Natal / Promocao da Saude""
@@ -95,3 +95,87 @@ Conforme preconizado pela Organização Mundial da Saúde (OMS), o acompanhament
 É fundamental capacitar a gestante para que exerça papel ativo no processo gestacional e no parto, promovendo o envolvimento da família e da comunidade:
 
 *   **Direito ao Acompanhante:** Garantia legal da presença do acompanhante de escolha da gestante durante o pré-natal, parto e puer",True
+deslocamento_prematuro_placenta.md,simple,Qual é o principal fator de risco associado ao Descolamento Prematuro de Placenta (DPP)?,"O principal fator de risco associado é a hipertensão, tanto a pré-eclâmpsia quanto a hipertensão arterial crônica.","---
+id: descolamento_prematuro_placenta
+titulo: ""Hemorragias da Segunda Metade: Descolamento Prematuro de Placenta e Placenta Prévia""
+tags: [alto_risco, emergencia, hemorragia, conduta_obstetrica]
+---
+
+# Hemorragias da Segunda Metade da Gestação: DPP e Placenta Prévia
+
+O sangramento vaginal após a 20ª semana de gestação representa uma urgência obstétrica de alto risco, exigindo diagnóstico diferencial rápido para preservar a vida do binômio mãe-filho.
+
+---
+
+## 1. Descolamento Prematuro de Placenta (DPP)
+Definido como a separação abrupta da placenta normalmente implantada no corpo uterino antes do nascimento do feto. O principal fator de risco associado é a hipertensão (tanto a pré-eclâmpsia quanto a hipertensão arterial crônica).
+
+### Quadro Clínico:
+* Dor abdominal súbita e intensa.
+* **Hipertonia Uterina:** Útero rígido (""leatoso"" ou em tábua) que não relaxa à palpação.
+* Sangramento vaginal escuro com coágulos (em 20% dos casos o sangramento é oculto, retido retroplacentário).
+* Sofrimento fetal agudo ou ausência de BCF.
+* Instabilidade hemodinâmica materna incompatível com o volume de sangramento visível.
+
+### Diagnóstico:
+O diagnóstico do DPP é **estritamente clínico**. A ultrassonografia possui baixa sensibilidade no evento agudo e **não deve atrasar a conduta cirúrgica**.
+
+### Conduta Médica:
+O DPP é uma emergência médica. O foco é a estabilização materna e o parto rápido.
+* **Feto Vivo:** Via de parto mais rápida, frequentemente **Cesariana de Emergência**. Se o parto",False
+deslocamento_prematuro_placenta.md,reasoning,"Uma gestante em 28ª semana apresenta sangramento vaginal com dor abdominal intensa e útero em tábua (leatoso). O ultrassom foi realizado e mostrou imagem pouco definida devido à agudeza do evento. Qual é o diagnóstico, a conduta diagnóstica correta quanto ao ultrassom e qual é a estratégia de manejo do feto vivo versus morto nesta emergência?","Diagnóstico: Descolamento Prematuro de Placenta (DPP). Conduta Diagnóstica: O diagnóstico é estritamente clínico; a ultrassonografia possui baixa sensibilidade no evento agudo e não deve atrasar a conduta cirúrgica. Manejo do Feto Vivo: Parto mais rápido, frequentemente por Cesariana de Emergência. Manejo do Feto Morto: Estabilização hemodinâmica da mãe (reposição volêmica, avaliação de CIVD). O parto vaginal é preferencial se as condições maternas permitirem, pois a cesariana em distúrbio de coagulação aumenta a mortalidade materna.","---
+id: descolamento_prematuro_placenta
+titulo: ""Hemorragias da Segunda Metade: Descolamento Prematuro de Placenta e Placenta Prévia""
+tags: [alto_risco, emergencia, hemorragia, conduta_obstetrica]
+---
+
+# Hemorragias da Segunda Metade da Gestação: DPP e Placenta Prévia
+
+O sangramento vaginal após a 20ª semana de gestação representa uma urgência obstétrica de alto risco, exigindo diagnóstico diferencial rápido para preservar a vida do binômio mãe-filho.
+
+---
+
+## 1. Descolamento Prematuro de Placenta (DPP)
+Definido como a separação abrupta da placenta normalmente implantada no corpo uterino antes do nascimento do feto. O principal fator de risco associado é a hipertensão (tanto a pré-eclâmpsia quanto a hipertensão arterial crônica).
+
+### Quadro Clínico:
+* Dor abdominal súbita e intensa.
+* **Hipertonia Uterina:** Útero rígido (""leatoso"" ou em tábua) que não relaxa à palpação.
+* Sangramento vaginal escuro com coágulos (em 20% dos casos o sangramento é oculto, retido retroplacentário).
+* Sofrimento fetal agudo ou ausência de BCF.
+* Instabilidade hemodinâmica materna incompatível com o volume de sangramento visível.
+
+### Diagnóstico:
+O diagnóstico do DPP é **estritamente clínico**. A ultrassonografia possui baixa sensibilidade no evento agudo e **não deve atrasar a conduta cirúrgica**.
+
+### Conduta Médica:
+O DPP é uma emergência médica. O foco é a estabilização materna e o parto rápido.
+* **Feto Vivo:** Via de parto mais rápida, frequentemente **Cesariana de Emergência**. Se o parto",False
+deslocamento_prematuro_placenta.md,unanswerable_refusal,Qual é a dosagem padrão de oxitocina recomendada para o tratamento da atonia uterina refratária descrita no texto?,Informacao nao disponivel nos documentos.,"---
+id: descolamento_prematuro_placenta
+titulo: ""Hemorragias da Segunda Metade: Descolamento Prematuro de Placenta e Placenta Prévia""
+tags: [alto_risco, emergencia, hemorragia, conduta_obstetrica]
+---
+
+# Hemorragias da Segunda Metade da Gestação: DPP e Placenta Prévia
+
+O sangramento vaginal após a 20ª semana de gestação representa uma urgência obstétrica de alto risco, exigindo diagnóstico diferencial rápido para preservar a vida do binômio mãe-filho.
+
+---
+
+## 1. Descolamento Prematuro de Placenta (DPP)
+Definido como a separação abrupta da placenta normalmente implantada no corpo uterino antes do nascimento do feto. O principal fator de risco associado é a hipertensão (tanto a pré-eclâmpsia quanto a hipertensão arterial crônica).
+
+### Quadro Clínico:
+* Dor abdominal súbita e intensa.
+* **Hipertonia Uterina:** Útero rígido (""leatoso"" ou em tábua) que não relaxa à palpação.
+* Sangramento vaginal escuro com coágulos (em 20% dos casos o sangramento é oculto, retido retroplacentário).
+* Sofrimento fetal agudo ou ausência de BCF.
+* Instabilidade hemodinâmica materna incompatível com o volume de sangramento visível.
+
+### Diagnóstico:
+O diagnóstico do DPP é **estritamente clínico**. A ultrassonografia possui baixa sensibilidade no evento agudo e **não deve atrasar a conduta cirúrgica**.
+
+### Conduta Médica:
+O DPP é uma emergência médica. O foco é a estabilização materna e o parto rápido.
+* **Feto Vivo:** Via de parto mais rápida, frequentemente **Cesariana de Emergência**. Se o parto",True
