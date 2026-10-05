@@ -8,10 +8,14 @@ Este módulo é responsável por:
 """
 
 import configparser, ollama
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
+
 
 # Carrega as configurações do arquivo ini
 config = configparser.ConfigParser()
-config.read('config.ini', encoding='utf-8')
+config.read(BASE_DIR / 'config.ini', encoding='utf-8')
 
 def create_payload(historico_conversa, message, contexto, fontes):
     """
@@ -27,10 +31,11 @@ def create_payload(historico_conversa, message, contexto, fontes):
     
     # 1. Carrega o prompt do sistema (prioriza config_agent.md se existir, senão usa config.ini)
     try:
-        with open("config_agent.md", "r", encoding="utf-8") as f:
+        with open(BASE_DIR / "config_agent.md", "r", encoding="utf-8") as f:
             prompt_sistema = f.read()
     except FileNotFoundError:
         prompt_sistema = config.get('prompts', 'prompt_sistema')
+
     
     payload.append({"role": "system", "content": prompt_sistema})    
     

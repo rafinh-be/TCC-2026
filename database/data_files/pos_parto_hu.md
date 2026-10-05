@@ -1,7 +1,7 @@
 ---
-id: pos_parto_hu
+id: pospartohu
 titulo: "Pós-Parto, Cuidados com o Recém-Nascido e Amamentação: Guia HU-USP"
-tags: [pos_parto, alojamento_conjunto, amamentacao, cuidados_recem_nascido, planejamento_reprodutivo]
+tags: [posparto, alojamentoconjunto, amamentacao, cuidadosrecemnascido, planejamentoreprodutivo]
 ---
 
 # Pós-Parto, Cuidados com o Recém-Nascido e Amamentação: Guia HU-USP

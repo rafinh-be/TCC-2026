@@ -22,15 +22,91 @@ from huggingface_hub import login
 # -----------------------------------------------------------------------------
 # Configuração e Inicialização
 # -----------------------------------------------------------------------------
+BASE_DIR = Path(__file__).parent
 config = configparser.ConfigParser()
-config.read('config.ini', encoding='utf-8')
+config_path = BASE_DIR / 'config.ini'
+config.read(config_path, encoding='utf-8')
 
-NOTES_DIR = config.get("database", "NOTES_DIR")
-MEMORY_FILE = config.get("database", "MEMORY_FILE")
-DB_PATH = config.get("database", "DB_PATH")
+NOTES_DIR = (BASE_DIR / config.get("database", "NOTES_DIR")).resolve()
+MEMORY_FILE = (BASE_DIR / config.get("database", "MEMORY_FILE")).resolve()
+DB_PATH = (BASE_DIR / config.get("database", "DB_PATH")).resolve()
+CHUNK_SIZE = int(config.get("database", "CHUNK_SIZE", fallback="500"))
+CHUNK_OVERLAP = int(config.get("database", "CHUNK_OVERLAP", fallback=str(int(CHUNK_SIZE * 0.20))))
+
 
 embedding_model = None
 registry = None
+
+def clean_latex_math(text: str) -> str:
+    """
+    Remove ou simplifica notações de sintaxe LaTeX no texto dos documentos Markdown,
+    convertendo elementos como $\text{MgSO}_4$ ou $MgSO_4$ para texto limpo 'MgSO4'.
+    """
+    if not text:
+        return text
+
+    import re
+    # Remove comandos \text{...}
+    text = re.sub(r'\\text\{([^}]+)\}', r'\1', text)
+    # Substitui operadores de comparação e símbolo de grau
+    text = text.replace(r'\ge', '>=').replace(r'\le', '<=').replace(r'^\circ', '°')
+    # Remove subscrito simples com underline (ex: MgSO_4 -> MgSO4)
+    text = re.sub(r'_([0-9a-zA-Z])', r'\1', text)
+    # Remove delimitadores de equações embutidas $...$
+    text = re.sub(r'\$([^$]+)\$', r'\1', text)
+    # Remove espaços duplos remanescentes
+    text = re.sub(r' +', ' ', text)
+    return text
+
+def split_text_into_chunks(text: str, chunk_size: int = CHUNK_SIZE, chunk_overlap: int = CHUNK_OVERLAP) -> list[str]:
+
+    """
+    Divide um texto em chunks de tamanho máximo 'chunk_size' com sobreposição 'chunk_overlap'.
+    Por padrão, o chunk_overlap é 20% do chunk_size.
+    Preserva a integridade de palavras ajustando os limites em espaços ou quebras de linha.
+    """
+    if chunk_overlap is None:
+        chunk_overlap = int(chunk_size * 0.20)
+        
+    if not text or not text.strip():
+        return []
+    
+    text = text.strip()
+    if len(text) <= chunk_size:
+        return [text]
+
+    chunks = []
+    step = chunk_size - chunk_overlap
+    if step <= 0:
+        step = 1
+
+    start = 0
+    text_length = len(text)
+
+    while start < text_length:
+        if start > 0 and start < text_length and not text[start - 1].isspace():
+            space_before = max(text.rfind('\n', 0, start), text.rfind(' ', 0, start))
+            if space_before != -1 and (start - space_before) < (chunk_overlap // 2):
+                start = space_before + 1
+
+        end = min(start + chunk_size, text_length)
+
+        if end < text_length:
+            last_space = max(text.rfind('\n', start, end), text.rfind(' ', start, end))
+            if last_space > start + int(chunk_size * 0.5):
+                end = last_space
+
+        chunk = text[start:end].strip()
+        if chunk:
+            chunks.append(chunk)
+
+        if end == text_length:
+            break
+
+        start = start + step
+
+    return chunks
+
 
 def load_embedding_model():
     """
@@ -136,22 +212,24 @@ def index_data(verbose=False):
         post = frontmatter.load(arquivo_md)
         
         tags = post.get("tags", [])
-        conteudo_limpo = post.content
+        conteudo_limpo = clean_latex_math(post.content)
+
         
-        # Divisão simples em parágrafos
-        paragrafos = [p.strip() for p in conteudo_limpo.split("\n\n") if p.strip()]
+        # Divisão do texto em chunks com sobreposição (chunk_overlap = 20% de chunk_size)
+        chunks = split_text_into_chunks(conteudo_limpo, CHUNK_SIZE, CHUNK_OVERLAP)
         
         if (verbose):
             print("Indexando:", post.get("titulo", arquivo_md.stem))
         
-        for para in paragrafos:
+        for chunk in chunks:
             chunks_to_save.append({
-                "text": para,
+                "text": chunk,
                 "nome_arquivo": post.get("titulo", arquivo_md.stem),  
                 "tags": tags
             })
             if (verbose):
-                print(para, tags)
+                print(chunk, tags)
+
         
     if not chunks_to_save:
         print("⚠️ Nenhum arquivo ou parágrafo encontrado para indexar.")
@@ -222,10 +300,19 @@ def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
             fontes_validas.add(nome_documento)
         
         if (debug_rag):
-            print("Documento encontrado com score de", score, "e título:", nome_documento, "\n\n", res["text"])
+            from rich.console import Console
+            from rich.panel import Panel
+            Console().print(Panel(
+                f"[bold yellow]Documento:[/bold yellow] {nome_documento}\n"
+                f"[bold magenta]Relevância (Score):[/bold magenta] {score:.4f}\n\n"
+                f"[white]{res['text']}[/white]",
+                title="[bold blue]🔍 RAG Chunk Recuperado[/bold blue]",
+                border_style="blue"
+            ))
+
         
     if not blocos_validos:
         return None, []
         
     contexto_unificado = "\n\n---\n\n".join(blocos_validos)
-    return contexto_unificado, list(fontes_validas)
+    return contexto_unificado, list(fontes_validas)

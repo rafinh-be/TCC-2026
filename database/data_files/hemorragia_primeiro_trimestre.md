@@ -1,7 +1,7 @@
 ---
-id: hemorragia_primeiro_trimestre
+id: hemorragiaprimeirotrimestre
 titulo: "Hemorragia do Primeiro Trimestre: Abortamento, Ectópica e Mola"
-tags: [alto_risco, emergencia, patologia, conduta_obstetrica]
+tags: [altorisco, emergencia, patologia, condutaobstetrica]
 ---
 
 # Hemorragia do Primeiro Trimestre: Diagnóstico Diferencial e Conduta
@@ -22,8 +22,8 @@ Definido como a interrupção da gravidez antes de 20-22 semanas ou com feto pes
 ### Manejo Clínico:
 * **Ameaça:** Repouso relativo, abstinência sexual e analgesia. O uso de progesterona natural micronizada (200 a 400 mg/dia via vaginal) pode ser considerado.
 * **Esvaziamento Uterino (Incompleto/Retido):** * **Farmacológico:** Misoprostol vaginal (especialmente em colos fechados no retido).
-    * **Cirúrgico:** Aspiração Manual Intrauterina (AMIU) — preferencial por menor taxa de complicações — ou Curetagem Uterina.
-    * **Profilaxia Rh:** Administrar Imunoglobulina Anti-D em mulheres Rh negativo não sensibilizadas dentro de 72 horas.
+ * **Cirúrgico:** Aspiração Manual Intrauterina (AMIU) — preferencial por menor taxa de complicações — ou Curetagem Uterina.
+ * **Profilaxia Rh:** Administrar Imunoglobulina Anti-D em mulheres Rh negativo não sensibilizadas dentro de 72 horas.
 
 ---
 
@@ -34,7 +34,7 @@ Implantação do blastocisto fora da cavidade uterina, sendo 95% das vezes na tu
 Tríade clássica: Atraso menstrual, dor abdominal progressiva (unilateral) e sangramento vaginal escasso. Se houver rotura tubária (emergência), há sinais de irritação peritoneal (Sinal de Blumberg positivo, dor à mobilização do colo uterino e dor referida no ombro - Sinal de Laffon).
 
 ### Diagnóstico:
-* **Beta-hCG quantitativo:** Níveis acima da zona de discriminação ($\ge$ 1.500 a 2.000 mUI/mL) sem evidência de saco gestacional intrauterino à USG transvaginal.
+* **Beta-hCG quantitativo:** Níveis acima da zona de discriminação (>= 1.500 a 2.000 mUI/mL) sem evidência de saco gestacional intrauterino à USG transvaginal.
 * **USG Transvaginal:** Útero vazio, endométrio espessado (decídua) e presença de massa anexial ou imagem em "anel tubário". Presença de líquido livre no fundo de saco de Douglas sugere hemoperitônio.
 
 ### Conduta:

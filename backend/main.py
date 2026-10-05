@@ -8,6 +8,10 @@ das mensagens (RAG + Ollama) e permite execução via CLI local para testes ráp
 
 import configparser, sys, json, ollama, asyncio, uvicorn, argparse
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
+
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -22,7 +26,9 @@ from user_prompt_proccessing import get_command, execute_command
 # Carregamento de Configurações
 # -----------------------------------------------------------------------------
 config = configparser.ConfigParser()
-config.read('config.ini', encoding='utf-8')
+config_path = Path(__file__).parent / 'config.ini'
+config.read(config_path, encoding='utf-8')
+
 
 # Leitura de prompts estruturados do arquivo de configuração
 prompt_critica = config.get('prompts', 'prompt_critica')
@@ -207,12 +213,23 @@ async def chat_endpoint(request: ChatRequest):
 # Execução CLI em Modo Local
 # -----------------------------------------------------------------------------
 def run_local_agent():
-    """Modo CLI interativo para testar o agente diretamente no terminal."""
-    print("Iniciando agente em modo local (CLI)...")
+    """Modo CLI interativo estilizado para testar o agente diretamente no terminal."""
+    from rich.console import Console
+    from rich.markdown import Markdown
+    from rich.panel import Panel
+
+    console = Console()
+    console.print(Panel.fit(
+        "[bold cyan]👩‍⚕️ Agente Obstétrico & Ginecológico - RAG[/bold cyan]\n"
+        "[dim]Digite sua dúvida médica. Para limpar o histórico, digite /clear.[/dim]",
+        title="[bold green]Modo Local CLI[/bold green]",
+        border_style="cyan"
+    ))
+    
     historico_conversa = []
     while True:
         try:
-            message = input("\nDigite sua mensagem: ")
+            message = console.input("\n[bold yellow]👤 Você:[/bold yellow] ")
             if not message.strip():
                 continue
             res = process_chat(
@@ -223,12 +240,19 @@ def run_local_agent():
                 debug_model=args.debug_model
             )
             historico_conversa = res["historico_conversa"]
-            print(f"\nAssistente: {res['assistant']}")
+            
+            console.print("\n[bold green]👩‍⚕️ Assistente:[/bold green]")
+            console.print(Panel(
+                Markdown(res['assistant']),
+                border_style="green",
+                padding=(1, 2)
+            ))
         except KeyboardInterrupt:
-            print("\nEncerrando agente local.")
+            console.print("\n[bold red]Encerrando agente local.[/bold red]")
             sys.exit(0)
         except Exception as e:
-            print(f"Erro: {e}")
+            console.print(f"[bold red]Erro:[/bold red] {e}")
+
 
 
 # -----------------------------------------------------------------------------

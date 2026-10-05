@@ -1,7 +1,7 @@
 ---
-id: ruptura_prematura_membranas
+id: rupturaprematuramembranas
 titulo: "Ruptura Prematura de Membranas Ovulares (RPMO)"
-tags: [alto_risco, infeccao, trabalho_de_parto, conduta_obstetrica]
+tags: [altorisco, infeccao, trabalhodeparto, condutaobstetrica]
 ---
 
 # Ruptura Prematura de Membranas Ovulares (RPMO) / Amniorrexe Prematura
@@ -16,15 +16,15 @@ A história de perda de líquido claro com odor de "água de sanitária" (esperm
 * **Toque Vaginal Proibido:** O toque digital está formalmente contraindicado em condutas expectantes pelo risco de ascensão bacteriana e corioamnionite.
 
 ### Testes Diagnósticos Complementares (Se dúvida no especular):
-* **Teste de Nitrazina:** O pH do líquido amniótico é alcalino ($7,0\text{ a }7,5$). O papel vira de amarelo para azul/azul-escuro. (Falsos positivos: sêmen, sangue, vaginose bacteriana).
+* **Teste de Nitrazina:** O pH do líquido amniótico é alcalino (7,0 a 7,5). O papel vira de amarelo para azul/azul-escuro. (Falsos positivos: sêmen, sangue, vaginose bacteriana).
 * **Teste da Cristalização (Folha de Samambaia):** Secagem em lâmina do líquido coletado revela padrão de cristalização em formato de samambaia sob microscopia.
-* **Testes Imunológicos:** Detecção de microglobulina $\alpha$-1 amniótica (AmniSure) ou proteína de ligação do fator de crescimento semelhante à insulina tipo 1 (Actim PROM).
+* **Testes Imunológicos:** Detecção de microglobulina \alpha-1 amniótica (AmniSure) ou proteína de ligação do fator de crescimento semelhante à insulina tipo 1 (Actim PROM).
 
 ---
 
 ## 2. Abordagem Conforme a Idade Gestacional
 
-### A. Idade Gestacional $\ge 37\text{ semanas}$ (Termo):
+### A. Idade Gestacional >= 37 semanas (Termo):
 * Ausência de infecção: Resolução da gestação. A indução do parto com ocitocina ou misoprostol deve ser iniciada para reduzir o período de latência e o risco de infecção.
 * Profilaxia para Estreptococo do Grupo B (GBS) se aplicável (status desconhecido ou positivo).
 
@@ -37,9 +37,9 @@ A história de perda de líquido claro com odor de "água de sanitária" (esperm
 A presença de critérios para infecção ovular exige a **interrupção imediata** da gestação por via de parto mais rápida (frequentemente indução se condições favoráveis, ou cesariana se sofrimento fetal), independente da idade gestacional.
 
 ### Critérios de Gibbs para Corioamnionite:
-> Temperatura materna $\ge 38^\circ\text{C}$ associada a pelo menos dois dos seguintes critérios:
-> * Taquicardia materna ($> 100\text{ bpm}$).
-> * Taquicardia fetal ($> 160\text{ bpm}$).
+> Temperatura materna >= 38°C associada a pelo menos dois dos seguintes critérios:
+> * Taquicardia materna (> 100 bpm).
+> * Taquicardia fetal (> 160 bpm).
 > * Sensibilidade/dor uterina à palpação.
 > * Líquido amniótico fétido ou purulento.
-> * Leucocitose ($> 15.000/\text{mm}^3$).
+> * Leucocitose (> 15.000/mm^3).

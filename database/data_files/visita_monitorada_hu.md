@@ -1,7 +1,7 @@
 ---
-id: visita_monitorada_hu
+id: visitamonitoradahu
 titulo: "Visita Monitorada à Maternidade do HU-USP"
-tags: [visita_monitorada, estrutura_hu, acolhimento, gestacao, orientacao_maternidade]
+tags: [visitamonitorada, estruturahu, acolhimento, gestacao, orientacaomaternidade]
 ---
 
 # Visita Monitorada à Maternidade do HU-USP

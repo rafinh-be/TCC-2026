@@ -1,7 +1,7 @@
 ---
-id: descolamento_prematuro_placenta
+id: descolamentoprematuroplacenta
 titulo: "Hemorragias da Segunda Metade: Descolamento Prematuro de Placenta e Placenta Prévia"
-tags: [alto_risco, emergencia, hemorragia, conduta_obstetrica]
+tags: [altorisco, emergencia, hemorragia, condutaobstetrica]
 ---
 
 # Hemorragias da Segunda Metade da Gestação: DPP e Placenta Prévia

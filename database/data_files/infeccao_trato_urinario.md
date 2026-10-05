@@ -1,5 +1,5 @@
 ---
-id: infeccao_trato_urinario
+id: infeccaotratourinario
 titulo: "Infecção do Trato Urinário (ITU) na Gestação"
 tags: [ambulatorio, infeccao, patologia, triagem]
 ---
@@ -13,7 +13,7 @@ A ITU é a complicação médica bacteriana mais comum da gestação. As altera�
 ## 1. Formas Clínicas e Critérios Diagnósticos
 
 ### A. Bacteriúria Assintomática (BA)
-Ausência de sintomas urinários acompanhada de urocultura positiva com contagem de colônias $\ge 10^5\text{ UFC/mL}$ de um único uropatógeno.
+Ausência de sintomas urinários acompanhada de urocultura positiva com contagem de colônias >= 10^5 UFC/mL de um único uropatógeno.
 * **Rastreio Obrigatório:** Deve ser solicitada urocultura para todas as gestantes na primeira consulta de pré-natal e repetida no terceiro trimestre. Se não tratada, até 40% das pacientes evoluem para Pielonefrite.
 
 ### B. Cistite Aguda
@@ -21,7 +21,7 @@ Infecção restrita à bexiga. Apresenta quadro clássico de disúria, polaciúr
 
 ### C. Pielonefrite Aguda
 Infecção do trato urinário superior (parênquima renal). Constitui uma urgência médica com alto risco de sepse materna, choque endotóxico, TPP e anemia.
-* **Quadro Clínico:** Febre alta ($> 38^\circ\text{C}$), calafrios, náuseas, vômitos e **Sinal de Giordano positivo** (dor à punho-percussão lombar).
+* **Quadro Clínico:** Febre alta (> 38°C), calafrios, náuseas, vômitos e **Sinal de Giordano positivo** (dor à punho-percussão lombar).
 
 ---
 

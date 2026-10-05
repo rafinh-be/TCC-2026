@@ -1,7 +1,7 @@
 ---
-id: plano_de_parto_hu
+id: planodepartohu
 titulo: "Plano de Parto e Diretrizes Assistenciais: Maternidade HU-USP"
-tags: [plano_de_parto, humanizacao, conduta_obstetrica, protocolo_hu, diretrizes_maternidade]
+tags: [planodeparto, humanizacao, condutaobstetrica, protocolohu, diretrizesmaternidade]
 ---
 
 # Plano de Parto e Diretrizes Assistenciais: Maternidade HU-USP
@@ -13,11 +13,11 @@ O **Plano de Parto** é um instrumento formal de comunicação entre a gestante,
 ## 1. Orientações Gerais e Fluxo de Atendimento
 * **Elegibilidade:** Maternidade voltada para gestações de risco habitual. Não é serviço de referência para alto risco.
 * **Grupos de Orientação:** A partir de 28 semanas (7º mês), gestantes de risco habitual podem participar das orientações.
-  * **Local:** Anfiteatro do 4º andar do HU.
-  * **Ponto de Encontro:** 12:45h no ambulatório (2º andar).
+ * **Local:** Anfiteatro do 4º andar do HU.
+ * **Ponto de Encontro:** 12:45h no ambulatório (2º andar).
 * **Agendamento e Download:**
-  * Formulário de Inscrição: [Link para Inscrição](https://docs.google.com/forms/d/15K22Aby_2uDyP1un7fOGBcwQG31H8OP4LHUJepMVduo/edit)
-  * Documento em PDF: [Download do Modelo HU](https://www.hu.usp.br/wp-content/uploads/sites/367/2022/01/PlanoDeParto2026.pdf)
+ * Formulário de Inscrição: [Link para Inscrição](https://docs.google.com/forms/d/15K22Aby2uDyP1un7fOGBcwQG31H8OP4LHUJepMVduo/edit)
+ * Documento em PDF: [Download do Modelo HU](https://www.hu.usp.br/wp-content/uploads/sites/367/2022/01/PlanoDeParto2026.pdf)
 * **Perfil Institucional:** Hospital-escola. Atendimento realizado por profissionais formados e em formação sob supervisão contínua.
 
 ---
@@ -49,9 +49,9 @@ Estatísticas base do serviço (dados de 2025): **38% Partos Normais**, **57% Ce
 
 * **Monitoramento Fetal:** Ausculta intermitente prioritária (avaliada em intervalos regulares).
 * **Episiotomia:** Não realizada de rotina (8.5% em 2025). 
-  * **Risco Fetal / Fórcipe:** Indicada se houver sofrimento fetal ou exaustão materna.
-  * **Risco de Laceração Grave:** Incidência sem episiotomia no serviço: 1º grau ($33\%$), 2º grau ($18\%$), 3º grau ($0,4\%$) e 4º grau ($0\%$).
-* **Fórcipe:** Utilizado apenas em emergências para acelerar a saída do feto ($3,5\%$ em 2025). *O serviço não utiliza vácuo-extrator.*
+ * **Risco Fetal / Fórcipe:** Indicada se houver sofrimento fetal ou exaustão materna.
+ * **Risco de Laceração Grave:** Incidência sem episiotomia no serviço: 1º grau (33\%), 2º grau (18\%), 3º grau (0,4\%) e 4º grau (0\%).
+* **Fórcipe:** Utilizado apenas em emergências para acelerar a saída do feto (3,5\% em 2025). *O serviço não utiliza vácuo-extrator.*
 * **Ocitocina Pós-Parto:** Administrada de rotina após o nascimento para profilaxia de atonia uterina e hemorragia pós-parto.
 
 ---
@@ -59,8 +59,8 @@ Estatísticas base do serviço (dados de 2025): **38% Partos Normais**, **57% Ce
 ## 5. Diretrizes para Cesariana e Cesárea a Pedido
 * **Cesárea de Indicação Médica:** Procedimento cirúrgico realizado sob anestesia, depilação cirúrgica e sondagem vesical de demora.
 * **Cesárea a Pedido (Lei Estadual nº 17.137/19):**
-  * **Critérios:** Gestante com $IG \ge 39$ semanas (comprovada por USG precoce) **E** em trabalho de parto ativo.
-  * **Alertas e Riscos:** Procedimento eletivo sujeito a aguardar vagas de urgência. Apresenta maiores riscos de atonia uterina, hemorragia, infecção, lesões de órgãos adjacentes, histerectomia e complicações anestésicas.
+ * **Critérios:** Gestante com IG >= 39 semanas (comprovada por USG precoce) **E** em trabalho de parto ativo.
+ * **Alertas e Riscos:** Procedimento eletivo sujeito a aguardar vagas de urgência. Apresenta maiores riscos de atonia uterina, hemorragia, infecção, lesões de órgãos adjacentes, histerectomia e complicações anestésicas.
 
 ---
 
