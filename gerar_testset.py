@@ -2,7 +2,7 @@
 Script para Geração de Dataset Sintético de Teste (Testset RAG).
 
 Este script lê documentos Markdown contendo notas/diretrizes médicas da pasta 'my_notes',
-e utiliza um modelo LLM rodando via Ollama local para gerar um conjunto de teste com 3 categorias:
+e utiliza um modelo LLM remoto via Gemini API para gerar um conjunto de teste com 3 categorias:
 1. Perguntas simples e diretas (fato específico).
 2. Perguntas clínicas com raciocínio (diagnóstico/conduta).
 3. Perguntas fora do escopo (para testar a taxa de recusa/alucinação do RAG).
@@ -15,7 +15,8 @@ import glob
 import json
 import pandas as pd
 from pydantic import BaseModel, Field
-import ollama
+from google.genai import types
+from backend.google_models import get_client, model_setting
 
 # -----------------------------------------------------------------------------
 # 1. Estrutura Pydantic para Geração Sintética Estruturada
@@ -39,33 +40,12 @@ class SyntheticQA(BaseModel):
     )
 
 # -----------------------------------------------------------------------------
-# 2. Funções Auxiliares de Gerenciamento do Ollama e Arquivos
+# 2. Funções Auxiliares de Gerenciamento do Gemini e Arquivos
 # -----------------------------------------------------------------------------
 def obter_modelo_disponivel():
-    """
-    Obtém automaticamente um modelo instalado no Ollama local.
-    Prioriza modelos recomendados como qwen3.5:9b ou qwen2.5:7b.
-    """
-    try:
-        modelos_resp = ollama.list()
-        # Se for objeto com atributo 'models' ou dicionario
-        if hasattr(modelos_resp, 'models'):
-            lista = [m.model for m in modelos_resp.models]
-        elif isinstance(modelos_resp, dict) and 'models' in modelos_resp:
-            lista = [m['model'] for m in modelos_resp['models']]
-        else:
-            lista = []
-            
-        if lista:
-            print(f"[*] Modelos Ollama encontrados: {lista}")
-            # Priorizar qwen3.5:9b ou qwen2.5:7b se disponivel
-            for pref in ["qwen3.5:9b", "qwen2.5:7b"]:
-                if any(pref in m for m in lista):
-                    return pref
-            return lista[0]
-    except Exception as e:
-        print(f"[-] Aviso ao listar modelos: {e}")
-    return "qwen3.5:9b"
+    """Retorna o modelo remoto configurado para gera??o."""
+    return model_setting("llm_model")
+
 
 def carregar_markdowns(diretorio: str = "my_notes"):
     """
@@ -90,7 +70,7 @@ def carregar_markdowns(diretorio: str = "my_notes"):
 def gerar_perguntas_sinteticas_por_chunk(fonte: str, chunk_texto: str, model_name: str):
     """
     Gera variações sintéticas de QA (Simples, Raciocínio e Recusa) para um trecho de texto
-    utilizando a API do Ollama com formato JSON Schema Pydantic.
+    utilizando a API do Gemini com formato JSON Schema Pydantic.
     """
     prompt = f"""
     Voce eh um gerador de datasets sinteticos de teste para RAG medico (Obstetricia e Ginecologia).
@@ -106,12 +86,15 @@ def gerar_perguntas_sinteticas_por_chunk(fonte: str, chunk_texto: str, model_nam
     """
 
     try:
-        response = ollama.chat(
+        response = get_client().models.generate_content(
             model=model_name,
-            messages=[{"role": "user", "content": prompt}],
-            format=SyntheticQA.model_json_schema()
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=SyntheticQA,
+            ),
         )
-        dados = json.loads(response['message']['content'])
+        dados = SyntheticQA.model_validate_json(response.text).model_dump()
         return dados
     except Exception as e:
         print(f"[-] Aviso ao gerar para {fonte}: {e}")
@@ -126,7 +109,7 @@ def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documento
     Salva os resultados em CSV e JSON.
     """
     modelo = obter_modelo_disponivel()
-    print(f"[*] Usando modelo Ollama: '{modelo}'")
+    print(f"[*] Usando modelo Gemini: '{modelo}'")
 
     print(f"[*] Lendo arquivos Markdown em '{diretorio_notes}'...")
     docs = carregar_markdowns(diretorio_notes)

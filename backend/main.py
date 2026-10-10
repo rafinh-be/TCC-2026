@@ -3,10 +3,10 @@ Servidor Backend Principal (FastAPI) - Sistema RAG para Obstetrícia e Ginecolog
 
 Este arquivo é o ponto de entrada da aplicação backend. Ele configura a API FastAPI,
 os middlewares de CORS, define endpoints REST e WebSocket, gerencia o fluxo de processamento 
-das mensagens (RAG + Ollama) e permite execução via CLI local para testes rápidos.
+das mensagens (RAG + Gemini) e permite execução via CLI local para testes rápidos.
 """
 
-import configparser, sys, json, ollama, asyncio, uvicorn, argparse
+import configparser, sys, json, asyncio, uvicorn, argparse
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
@@ -19,7 +19,7 @@ from pydantic import BaseModel
 from pathlib import Path
 
 from database_utility import needs_indexing, index_data, retrieve_context
-from ollama_interaction import create_payload, chat_with_thought_limit  
+from gemini_interaction import create_payload, chat
 from user_prompt_proccessing import get_command, execute_command
 
 # -----------------------------------------------------------------------------
@@ -90,7 +90,7 @@ def process_chat(message: str, historico_conversa: list, verbose: bool = False, 
     1. Verifica se a base de dados em vetores (LanceDB) precisa de reindexação.
     2. Verifica se a mensagem é um comando do sistema (ex: /clear ou /reset).
     3. Busca contexto relevante e fontes na base de conhecimentos local (LanceDB).
-    4. Monta o payload estruturado e chama a LLM via Ollama com limite de raciocínio.
+    4. Monta o payload estruturado e chama a LLM via Gemini com limite de raciocínio.
     5. Atualiza o histórico da conversa e retorna o dicionário com os resultados.
     """
     # Step 1: Atualização automática da base de vetores se houver alterações nos Markdowns
@@ -120,9 +120,9 @@ def process_chat(message: str, historico_conversa: list, verbose: bool = False, 
         if fonte not in fontes:
             fontes.append(fonte)
 
-    # Step 4: Montagem do payload e chamada da LLM via Ollama
+    # Step 4: Montagem do payload e chamada da LLM via Gemini
     payload = create_payload(historico_conversa, message, contexto, fontes)
-    answer = chat_with_thought_limit(payload)
+    answer = chat(payload, verbose=verbose, debug_model=debug_model)
     assistant_reply = answer['message']['content']
 
     # Step 5: Atualização do histórico da conversa
@@ -232,13 +232,14 @@ def run_local_agent():
             message = console.input("\n[bold yellow]👤 Você:[/bold yellow] ")
             if not message.strip():
                 continue
-            res = process_chat(
-                message=message,
-                historico_conversa=historico_conversa,
-                verbose=args.verbose,
-                debug_rag=args.debug_rag,
-                debug_model=args.debug_model
-            )
+            with console.status("Consultando a base e preparando a resposta..."):
+                res = process_chat(
+                    message=message,
+                    historico_conversa=historico_conversa,
+                    verbose=args.verbose,
+                    debug_rag=args.debug_rag,
+                    debug_model=args.debug_model
+                )
             historico_conversa = res["historico_conversa"]
             
             console.print("\n[bold green]👩‍⚕️ Assistente:[/bold green]")

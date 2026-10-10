@@ -1,23 +1,20 @@
 """
-Módulo de Banco de Dados Vetorial e Indexação RAG (LanceDB + Sentence Transformers).
+Módulo de Banco de Dados Vetorial e Indexação RAG (LanceDB + Gemini API).
 
 Este módulo é responsável por:
-1. Gerenciar o modelo de embeddings multilíngue (sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2).
+1. Gerenciar o modelo de embeddings multilíngue (Google Gemini).
 2. Monitorar a pasta de notas médicas em Markdown e verificar se houve alterações ou novos arquivos.
 3. Indexar parágrafos das notas médicas no banco vetorial LanceDB com suporte a Busca Híbrida (FTS + Vetorial).
 4. Realizar a busca de contextos relevantes para responder às perguntas médicas.
 """
 
-import json, os, lancedb, configparser, frontmatter, contextlib
+import json, os, lancedb, configparser, frontmatter
 
-# Desativa barras de progresso do Hugging Face Hub no console
-os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 
 from pathlib import Path
-from dotenv import load_dotenv
 from lancedb.pydantic import LanceModel, Vector
-from lancedb.embeddings import get_registry
-from huggingface_hub import login
+from google_embeddings import GoogleEmbeddings
+from google_models import model_setting
 
 # -----------------------------------------------------------------------------
 # Configuração e Inicialização
@@ -109,18 +106,21 @@ def split_text_into_chunks(text: str, chunk_size: int = CHUNK_SIZE, chunk_overla
 
 
 def load_embedding_model():
-    """
-    Carrega o modelo de embeddings multilíngue via Sentence Transformers no LanceDB.
-    Utiliza CPU por padrão para compatibilidade ampla.
-    """
+    """Configura embeddings remotos, sem carregar pesos na CPU/GPU."""
     global embedding_model
-    global registry
-    
-    registry = get_registry()
-    embedding_model = registry.get("sentence-transformers").create(
-        name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", 
-        device="cpu",
+    embedding_model = GoogleEmbeddings.create(
+        name=model_setting("embedding_model"),
+        dimensions=int(model_setting("embedding_dimensions")),
     )
+
+
+def embedding_signature():
+    return {
+        "provider": "google-gemini",
+        "model": model_setting("embedding_model"),
+        "dimensions": int(model_setting("embedding_dimensions")),
+    }
+
 
 def needs_indexing(verbose=False) -> bool:
     """
@@ -152,6 +152,12 @@ def needs_indexing(verbose=False) -> bool:
     except Exception:
         return True 
 
+    if memoria_salva.get("embedding") != embedding_signature():
+        return True
+    if not (DB_PATH / "notas_medicas.lance").exists():
+        return True
+    memoria_salva = memoria_salva.get("files", {})
+
     # Se a quantidade de arquivos mudou, precisa reindexar
     if len(estado_atual) != len(memoria_salva):
         return True
@@ -177,7 +183,7 @@ def update_memory():
         estado_atual[arquivo_md.name] = os.path.getmtime(arquivo_md)
         
     with open(MEMORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(estado_atual, f, indent=4)
+        json.dump({"embedding": embedding_signature(), "files": estado_atual}, f, indent=4)
 
 def conectar_banco():
     """Estabelece e retorna a conexão com o banco de dados LanceDB no caminho configurado."""
@@ -271,8 +277,6 @@ def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
 
     vetor_query = _tokenize_query(pergunta)
 
-    SCORE_MINIMO = 0.02
-
     # Executa busca híbrida combinando dissimilaridade vetorial (L2) e FTS
     resultados = (
         table.search(query_type="hybrid")
@@ -289,13 +293,13 @@ def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
     for res in resultados:
         score = res.get("_relevance_score", 0.0)
         
-        # Filtra resultados com relevância abaixo do threshold
-        if score < SCORE_MINIMO:
-            continue
+        # O score RRF ordena resultados; não mede confiança semântica.
+        # Um resultado presente só na busca vetorial tem score ~0.016,
+        # mesmo sendo relevante. A suficiência é avaliada pela LLM.
 
         nome_documento = res.get("nome_arquivo", "Documento Sem Título")
 
-        blocos_validos.append(res["text"])
+        blocos_validos.append(f"Documento: {nome_documento}\n{res['text']}")
         if (nome_documento not in fontes_validas):
             fontes_validas.add(nome_documento)
         
