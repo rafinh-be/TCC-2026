@@ -34,6 +34,63 @@ parser.add_argument("--debug_model", action="store_true", help="Enables extra ve
 parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
 args = parser.parse_args()
 
+def handle_indexing(verbose, debug_rag):
+    if needs_indexing((verbose or debug_rag)):
+        if (verbose or debug_rag):
+            print("Updating LanceDB index...")
+        index_data((verbose or debug_rag))
+
+class ChatMessage(BaseModel):
+    sender: str
+    content: str
+
+class ChatRequest(BaseModel):
+    messages: list[ChatMessage]
+    sources: list[str]
+    context: str
+
+@app.post("/chat")
+async def process_message(item: ChatRequest):
+    global args
+    local = args.local
+    verbose = args.verbose
+    debug_model = args.debug_model
+    debug_rag = args.debug_rag
+    
+    handle_indexing(verbose, debug_rag)
+
+    contexto = item.context
+    fontes = item.sources
+
+    historico_conversa = []
+    if (len(item.messages) > 1):
+        for message in item.messages[:-1]:
+            historico_conversa.append({"role": message.sender, "content": message.content})
+
+    message = item.messages.pop().content
+
+    command = get_command(message, verbose)
+    if command:
+        # Executa o comando e envia a resposta para o usuario
+        # Alguns comandos que "terminam" o processo devem usar 'continue' para nao encerrar o loop
+        return command
+            
+    contexto_novo, fontes_novas = retrieve_context(message, debug_rag)
+    if contexto_novo and contexto_novo not in contexto:
+        contexto = (contexto + "\n\n---\n\n" + contexto_novo).strip()
+    for fonte in fontes_novas:
+        if fonte not in fontes:
+            fontes.append(fonte)
+
+    # Debatendo ainda se deveria passar contexto total ou apenas contexto novo. Nao decidi ainda. Vou deixar contexto total por enquanto
+    payload = create_payload(historico_conversa, message, contexto, fontes)
+
+    answer = chat_with_thought_limit(payload)
+
+    return {"answer": answer,
+            "context": contexto,
+            "sources": fontes}
+
 @app.websocket("/ws/chat")
 async def start_agent(websocket: WebSocket = None):
     global args

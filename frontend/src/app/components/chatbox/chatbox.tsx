@@ -7,7 +7,6 @@ import { ChatInput } from "./chatInput";
 export type messageType = { content: string, sender: "user" | "bot" };
 
 export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: messageType[], isProcessing: boolean, onSendMessage: (message: string) => void }) {
-    const chatItems : React.ReactNode[] = [];
     const bottomRef = useRef<HTMLDivElement | null>(null);
     const topRef = useRef<HTMLDivElement | null>(null);
 
@@ -15,12 +14,12 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    messages.forEach((message, index) => {
+    const chatItems : React.ReactNode[] = messages.map((message, index) => {
         const isWaitingForAnswer = isProcessing && index === messages.length - 1 && message.sender == "bot";
 
         if (isWaitingForAnswer) {
-            chatItems.push(
-                <div className="chat chat-start">
+            return(
+                <div key={index} className="chat chat-start">
                     <div className="chat-header text-sm opacity-70 mb-1">
                         {message.content}
                     </div>
@@ -32,16 +31,16 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
                 </div>
             )
         } else if (message.sender == "user") {
-            chatItems.push(
-                <div className="chat chat-end pb-10">
+            return(
+                <div key={index} className="chat chat-end pb-10">
                     <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-user text-white border-2 border-chat-user max-w-[80%]">
                         {message.content}
                     </div>
                 </div>
             )
         } else if (message.sender == "bot") {
-            chatItems.push(
-                <div className="chat chat-start">
+            return(
+                <div key={index} className="chat chat-start">
                     <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-black border-2 border-chat-border prose prose-sm prose-strong:text-black max-w-[100%]">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                             {message.content}
