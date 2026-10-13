@@ -1,16 +1,40 @@
-import { useState } from "react";
+import { useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+import { ChatInput } from "./chatInput";
 
 export type messageType = { content: string, sender: "user" | "bot" };
 
 export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: messageType[], isProcessing: boolean, onSendMessage: (message: string) => void }) {
     const chatItems : React.ReactNode[] = [];
-    const [userMessage, setUserMessage] = useState<string | null>(null);
+    const bottomRef = useRef<HTMLDivElement | null>(null);
+    const topRef = useRef<HTMLDivElement | null>(null);
 
-    messages.forEach((message) => {
-        if (message.sender == "user") {
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+    messages.forEach((message, index) => {
+        const isWaitingForAnswer = isProcessing && index === messages.length - 1 && message.sender == "bot";
+
+        if (isWaitingForAnswer) {
             chatItems.push(
-                <div className="chat chat-end">
-                    <div className="chat-bubble chat-bubble-primary">
+                <div className="chat chat-start">
+                    <div className="chat-header text-sm opacity-70 mb-1">
+                        {message.content}
+                    </div>
+                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-black border-2 border-chat-border flex items-center gap-1.5 h-10">
+                        <span className="typing-dot" />
+                        <span className="typing-dot" style={{animationDelay: "0.25s"}} />
+                        <span className="typing-dot" style={{animationDelay: "0.5s"}} />
+                    </div>
+                </div>
+            )
+        } else if (message.sender == "user") {
+            chatItems.push(
+                <div className="chat chat-end pb-10">
+                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-user text-white border-2 border-chat-user max-w-[80%]">
                         {message.content}
                     </div>
                 </div>
@@ -18,8 +42,10 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
         } else if (message.sender == "bot") {
             chatItems.push(
                 <div className="chat chat-start">
-                    <div className="chat-bubble chat-bubble-secondary">
-                        {message.content}
+                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-black border-2 border-chat-border prose prose-sm prose-strong:text-black max-w-[100%]">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {message.content}
+                        </ReactMarkdown>
                     </div>
                 </div>
             )
@@ -32,16 +58,23 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
     }, [isProcessing])*/
 
     return (
-        <div>
-            <div>
-                {chatItems}   
+        <div style={{display: "flex", flexDirection: "column", flex: 1, minHeight: 0, alignItems: "center"}}>
+            <div style={{width: "100%", flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column"}}>
+                <div style={{width: "85%", margin: "0 auto", flex: "1 0 auto", display: "flex", flexDirection: "column"}}>
+                    <div ref={topRef} style={{height: "50px"}} />
+                    <div style={{display: "flex", justifyContent: "center"}}>
+                        <div style={{width: "100%"}}>
+                            {chatItems}
+                        </div>
+                    </div>
+                    <div style={{position: "sticky", display: "flex", justifyContent: "center", bottom: 0, marginTop: "auto", paddingTop:"20px", background: "linear-gradient(to bottom, rgba(255, 255, 255, 0), -20px, rgba(255, 255, 255, 0.15) 0px, rgba(255, 255, 255, 0.6) 10px, #FFFFFF 20px)"}}>
+                        <div style={{width:"90%"}}>
+                            <ChatInput onSendMessage={onSendMessage} />
+                        </div>
+                    </div>
+                    <div ref={bottomRef} />
+                </div>
             </div>
-            <div style={{position: "fixed", bottom: "0%", width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingLeft: "10px", paddingRight: "10px"}}>
-                <input type="text" onSubmit={(() => {onSendMessage(userMessage || "")})} style={{position: "fixed", bottom: "3%", width: "90%", borderRadius: "8px", borderColor: "#F0F0F0", borderWidth: "2px", backgroundColor: "#FCFCFC", padding: "5px", paddingTop: "10px", paddingBottom: "10px"}} value={userMessage || ""} onChange={(e) => setUserMessage(e.target.value)} placeholder="Digite sua mensagem..." />
-                <button style={{position: "fixed", right: "10px", zIndex: "1000", bottom: "3%"}} onClick={(() => {onSendMessage(userMessage || "")})}>
-                    Enviar
-                </button>
-            </div>    
         </div>
     );
 }
