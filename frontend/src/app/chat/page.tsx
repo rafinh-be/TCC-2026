@@ -13,6 +13,9 @@ function AsyncMessenger() {
   const [receivedMessage, setReceivedMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const [context, setContext] = useState<String>("");
+  const [fontes, setFontes] = useState<String[]>([]);
+
   const [messages, setMessages] = useState<messageType[]>([]);
   
   const socketRef = useRef(null);
@@ -37,12 +40,12 @@ function AsyncMessenger() {
 
     ws.onclose = () => {
       setServerStatus("Disconnected");
-  };
+    };
 
-  return () => {
-    ws.close();
-  };
-}, []);
+    return () => {
+        ws.close();
+    };
+  }, []);
 
   const handleSendMessage = (inputMessage: string | null) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
@@ -61,6 +64,35 @@ function AsyncMessenger() {
       alert("WebSocket is not connected to backend.");
     }
   };
+
+  const handleSendMessageApi = async (inputMessage: string) => {
+    try {
+      const payload : messageType[] = [...messages, {content: inputMessage, sender: "user"}];
+
+      setMessages([...messages, {sender: "user", content: inputMessage}]);
+
+      setIsProcessing(true);
+      setReceivedMessage("");
+      const response = await fetch("http://127.0.0.1:8000/chat", {
+        method: "POST",
+        body: JSON.stringify({
+          messages: payload,
+          context: context,
+          sources: fontes,
+        }),
+        headers: {"Content-Type": "application/json"}
+      })
+      const data = await response.json()
+      setIsProcessing(false);
+
+      setMessages([...messages, {sender: "user", content: inputMessage}, {sender: "bot", content: data["answer"].message.content}])
+      setContext(data["context"]);
+      setFontes(data["sources"]);
+      console.log(response)
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   const pageContent = () => {
     return (
@@ -94,7 +126,7 @@ function AsyncMessenger() {
           <p>{receivedMessage}</p>
         </div>
       )}*/}
-      <Chatbox messages={messages} isProcessing={isProcessing} onSendMessage={handleSendMessage} />
+      <Chatbox messages={messages} isProcessing={isProcessing} onSendMessage={handleSendMessageApi} />
     </div>
     );}
 
