@@ -4,3 +4,13 @@ backend/__pycache__/
 __pycache__/
 lancedb_obgyn/
 .env
+
+# AI agent artifacts
+docs/superpowers/
+docs/plans/
+docs/specs/
+.worktrees/
+.claude/worktrees/
+.claude/settings.local.json
+CLAUDE.local.md
+AGENTS.override.md
