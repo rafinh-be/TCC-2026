@@ -1,5 +1,3 @@
-"""Configuração compartilhada dos modelos remotos da Gemini API."""
-
 import configparser
 import os
 import ssl

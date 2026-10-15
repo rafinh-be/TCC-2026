@@ -1,5 +1,3 @@
-"""Constru??o de prompts RAG e intera??o com a Gemini API."""
-
 import configparser
 from time import perf_counter
 from pathlib import Path
@@ -11,18 +9,8 @@ config = configparser.ConfigParser()
 config.read(BASE_DIR / 'config.ini', encoding='utf-8')
 
 def create_payload(historico_conversa, message, contexto, fontes):
-    """
-    Constrói o payload no formato esperado pela Gemini API (lista de mensagens com papeis).
-    
-    :param historico_conversa: Lista de dicionários contendo mensagens anteriores da conversa.
-    :param message: Pergunta/mensagem atual enviada pelo usuário.
-    :param contexto: Trechos de texto recuperados da base de dados local (LanceDB).
-    :param fontes: Nomes dos arquivos de referência de onde o contexto foi extraído.
-    :return: Lista de mensagens formatada para envio à LLM.
-    """
     payload = []
     
-    # 1. Carrega o prompt do sistema (prioriza config_agent.md se existir, senão usa config.ini)
     try:
         with open(BASE_DIR / "config_agent.md", "r", encoding="utf-8") as f:
             prompt_sistema = f.read()
@@ -32,11 +20,9 @@ def create_payload(historico_conversa, message, contexto, fontes):
     
     payload.append({"role": "system", "content": prompt_sistema})    
     
-    # 2. Adiciona as mensagens anteriores do histórico da conversa
     for mensagem in historico_conversa:
         payload.append({"role": mensagem["role"], "content": mensagem["content"]})
     
-    # 3. Injeta o contexto médico recuperado via RAG e as fontes de evidência
     if contexto:
         payload.append({"role": "system", "content": f"Contexto adicional: <contexto_local>{contexto}</contexto_local>"})
     else:
@@ -44,14 +30,12 @@ def create_payload(historico_conversa, message, contexto, fontes):
     if fontes:
         payload.append({"role": "system", "content": f"Fontes adicionais: {', '.join(fontes)}"})
     
-    # 4. Adiciona a pergunta atual do usuário ao final do payload
     payload.append({"role": "user", "content": message})
     
     return payload
 
 
 def chat(payload, verbose=False, debug_model=False):
-    """Envia instru??es e hist?rico ao Gemini sem executar modelos locais."""
     system = "\n\n".join(m["content"] for m in payload if m["role"] == "system")
     contents = [
         types.Content(

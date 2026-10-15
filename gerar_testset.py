@@ -1,15 +1,3 @@
-"""
-Script para Geração de Dataset Sintético de Teste (Testset RAG).
-
-Este script lê documentos Markdown contendo notas/diretrizes médicas da pasta 'my_notes',
-e utiliza um modelo LLM remoto via Gemini API para gerar um conjunto de teste com 3 categorias:
-1. Perguntas simples e diretas (fato específico).
-2. Perguntas clínicas com raciocínio (diagnóstico/conduta).
-3. Perguntas fora do escopo (para testar a taxa de recusa/alucinação do RAG).
-
-Os resultados são salvos em 'testset_sintetico_tcc.csv' e 'testset_sintetico_tcc.json'.
-"""
-
 import os
 import glob
 import json
@@ -18,9 +6,6 @@ from pydantic import BaseModel, Field
 from google.genai import types
 from backend.google_models import get_client, model_setting
 
-# -----------------------------------------------------------------------------
-# 1. Estrutura Pydantic para Geração Sintética Estruturada
-# -----------------------------------------------------------------------------
 class SyntheticQA(BaseModel):
     """Esquema de saída estruturada para a geração de perguntas e respostas via LLM."""
     pergunta_simples: str = Field(
@@ -39,21 +24,11 @@ class SyntheticQA(BaseModel):
         description="Uma pergunta plausivel sobre medicina mas cuja resposta NAO esta no texto (para testar recusa)."
     )
 
-# -----------------------------------------------------------------------------
-# 2. Funções Auxiliares de Gerenciamento do Gemini e Arquivos
-# -----------------------------------------------------------------------------
 def obter_modelo_disponivel():
-    """Retorna o modelo remoto configurado para gera??o."""
     return model_setting("llm_model")
 
 
 def carregar_markdowns(diretorio: str = "my_notes"):
-    """
-    Carrega todos os arquivos Markdown (.md) do diretório especificado.
-    
-    :param diretorio: Pasta onde estão os arquivos Markdown.
-    :return: Lista de dicionários com 'fonte' (nome do arquivo) e 'conteudo' (texto do arquivo).
-    """
     arquivos = glob.glob(os.path.join(diretorio, "*.md"))
     documentos = []
     
@@ -68,10 +43,6 @@ def carregar_markdowns(diretorio: str = "my_notes"):
     return documentos
 
 def gerar_perguntas_sinteticas_por_chunk(fonte: str, chunk_texto: str, model_name: str):
-    """
-    Gera variações sintéticas de QA (Simples, Raciocínio e Recusa) para um trecho de texto
-    utilizando a API do Gemini com formato JSON Schema Pydantic.
-    """
     prompt = f"""
     Voce eh um gerador de datasets sinteticos de teste para RAG medico (Obstetricia e Ginecologia).
     Com base EXCLUSIVAMENTE no documento de referencia abaixo, crie um conjunto de perguntas e respostas realistas em portugues.
@@ -100,14 +71,7 @@ def gerar_perguntas_sinteticas_por_chunk(fonte: str, chunk_texto: str, model_nam
         print(f"[-] Aviso ao gerar para {fonte}: {e}")
         return None
 
-# -----------------------------------------------------------------------------
-# 3. Construção Final do Dataset e Exportação
-# -----------------------------------------------------------------------------
 def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documentos: int = 3):
-    """
-    Processa os arquivos Markdown e monta o Testset no formato de avaliação RAG.
-    Salva os resultados em CSV e JSON.
-    """
     modelo = obter_modelo_disponivel()
     print(f"[*] Usando modelo Gemini: '{modelo}'")
 
@@ -117,7 +81,6 @@ def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documento
 
     dataset_sintetico = []
 
-    # Processa até max_documentos
     docs_para_processar = docs[:max_documentos]
 
     for idx, doc in enumerate(docs_para_processar, 1):
@@ -128,7 +91,6 @@ def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documento
         qa_sintetico = gerar_perguntas_sinteticas_por_chunk(fonte, conteudo, model_name=modelo)
         
         if qa_sintetico:
-            # 1. Pergunta Simples
             dataset_sintetico.append({
                 "fonte_documento": fonte,
                 "evolution_type": "simple",
@@ -138,7 +100,6 @@ def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documento
                 "expected_refusal": False
             })
             
-            # 2. Pergunta de Raciocínio
             dataset_sintetico.append({
                 "fonte_documento": fonte,
                 "evolution_type": "reasoning",
@@ -148,7 +109,6 @@ def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documento
                 "expected_refusal": False
             })
             
-            # 3. Pergunta Fora do Escopo (Recusa)
             dataset_sintetico.append({
                 "fonte_documento": fonte,
                 "evolution_type": "unanswerable_refusal",
@@ -158,7 +118,6 @@ def construir_testset_sintetico(diretorio_notes: str = "my_notes", max_documento
                 "expected_refusal": True
             })
 
-    # Exportar para CSV e JSON
     df = pd.DataFrame(dataset_sintetico)
     
     csv_file = "testset_sintetico_tcc.csv"

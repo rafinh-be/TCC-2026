@@ -1,5 +1,3 @@
-"""Embeddings remotos com tarefas distintas para documentos e consultas."""
-
 import math
 import logging
 import threading
@@ -18,7 +16,6 @@ _next_request = 0.0
 
 
 def _request_embeddings(**kwargs):
-    """Limita documentos por minuto, inclusive entre chamadas do LanceDB."""
     global _next_request
     with _request_lock:
         for attempt in range(4):
