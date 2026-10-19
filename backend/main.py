@@ -1,4 +1,4 @@
-import configparser, sys, json, ollama, asyncio, uvicorn, argparse
+import configparser, sys, json, os, ollama, asyncio, uvicorn, argparse
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,10 +18,12 @@ prompt_critica = config.get('prompts', 'prompt_critica')
 prompt_refinamento = config.get('prompts', 'prompt_refinamento')
 prompt_validacao_ferramenta = config.get('prompts', 'prompt_validacao_ferramenta')
 
+allowed_origins = [origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], 
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -32,8 +34,9 @@ parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose
 parser.add_argument("--debug_rag", action="store_true", help="Enables extra verbose output for the RAG sections of the code")
 parser.add_argument("--debug_model", action="store_true", help="Enables extra verbose output for the LLM Model processing sections of the code")
 parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
-parser.add_argument("--host", action="store", help="Configure host address")
-parser.add_argument("--port", action="store", help="Configure host port")
+parser.add_argument("--reload", action="store_true", help="Enable auto reload on code changes (development only)")
+parser.add_argument("--host", action="store", default="127.0.0.1", help="Configure host address")
+parser.add_argument("--port", action="store", type=int, default=8000, help="Configure host port")
 
 args = parser.parse_args()
 
@@ -161,6 +164,6 @@ async def start_agent(websocket: WebSocket = None):
 
 if __name__ == "__main__":
     if (not args.local):
-        uvicorn.run("main:app", host=str(args.host), port=int(args.port), reload=True, reload_excludes=["*.db", "*.sqlite", "lancedb/*", "*.lancedb"])
+        uvicorn.run("main:app", host=args.host, port=args.port, reload=args.reload, reload_excludes=["*.db", "*.sqlite", "lancedb/*", "*.lancedb"])
     else:
         asyncio.run(start_agent(websocket=None))  # For testing without WebSocket
