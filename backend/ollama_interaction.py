@@ -82,3 +82,6 @@ def chat_with_thought_limit(payload, MAX_THINK_TOKENS=300, verbose=False, debug_
     else:
         return stream
     
+
+
+chat = chat_with_thought_limit
