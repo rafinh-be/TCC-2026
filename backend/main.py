@@ -1,4 +1,4 @@
-import configparser, sys, json, ollama, asyncio, uvicorn, argparse
+import configparser, sys, json, os, ollama, asyncio, uvicorn, argparse
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,10 +18,12 @@ prompt_critica = config.get('prompts', 'prompt_critica')
 prompt_refinamento = config.get('prompts', 'prompt_refinamento')
 prompt_validacao_ferramenta = config.get('prompts', 'prompt_validacao_ferramenta')
 
+allowed_origins = [origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"], 
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
