@@ -71,9 +71,11 @@ function AsyncMessenger() {
 
       setMessages([...messages, {sender: "user", content: inputMessage}]);
 
+      console.log("oi")
+
       setIsProcessing(true);
       setReceivedMessage("");
-      const response = await fetch("http://127.0.0.1:8000/chat", {
+      const response = await fetch("https://tcc-2026-vdrb.onrender.com/chat", {
         method: "POST",
         body: JSON.stringify({
           messages: payload,
