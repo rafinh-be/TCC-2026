@@ -55,6 +55,12 @@ class ChatRequest(BaseModel):
     sources: list[str]
     context: str
 
+@app.post("/ping")
+async def hello_world(item: ChatRequest):
+    return {"answer": "hello world!",
+           "context": "nun",
+           "sources": "none"}
+
 @app.post("/chat")
 async def process_message(item: ChatRequest):
     global args
