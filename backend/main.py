@@ -34,6 +34,7 @@ parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose
 parser.add_argument("--debug_rag", action="store_true", help="Enables extra verbose output for the RAG sections of the code")
 parser.add_argument("--debug_model", action="store_true", help="Enables extra verbose output for the LLM Model processing sections of the code")
 parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
+parser.add_argument("--reload", action="store_true", help="Enable auto reload on code changes (development only)")
 parser.add_argument("--host", action="store", default="127.0.0.1", help="Configure host address")
 parser.add_argument("--port", action="store", type=int, default=8000, help="Configure host port")
 
@@ -163,6 +164,6 @@ async def start_agent(websocket: WebSocket = None):
 
 if __name__ == "__main__":
     if (not args.local):
-        uvicorn.run("main:app", host=args.host, port=args.port, reload=True, reload_excludes=["*.db", "*.sqlite", "lancedb/*", "*.lancedb"])
+        uvicorn.run("main:app", host=args.host, port=args.port, reload=args.reload, reload_excludes=["*.db", "*.sqlite", "lancedb/*", "*.lancedb"])
     else:
         asyncio.run(start_agent(websocket=None))  # For testing without WebSocket
