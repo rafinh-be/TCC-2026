@@ -2,6 +2,7 @@ from importlib import import_module
 
 PROVIDER_MODULES = {
     "ollama": "ollama_interaction",
+    "gemini": "gemini_interaction",
 }
 
 PROVIDERS = tuple(PROVIDER_MODULES)
