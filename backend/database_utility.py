@@ -5,7 +5,7 @@ os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
 from pathlib import Path
 from dotenv import load_dotenv
 from lancedb.pydantic import LanceModel, Vector
-from lancedb.embeddings import get_registry
+import providers
 from huggingface_hub import login
 
 #load_dotenv() 
@@ -25,13 +25,7 @@ registry = None
 
 def load_embedding_model():
     global embedding_model
-    global registry
-    
-    registry = get_registry()
-    embedding_model = registry.get("sentence-transformers").create(
-        name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2", 
-        device="cpu",
-    )
+    embedding_model = providers.create_embedding_model()
 
 def needs_indexing(verbose=False) -> bool:
     path_dir = Path(NOTES_DIR)
@@ -55,6 +49,11 @@ def needs_indexing(verbose=False) -> bool:
     except Exception:
         return True 
 
+    if (memoria_salva.get("embedding") != providers.embedding_signature()):
+        if (verbose):
+            print("Embedding provider changed since last sync")
+        return True
+    memoria_salva = memoria_salva["files"]
 
     if len(estado_atual) != len(memoria_salva):
         return True
@@ -78,7 +77,7 @@ def update_memory():
         estado_atual[arquivo_md.name] = os.path.getmtime(arquivo_md)
         
     with open(MEMORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(estado_atual, f, indent=4)
+        json.dump({"embedding": providers.embedding_signature(), "files": estado_atual}, f, indent=4)
 
 def conectar_banco():
     Path(DB_PATH).mkdir(exist_ok=True)
