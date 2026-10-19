@@ -20,6 +20,7 @@ function AsyncMessenger() {
   
   const socketRef = useRef(null);
 
+  /*
   const onReceiveMessage = (message: { assistant: string }) => {
     setMessages((prev) => [...prev.slice(0, -1), { content: message.assistant, sender: "bot" }]);
   }
@@ -45,8 +46,9 @@ function AsyncMessenger() {
     return () => {
         ws.close();
     };
-  }, []);
+  }, []);*/
 
+  /*
   const handleSendMessage = (inputMessage: string | null) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
       if (!inputMessage?.trim()) return;
@@ -64,6 +66,7 @@ function AsyncMessenger() {
       alert("WebSocket is not connected to backend.");
     }
   };
+  */
 
   const handleSendMessageApi = async (inputMessage: string) => {
     try {
