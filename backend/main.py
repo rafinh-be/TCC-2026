@@ -8,7 +8,8 @@ from pathlib import Path
 
 from database_utility import needs_indexing, index_data, retrieve_context
 
-from ollama_interaction import create_payload, chat_with_thought_limit  
+from ollama_interaction import create_payload
+import providers
 from user_prompt_proccessing import get_message, get_command, execute_command, complete_step
 
 config = configparser.ConfigParser()
@@ -30,6 +31,7 @@ app.add_middleware(
 )
 
 parser = argparse.ArgumentParser("main")
+parser.add_argument("--provider", required=True, choices=providers.PROVIDERS, help="LLM provider used for chat")
 parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output for debugging")
 parser.add_argument("--debug_rag", action="store_true", help="Enables extra verbose output for the RAG sections of the code")
 parser.add_argument("--debug_model", action="store_true", help="Enables extra verbose output for the LLM Model processing sections of the code")
@@ -39,6 +41,7 @@ parser.add_argument("--host", action="store", default="127.0.0.1", help="Configu
 parser.add_argument("--port", action="store", type=int, default=8000, help="Configure host port")
 
 args = parser.parse_args()
+providers.set_provider(args.provider)
 
 def handle_indexing(verbose, debug_rag):
     if needs_indexing((verbose or debug_rag)):
@@ -97,7 +100,7 @@ async def process_message(item: ChatRequest):
     # Debatendo ainda se deveria passar contexto total ou apenas contexto novo. Nao decidi ainda. Vou deixar contexto total por enquanto
     payload = create_payload(historico_conversa, message, contexto, fontes)
 
-    answer = chat_with_thought_limit(payload)
+    answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
 
     return {"answer": answer,
             "context": contexto,
@@ -147,7 +150,7 @@ async def start_agent(websocket: WebSocket = None):
             # Debatendo ainda se deveria passar contexto total ou apenas contexto novo. Nao decidi ainda. Vou deixar contexto total por enquanto
             payload = create_payload(historico_conversa, message, contexto, fontes)
 
-            answer = chat_with_thought_limit(payload)
+            answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
             
             await complete_step(historico_conversa, message, answer['message']['content'], local, websocket)
             
