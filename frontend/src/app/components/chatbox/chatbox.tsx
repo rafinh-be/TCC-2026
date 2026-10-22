@@ -8,68 +8,52 @@ export type messageType = { content: string, sender: "user" | "bot" };
 
 export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: messageType[], isProcessing: boolean, onSendMessage: (message: string) => void }) {
     const bottomRef = useRef<HTMLDivElement | null>(null);
-    const topRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+    }, [messages, isProcessing]);
 
     const chatItems : React.ReactNode[] = messages.map((message, index) => {
-        const isWaitingForAnswer = isProcessing && index === messages.length - 1 && message.sender == "bot";
-
-        if (isWaitingForAnswer) {
+        if (message.sender == "user") {
             return(
-                <div key={`${index}-waiting`} className="chat chat-start pop-up-from-bottom">
-                    <div className="chat-header text-sm opacity-70 mb-1">
-                        {message.content}
-                    </div>
-                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-ink border-2 border-chat-border flex items-center gap-1.5 h-10">
-                        <span className="typing-dot" />
-                        <span className="typing-dot" style={{animationDelay: "0.25s"}} />
-                        <span className="typing-dot" style={{animationDelay: "0.5s"}} />
-                    </div>
-                </div>
-            )
-        } else if (message.sender == "user") {
-            return(
-                <div key={index} className="chat chat-end pb-10 pop-up-from-bottom">
-                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-user text-on-brand border-2 border-chat-user max-w-[80%]">
+                <div key={index} className="rise-in flex justify-end">
+                    <div className="max-w-[80%] whitespace-pre-wrap rounded-2xl bg-primary-soft px-4 py-2.5 text-primary-ink">
                         {message.content}
                     </div>
                 </div>
             )
         } else if (message.sender == "bot") {
             return(
-                <div key={index} className="chat chat-start pop-up-from-bottom">
-                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-ink border-2 border-chat-border prose prose-sm prose-strong:text-ink max-w-[100%]">
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                            {message.content}
-                        </ReactMarkdown>
-                    </div>
+                <div key={index} className="rise-in answer-prose max-w-[68ch]">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {message.content}
+                    </ReactMarkdown>
                 </div>
             )
         }
     })
-    
-    /*
-    useEffect(() => {
-        if (isProcessing) {
-    }, [isProcessing])*/
+
+    const waitingIndicator = isProcessing && (
+        <div className="rise-in flex items-center gap-3 text-sm text-ink-muted">
+            <div className="flex items-center gap-1.5">
+                <span className="typing-dot" />
+                <span className="typing-dot" style={{animationDelay: "0.2s"}} />
+                <span className="typing-dot" style={{animationDelay: "0.4s"}} />
+            </div>
+            <span>Consultando a base de conhecimento</span>
+        </div>
+    );
 
     return (
-        <div style={{display: "flex", flexDirection: "column", flex: 1, minHeight: 0, alignItems: "center"}}>
-            <div style={{width: "100%", flex: 1, minHeight: 0, overflowY: "auto", display: "flex", flexDirection: "column"}}>
-                <div style={{width: "85%", margin: "0 auto", flex: "1 0 auto", display: "flex", flexDirection: "column"}}>
-                    <div ref={topRef} style={{height: "50px"}} />
-                    <div style={{display: "flex", justifyContent: "center"}}>
-                        <div style={{width: "100%"}}>
-                            {chatItems}
-                        </div>
+        <div className="flex min-h-0 flex-1 flex-col">
+            <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+                <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-6">
+                    <div className="flex flex-col gap-8 pt-10 pb-8">
+                        {chatItems}
+                        {waitingIndicator}
                     </div>
-                    <div style={{position: "sticky", display: "flex", justifyContent: "center", bottom: 0, marginTop: "auto", paddingTop:"20px", background: "linear-gradient(to bottom, color-mix(in srgb, var(--page) 0%, transparent), -20px, color-mix(in srgb, var(--page) 15%, transparent) 0px, color-mix(in srgb, var(--page) 60%, transparent) 10px, var(--page) 20px)"}}>
-                        <div style={{width:"90%"}}>
-                            <ChatInput onSendMessage={onSendMessage} />
-                        </div>
+                    <div className="sticky bottom-0 mt-auto bg-linear-to-t from-page from-75% to-transparent pt-6 pb-4">
+                        <ChatInput onSendMessage={onSendMessage} />
                     </div>
                     <div ref={bottomRef} />
                 </div>
