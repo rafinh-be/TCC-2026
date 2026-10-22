@@ -17,7 +17,7 @@ export function HomeInput({ onSendMessage, disabled }: { onSendMessage: (message
     };
 
     return (
-        <div className="flex w-full items-center gap-2 rounded-2xl border border-line bg-surface py-2 pl-4 pr-2 shadow-sm transition focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15">
+        <div className="[view-transition-name:composer] flex w-full items-center gap-2 rounded-2xl border border-line bg-surface py-2 pl-4 pr-2 shadow-sm transition focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15">
             <input
                 type="text"
                 value={userMessage}

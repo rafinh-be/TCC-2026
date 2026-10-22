@@ -30,7 +30,7 @@ export function ChatInput({ onSendMessage }: { onSendMessage: (message: string) 
 
     return (
         <div className="w-full">
-            <div className="flex items-end gap-2 rounded-2xl border border-line bg-surface py-2 pl-4 pr-2 shadow-sm transition focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15">
+            <div className="[view-transition-name:composer] flex items-end gap-2 rounded-2xl border border-line bg-surface py-2 pl-4 pr-2 shadow-sm transition focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15">
                 <textarea
                     ref={textareaRef}
                     rows={1}

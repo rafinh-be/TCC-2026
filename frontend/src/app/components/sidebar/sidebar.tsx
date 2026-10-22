@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { NewChatLink } from "./newChatLink";
 
 export function Sidebar({ children, content }: { children?: React.ReactNode, content?: React.ReactNode }) {
 
@@ -22,10 +22,10 @@ export function Sidebar({ children, content }: { children?: React.ReactNode, con
                     </div>
                     <ul className="menu w-full grow gap-1 px-2">
                         <li>
-                            <Link href="/" className="is-drawer-close:tooltip is-drawer-close:tooltip-right text-ink hover:bg-primary-soft" data-tip="Nova conversa">
+                            <NewChatLink>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="size-4 text-primary"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
                                 <span className="is-drawer-close:hidden">Nova conversa</span>
-                            </Link>
+                            </NewChatLink>
                         </li>
                         {children}
                     </ul>
