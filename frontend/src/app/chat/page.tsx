@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 import { Sidebar } from '../components/sidebar/sidebar';
-import { SidebarItem } from '../components/sidebar/sidebarItem';
 import { Chatbox } from '../components/chatbox/chatbox';
 
 import { messageType } from '../components/chatbox/chatbox';
@@ -143,11 +142,7 @@ function AsyncMessenger() {
     );}
 
   return (
-    <div style={{ fontFamily: 'Arial, sans-serif' }}>
-      <Sidebar content={pageContent()}>
-        <SidebarItem onClick={() => alert("Home clicked")} icon="message" label="Teste" />
-      </Sidebar>
-    </div>
+    <Sidebar content={pageContent()} />
   );
 }
 
