@@ -19,7 +19,7 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
 
         if (isWaitingForAnswer) {
             return(
-                <div key={index} className="chat chat-start">
+                <div key={`${index}-waiting`} className="chat chat-start pop-up-from-bottom">
                     <div className="chat-header text-sm opacity-70 mb-1">
                         {message.content}
                     </div>
@@ -32,7 +32,7 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
             )
         } else if (message.sender == "user") {
             return(
-                <div key={index} className="chat chat-end pb-10">
+                <div key={index} className="chat chat-end pb-10 pop-up-from-bottom">
                     <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-user text-white border-2 border-chat-user max-w-[80%]">
                         {message.content}
                     </div>
@@ -40,7 +40,7 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
             )
         } else if (message.sender == "bot") {
             return(
-                <div key={index} className="chat chat-start">
+                <div key={index} className="chat chat-start pop-up-from-bottom">
                     <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-black border-2 border-chat-border prose prose-sm prose-strong:text-black max-w-[100%]">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                             {message.content}

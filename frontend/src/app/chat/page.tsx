@@ -99,6 +99,13 @@ function AsyncMessenger() {
     }
   }
 
+  useEffect(() => {
+    const pendingMessage = sessionStorage.getItem("pendingMessage");
+    if (!pendingMessage) return;
+    sessionStorage.removeItem("pendingMessage");
+    handleSendMessageApi(pendingMessage);
+  }, []);
+
   const pageContent = () => {
     return (
     <div style={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}>
