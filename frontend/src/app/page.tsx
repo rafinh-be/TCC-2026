@@ -1,14 +1,8 @@
 import { Sidebar } from "./components/sidebar/sidebar.tsx"
+import { HomeContent } from "./components/home/homeContent"
 
 export default function Home() {
-  const pageContent = () => {
-    return(  
-      <h1>oi</h1>
-    )};
-    
   return (
-    <Sidebar content={pageContent()}>
-
-    </Sidebar>
+    <Sidebar content={<HomeContent />} />
   );
 }

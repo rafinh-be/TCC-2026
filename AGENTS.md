@@ -56,4 +56,7 @@ There is no automated test suite yet.
 - LLM prompts live in `backend/config.ini`, not hardcoded in Python.
 - Backend modules read `config.ini` via `configparser`; new settings go there.
 - Frontend components live in `src/app/components/<feature>/` with camelCase file names (`chatInput.tsx`) and PascalCase exports (`ChatInput`). Style with Tailwind/daisyUI classes.
+- Frontend visual style: simple and elegant. Avoid generic AI-generated looks: no unnecessary text or decoration, and no high-contrast or saturated colour blocks (soft tints and hairline borders instead; text must still meet WCAG AA).
+- Take inspiration from Brazil's Sistema Único de Saúde (SUS) palette and the gov.br design philosophy: plain language, accessibility, consistency, sober radii, calm institutional blue.
+- Colours come from theme tokens in `frontend/src/app/globals.css` (selected with `NEXT_PUBLIC_THEME`); never hardcode colour values in components.
 - New knowledge-base documents go in `database/data_files/` as Markdown with `id`, `titulo` and `tags` frontmatter; paragraphs are separated by blank lines, since indexing splits on them.
