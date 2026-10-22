@@ -23,7 +23,7 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
                     <div className="chat-header text-sm opacity-70 mb-1">
                         {message.content}
                     </div>
-                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-black border-2 border-chat-border flex items-center gap-1.5 h-10">
+                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-ink border-2 border-chat-border flex items-center gap-1.5 h-10">
                         <span className="typing-dot" />
                         <span className="typing-dot" style={{animationDelay: "0.25s"}} />
                         <span className="typing-dot" style={{animationDelay: "0.5s"}} />
@@ -33,7 +33,7 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
         } else if (message.sender == "user") {
             return(
                 <div key={index} className="chat chat-end pb-10 pop-up-from-bottom">
-                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-user text-white border-2 border-chat-user max-w-[80%]">
+                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-user text-on-brand border-2 border-chat-user max-w-[80%]">
                         {message.content}
                     </div>
                 </div>
@@ -41,7 +41,7 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
         } else if (message.sender == "bot") {
             return(
                 <div key={index} className="chat chat-start pop-up-from-bottom">
-                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-black border-2 border-chat-border prose prose-sm prose-strong:text-black max-w-[100%]">
+                    <div className="chat-bubble rounded-3xl! before:hidden! bg-chat-bot text-ink border-2 border-chat-border prose prose-sm prose-strong:text-ink max-w-[100%]">
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                             {message.content}
                         </ReactMarkdown>
@@ -66,7 +66,7 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
                             {chatItems}
                         </div>
                     </div>
-                    <div style={{position: "sticky", display: "flex", justifyContent: "center", bottom: 0, marginTop: "auto", paddingTop:"20px", background: "linear-gradient(to bottom, rgba(255, 255, 255, 0), -20px, rgba(255, 255, 255, 0.15) 0px, rgba(255, 255, 255, 0.6) 10px, #FFFFFF 20px)"}}>
+                    <div style={{position: "sticky", display: "flex", justifyContent: "center", bottom: 0, marginTop: "auto", paddingTop:"20px", background: "linear-gradient(to bottom, color-mix(in srgb, var(--page) 0%, transparent), -20px, color-mix(in srgb, var(--page) 15%, transparent) 0px, color-mix(in srgb, var(--page) 60%, transparent) 10px, var(--page) 20px)"}}>
                         <div style={{width:"90%"}}>
                             <ChatInput onSendMessage={onSendMessage} />
                         </div>

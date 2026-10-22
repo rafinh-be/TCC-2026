@@ -65,7 +65,7 @@ export function HomeContent() {
   const fadeClasses = `transition-all ease-in-out duration-500 ${isLeaving ? "-translate-y-6 opacity-0" : ""}`;
 
   return (
-    <div ref={containerRef} className={`flex-1 bg-white ${isLeaving ? "overflow-hidden" : "overflow-y-auto"}`}>
+    <div ref={containerRef} className={`flex-1 bg-page ${isLeaving ? "overflow-hidden" : "overflow-y-auto"}`}>
       <div className="mx-auto flex max-w-4xl flex-col gap-20 px-6 py-16">
         <section className="flex min-h-[60vh] flex-col items-center justify-center gap-6 text-center">
           <h1 className={`${fadeClasses} text-4xl font-semibold leading-tight tracking-tight text-neutral-900 sm:text-5xl`}>
@@ -91,7 +91,7 @@ export function HomeContent() {
           <h2 className="text-sm font-medium uppercase tracking-[0.2em] text-neutral-400">Como funciona</h2>
           <ol className="grid gap-px overflow-hidden rounded-xl border border-chat-border bg-chat-border sm:grid-cols-3">
             {steps.map((step, index) => (
-              <li key={step.title} className="flex flex-col gap-3 bg-white p-6">
+              <li key={step.title} className="flex flex-col gap-3 bg-page p-6">
                 <span className="text-sm font-medium text-chat-user">{String(index + 1).padStart(2, "0")}</span>
                 <h3 className="text-lg font-semibold text-neutral-900">{step.title}</h3>
                 <p className="text-sm leading-relaxed text-neutral-600">{step.description}</p>

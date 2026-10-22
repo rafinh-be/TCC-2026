@@ -68,7 +68,7 @@ export function ChatInput({ onSendMessage }: { onSendMessage: (message: string) 
 
     return (
         <div style={{width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", paddingLeft: "10px", paddingRight: "10px", paddingBottom: "10px"}}>
-            <div ref={wrapperRef} style={{width: "100%", display: "flex", flexDirection: isMultiline ? "column" : "row", alignItems: isMultiline ? "stretch" : "center", borderRadius: isMultiline ? "24px" : "9999px", borderColor: "#F0F0F0", borderWidth: "2px", borderStyle: "solid", backgroundColor: "#FCFCFC", paddingLeft: "20px", paddingRight: "10px", paddingTop: "6px", paddingBottom: "6px"}}>
+            <div ref={wrapperRef} style={{width: "100%", display: "flex", flexDirection: isMultiline ? "column" : "row", alignItems: isMultiline ? "stretch" : "center", borderRadius: isMultiline ? "24px" : "9999px", borderColor: "var(--surface-border)", borderWidth: "2px", borderStyle: "solid", backgroundColor: "var(--surface)", paddingLeft: "20px", paddingRight: "10px", paddingTop: "6px", paddingBottom: "6px"}}>
                 <div style={{position: "absolute", width: 0, height: 0, overflow: "hidden"}}>
                     <span ref={measureRef} style={{whiteSpace: "pre", fontFamily: "inherit", fontSize: "inherit"}} />
                 </div>
@@ -76,14 +76,14 @@ export function ChatInput({ onSendMessage }: { onSendMessage: (message: string) 
                     ref={textareaRef}
                     onKeyDown={handleKeyDown}
                     rows={1}
-                    style={{flexGrow: 1, flexShrink: 1, flexBasis: "auto", resize: "none", overflowY: "auto", maxHeight: `${MAX_TEXTAREA_HEIGHT}px`, boxSizing: "border-box", border: "none", outline: "none", backgroundColor: "transparent", padding: "4px", color: "black", fontFamily: "inherit", fontSize: "inherit"}}
+                    style={{flexGrow: 1, flexShrink: 1, flexBasis: "auto", resize: "none", overflowY: "auto", maxHeight: `${MAX_TEXTAREA_HEIGHT}px`, boxSizing: "border-box", border: "none", outline: "none", backgroundColor: "transparent", padding: "4px", color: "var(--ink)", fontFamily: "inherit", fontSize: "inherit"}}
                     value={userMessage || ""}
                     onChange={handleChange}
                     placeholder="Digite sua mensagem..."
                 />
                 <button
                     ref={buttonRef}
-                    style={{padding: "10px 20px", borderRadius: "9999px", backgroundColor: "#cc3434", color: "white", alignSelf: isMultiline ? "flex-end" : "center", marginTop: isMultiline ? "6px" : "0"}}
+                    style={{padding: "10px 20px", borderRadius: "9999px", backgroundColor: "var(--brand)", color: "var(--on-brand)", alignSelf: isMultiline ? "flex-end" : "center", marginTop: isMultiline ? "6px" : "0"}}
                     onClick={handleSend}
                 >
                     Enviar

@@ -24,12 +24,12 @@ export function HomeInput({ onSendMessage, disabled }: { onSendMessage: (message
                 onKeyDown={handleKeyDown}
                 disabled={disabled}
                 placeholder="Digite sua mensagem..."
-                className="grow bg-transparent p-1 text-black outline-none"
+                className="grow bg-transparent p-1 text-ink outline-none"
             />
             <button
                 onClick={handleSend}
                 disabled={disabled}
-                className="rounded-full bg-chat-user px-5 py-2.5 text-white"
+                className="rounded-full bg-chat-user px-5 py-2.5 text-on-brand"
             >
                 Enviar
             </button>
