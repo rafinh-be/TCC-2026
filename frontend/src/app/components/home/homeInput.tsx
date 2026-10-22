@@ -2,9 +2,10 @@ import { useState } from "react";
 
 export function HomeInput({ onSendMessage, disabled }: { onSendMessage: (message: string) => void, disabled: boolean }) {
     const [userMessage, setUserMessage] = useState("");
+    const canSend = !disabled && userMessage.trim().length > 0;
 
     const handleSend = () => {
-        if (disabled || !userMessage.trim()) return;
+        if (!canSend) return;
         onSendMessage(userMessage.trim());
     };
 
@@ -16,7 +17,7 @@ export function HomeInput({ onSendMessage, disabled }: { onSendMessage: (message
     };
 
     return (
-        <div className="flex w-full items-center rounded-full border-2 border-chat-border bg-chat-bot py-1.5 pl-5 pr-2.5">
+        <div className="flex w-full items-center gap-2 rounded-2xl border border-line bg-surface py-2 pl-4 pr-2 shadow-sm transition focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/15">
             <input
                 type="text"
                 value={userMessage}
@@ -24,14 +25,18 @@ export function HomeInput({ onSendMessage, disabled }: { onSendMessage: (message
                 onKeyDown={handleKeyDown}
                 disabled={disabled}
                 placeholder="Digite sua mensagem..."
-                className="grow bg-transparent p-1 text-ink outline-none"
+                className="grow bg-transparent py-1.5 text-ink outline-none placeholder:text-ink-muted/70"
             />
             <button
                 onClick={handleSend}
-                disabled={disabled}
-                className="rounded-full bg-chat-user px-5 py-2.5 text-on-brand"
+                disabled={!canSend}
+                aria-label="Enviar mensagem"
+                className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary transition hover:bg-primary-hover active:scale-95 disabled:bg-line disabled:text-ink-muted"
             >
-                Enviar
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
+                    <path d="M12 19V5" />
+                    <path d="m5 12 7-7 7 7" />
+                </svg>
             </button>
         </div>
     );
