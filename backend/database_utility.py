@@ -54,7 +54,9 @@ def needs_indexing(verbose=False) -> bool:
         if (verbose):
             print("Embedding provider changed since last sync")
         return True
-    memoria_salva = memoria_salva["files"]
+    if not (Path(DB_PATH) / "notas_medicas.lance").exists():
+        return True
+    memoria_salva = memoria_salva.get("files", {})
 
     if len(estado_atual) != len(memoria_salva):
         return True
