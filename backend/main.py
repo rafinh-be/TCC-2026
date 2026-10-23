@@ -89,6 +89,13 @@ def attribute_sources(answer, candidates):
 
     return selected
 
+def select_sources(answer, chunks_contexto, chunks_novos):
+    if frase_sem_dados in answer["message"]["content"]:
+        return []
+    if args.source_attribution:
+        return attribute_sources(answer, chunks_contexto)
+    return chunks_novos
+
 def group_by_title(chunks):
     grouped = {}
     for chunk in chunks:
@@ -135,13 +142,7 @@ async def process_message(item: ChatRequest):
 
     answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
 
-    respondeu_sem_dados = frase_sem_dados in answer["message"]["content"]
-    if respondeu_sem_dados:
-        fontes = []
-    elif args.source_attribution:
-        fontes = group_by_title(attribute_sources(answer, chunks_contexto))
-    else:
-        fontes = group_by_title(chunks_novos)
+    fontes = group_by_title(select_sources(answer, chunks_contexto, chunks_novos))
 
     return {"answer": answer,
             "sources": fontes}
@@ -180,13 +181,20 @@ async def start_agent(websocket: WebSocket = None):
                     print("Continuando...")
                     continue
             
-            chunks_acumulados = merge_chunks(chunks_acumulados, retrieve_context(message, debug_rag, args.min_score))
+            chunks_novos = retrieve_context(message, debug_rag, args.min_score)
+            chunks_acumulados = merge_chunks(chunks_acumulados, chunks_novos)
+            citations = "citations" in args.source_attribution
 
-            payload = create_payload(historico_conversa, message, format_context(chunks_acumulados, args.label_chunks), args.agent_prompt)
+            payload = create_payload(historico_conversa, message, format_context(chunks_acumulados, args.label_chunks, citations), args.agent_prompt, citations)
 
             answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
+
+            fontes_usadas = group_by_title(select_sources(answer, chunks_acumulados, chunks_novos))
             
             await complete_step(historico_conversa, message, answer['message']['content'], local, websocket)
+
+            if (local and (verbose or debug_rag)):
+                print("\nFontes usadas:", ", ".join(fonte["title"] for fonte in fontes_usadas) or "nenhuma")
             
             if (verbose or debug_model):
                 print("\n\nPayload sent to the model:\n", payload)
