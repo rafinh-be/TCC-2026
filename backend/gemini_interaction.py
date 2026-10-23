@@ -37,8 +37,12 @@ def chat(payload, verbose=False, debug_model=False):
     if (response.candidates[0].finish_reason != types.FinishReason.STOP):
         raise RuntimeError(f"Gemini não concluiu a resposta: {response.candidates[0].finish_reason}")
 
+    thoughts = "\n".join(part.text for part in response.candidates[0].content.parts if part.thought and part.text)
     if (debug_model):
-        thoughts = "\n".join(part.text for part in response.candidates[0].content.parts if part.thought and part.text)
         print("Gemini thoughts:\n" + (thoughts or "(no thought summary returned)"))
 
-    return {"message": {"role": "assistant", "content": response.text}}
+    message = {"role": "assistant", "content": response.text}
+    if (thoughts):
+        message["thinking"] = thoughts
+
+    return {"message": message}
