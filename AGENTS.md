@@ -35,6 +35,7 @@ Backend (must run from `backend/` — config and data paths are relative):
 pip install -r requirements.txt
 cd backend
 python main.py            # flags: -v/--verbose, --debug_rag, --debug_model, --local (CLI mode), --chunking paragraph|window, --clean_latex
+python generate_testset.py  # Gemini-generated RAG test set from data_files; flags: --chunking, --chunks_per_document, --output, --csv
 ```
 
 Frontend (expects the backend at `http://127.0.0.1:8000`):
