@@ -6,6 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from lancedb.pydantic import LanceModel, Vector
 import providers
+from retrieval_logic import select_chunks, format_chunk
 from huggingface_hub import login
 from chunking import chunk_text
 from text_cleaning import clean_latex_math
@@ -76,7 +77,9 @@ def needs_indexing(verbose=False, chunking="paragraph", clean_latex=False) -> bo
         if (verbose):
             print("Chunking options changed since last sync")
         return True
-    memoria_salva = memoria_salva["files"]
+    if not (Path(DB_PATH) / "notas_medicas.lance").exists():
+        return True
+    memoria_salva = memoria_salva.get("files", {})
 
     if len(estado_atual) != len(memoria_salva):
         return True
@@ -164,7 +167,10 @@ def _tokenize_query(pergunta: str) -> list[float]:
     
     return embedding_model.compute_query_embeddings(pergunta)[0]
 
-def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
+def retrieve_context(pergunta: str, debug_rag=False, min_score=None, label_chunks=False) -> tuple[str, set[str]]:
+    if min_score is None:
+        min_score = config.getfloat("retrieval", "MIN_SCORE", fallback=0.015)
+
     db = conectar_banco()
 
     if "notas_medicas" not in db.table_names():
@@ -172,8 +178,6 @@ def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
 
     table = db.open_table("notas_medicas")
     vetor_query = _tokenize_query(pergunta)
-
-    SCORE_MINIMO = 0.015
 
     resultados = (
         table.search(query_type="hybrid")
@@ -187,17 +191,14 @@ def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
     blocos_validos = []
     fontes_validas = set()
 
-    for res in resultados:
+    for res in select_chunks(resultados, min_score):
         score = res.get("_relevance_score", 0.0)
 
-        if score < SCORE_MINIMO:
-            continue
-        
         nome_documento = res.get("nome_arquivo", "Documento Sem Título")
         if (debug_rag):
             print("Found this document with score of", score, "and title:", nome_documento)
                 
-        blocos_validos.append(res["text"])
+        blocos_validos.append(format_chunk(nome_documento, res["text"], label_chunks))
         if (nome_documento not in fontes_validas):
             fontes_validas.add(nome_documento)
         
