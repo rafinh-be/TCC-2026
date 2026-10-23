@@ -75,6 +75,8 @@ def attribute_sources(answer, candidates):
     selected = candidates
 
     if "citations" in args.source_attribution:
+        if args.debug_model:
+            answer["message"]["raw_content"] = content
         content, cited_indexes = extract_citations(content, len(candidates))
         answer["message"]["content"] = content
         selected = intersect_chunks(selected, cited_chunks(candidates, cited_indexes))
