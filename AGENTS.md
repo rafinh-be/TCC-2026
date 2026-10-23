@@ -17,7 +17,7 @@ This file is the single source of truth — `CLAUDE.md` imports it.
 Undergraduate thesis (TCC) project from Escola Politécnica da USP (PSI department), in partnership with the HU-USP maternity ward. It is a pt-BR obstetrics and gynecology assistant for patients that answers strictly from a local knowledge base (RAG) and never diagnoses or invents dosages.
 
 - `backend/` — FastAPI app (`main.py`) exposing `POST /chat` (stateless: the client sends the message history, accumulated context and sources) and `WS /ws/chat`. Talks to a local Ollama model.
-  - `database_utility.py` — indexes `database/data_files/*.md` into LanceDB (paragraph chunks, multilingual sentence-transformers embeddings) and retrieves context. Re-indexes when file mtimes differ from `database/index_memory.json`.
+  - `database_utility.py` — indexes `database/data_files/*.md` into LanceDB (paragraph chunks, multilingual sentence-transformers embeddings) and retrieves context. Re-indexes when file mtimes or chunking options differ from `database/index_memory.json`. `--chunking window` uses `CHUNK_SIZE` and `CHUNK_OVERLAP` from `config.ini`.
   - `ollama_interaction.py` — builds the prompt payload and calls the model with a thinking-token limit and a fallback synthesis step.
   - `user_prompt_proccessing.py` / `functions.py` — slash commands (`/clear`, `/reset`) and message I/O.
   - `config.ini` — model names, all LLM prompts (system, critique, refinement, tool validation) and database paths. `config_agent.md` overrides the system prompt when present.
@@ -34,7 +34,7 @@ Backend (must run from `backend/` — config and data paths are relative):
 ```bash
 pip install -r requirements.txt
 cd backend
-python main.py            # flags: -v/--verbose, --debug_rag, --debug_model, --local (CLI mode)
+python main.py            # flags: -v/--verbose, --debug_rag, --debug_model, --local (CLI mode), --chunking paragraph|window, --clean_latex
 ```
 
 Frontend (expects the backend at `http://127.0.0.1:8000`):
