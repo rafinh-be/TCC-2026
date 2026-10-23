@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
 
-from database_utility import needs_indexing, index_data, retrieve_context
+from database_utility import needs_indexing, index_data, retrieve_context, fetch_chunks, merge_chunks, format_context
 
 from ollama_interaction import create_payload
 import providers
@@ -18,6 +18,7 @@ config.read('config.ini', encoding='utf-8')
 prompt_critica = config.get('prompts', 'prompt_critica')
 prompt_refinamento = config.get('prompts', 'prompt_refinamento')
 prompt_validacao_ferramenta = config.get('prompts', 'prompt_validacao_ferramenta')
+frase_sem_dados = config.get('prompts_termino', 'prompt_restricao_1')
 
 allowed_origins = [origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]
 
@@ -54,20 +55,28 @@ def handle_indexing(verbose, debug_rag):
             print("Updating LanceDB index...")
         index_data((verbose or debug_rag), args.chunking, args.clean_latex)
 
+class Source(BaseModel):
+    title: str
+    chunk_ids: list[str]
+
 class ChatMessage(BaseModel):
     sender: str
     content: str
+    sources: list[Source] = []
 
 class ChatRequest(BaseModel):
     messages: list[ChatMessage]
-    sources: list[str]
-    context: str
+
+def group_by_title(chunks):
+    grouped = {}
+    for chunk in chunks:
+        grouped.setdefault(chunk["title"], []).append(chunk["chunk_id"])
+    return [{"title": title, "chunk_ids": chunk_ids} for title, chunk_ids in grouped.items()]
 
 @app.post("/ping")
 async def hello_world(item: ChatRequest):
     return {"answer": "hello world!",
-           "context": "nun",
-           "sources": "none"}
+           "sources": []}
 
 @app.post("/chat")
 async def process_message(item: ChatRequest):
@@ -79,13 +88,12 @@ async def process_message(item: ChatRequest):
     
     handle_indexing(verbose, debug_rag)
 
-    contexto = item.context
-    fontes = item.sources
-
     historico_conversa = []
     if (len(item.messages) > 1):
         for message in item.messages[:-1]:
             historico_conversa.append({"role": message.sender, "content": message.content})
+
+    chunk_ids_anteriores = [chunk_id for message in item.messages[:-1] for source in message.sources for chunk_id in source.chunk_ids]
 
     message = item.messages.pop().content
 
@@ -95,20 +103,18 @@ async def process_message(item: ChatRequest):
         # Alguns comandos que "terminam" o processo devem usar 'continue' para nao encerrar o loop
         return command
             
-    contexto_novo, fontes_novas = retrieve_context(message, debug_rag, args.min_score, args.label_chunks)
-    if contexto_novo and contexto_novo not in contexto:
-        contexto = (contexto + "\n\n---\n\n" + contexto_novo).strip()
-    for fonte in fontes_novas:
-        if fonte not in fontes:
-            fontes.append(fonte)
+    chunks_novos = retrieve_context(message, debug_rag, args.min_score)
+    chunks_anteriores = fetch_chunks(chunk_ids_anteriores)
+    contexto = format_context(merge_chunks(chunks_anteriores, chunks_novos), args.label_chunks)
 
-    # Debatendo ainda se deveria passar contexto total ou apenas contexto novo. Nao decidi ainda. Vou deixar contexto total por enquanto
-    payload = create_payload(historico_conversa, message, contexto, fontes, args.agent_prompt)
+    payload = create_payload(historico_conversa, message, contexto, args.agent_prompt)
 
     answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
 
+    respondeu_sem_dados = frase_sem_dados in answer["message"]["content"]
+    fontes = [] if respondeu_sem_dados else group_by_title(chunks_novos)
+
     return {"answer": answer,
-            "context": contexto,
             "sources": fontes}
 
 @app.websocket("/ws/chat")
@@ -129,7 +135,7 @@ async def start_agent(websocket: WebSocket = None):
             print("Updating LanceDB index...")
         index_data((verbose or debug_rag), args.chunking, args.clean_latex)
     
-    contexto, fontes = "", []
+    chunks_acumulados = []
     historico_conversa = []
     while True:
         try:
@@ -145,15 +151,9 @@ async def start_agent(websocket: WebSocket = None):
                     print("Continuando...")
                     continue
             
-            contexto_novo, fontes_novas = retrieve_context(message, debug_rag, args.min_score, args.label_chunks)
-            if contexto_novo and contexto_novo not in contexto:
-                contexto = (contexto + "\n\n---\n\n" + contexto_novo).strip()
-            for fonte in fontes_novas:
-                if fonte not in fontes:
-                    fontes.append(fonte)
+            chunks_acumulados = merge_chunks(chunks_acumulados, retrieve_context(message, debug_rag, args.min_score))
 
-            # Debatendo ainda se deveria passar contexto total ou apenas contexto novo. Nao decidi ainda. Vou deixar contexto total por enquanto
-            payload = create_payload(historico_conversa, message, contexto, fontes, args.agent_prompt)
+            payload = create_payload(historico_conversa, message, format_context(chunks_acumulados, args.label_chunks), args.agent_prompt)
 
             answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
             

@@ -3,7 +3,7 @@ import configparser, ollama
 config = configparser.ConfigParser()
 config.read('config.ini', encoding='utf-8')
 
-def create_payload(historico_conversa, message, contexto, fontes, agent_file="config_agent.md"):
+def create_payload(historico_conversa, message, contexto, agent_file="config_agent.md"):
     payload = []
 
     # Prompt inicial
@@ -19,13 +19,11 @@ def create_payload(historico_conversa, message, contexto, fontes, agent_file="co
     for mensagem in historico_conversa:
         payload.append({"role": mensagem["role"], "content": mensagem["content"]})
     
-    # Contexto e Fontes
+    # Contexto
     if contexto:
         payload.append({"role": "system", "content": f"Contexto adicional: <contexto_local>{contexto}</contexto_local>"})
     else:
         payload.append({"role": "system", "content": f"Contexto adicional: <contexto_local>Não ha contexto local, responda apenas com a frase 'Não encontrei dados ou critérios suficientes para esta conduta específica na minha base local de evidências.'</contexto_local>"})
-    if fontes:
-        payload.append({"role": "system", "content": f"Fontes adicionais: {', '.join(fontes)}"})
     
     # Mensagem nova
     payload.append({"role": "user", "content": message})

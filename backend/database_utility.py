@@ -59,6 +59,10 @@ def needs_indexing(verbose=False, chunking="paragraph", clean_latex=False) -> bo
     if not estado_atual:
         return False
 
+    db = conectar_banco()
+    if "notas_medicas" in db.table_names() and "chunk_id" not in db.open_table("notas_medicas").schema.names:
+        return True
+
     if not os.path.exists(MEMORY_FILE):
         return True
 
@@ -123,6 +127,7 @@ def index_data(verbose=False, chunking="paragraph", clean_latex=False):
         text: str = embedding_model.SourceField()
         vector: Vector(embedding_model.ndims()) = embedding_model.VectorField()
         nome_arquivo: str
+        chunk_id: str
         tags: list[str]  
     
     chunks_to_save = []
@@ -139,10 +144,11 @@ def index_data(verbose=False, chunking="paragraph", clean_latex=False):
         if (verbose):
             print("Indexing:", post.get("titulo", arquivo_md.stem))
         
-        for para in paragrafos:
+        for indice, para in enumerate(paragrafos):
             chunks_to_save.append({
                 "text": para,
                 "nome_arquivo": post.get("titulo", arquivo_md.stem),  
+                "chunk_id": f"{post.get('id', arquivo_md.stem)}:{indice}",
                 "tags": tags
             })
             if (verbose):
@@ -167,14 +173,21 @@ def _tokenize_query(pergunta: str) -> list[float]:
     
     return embedding_model.compute_query_embeddings(pergunta)[0]
 
-def retrieve_context(pergunta: str, debug_rag=False, min_score=None, label_chunks=False) -> tuple[str, set[str]]:
+def _to_chunk(res: dict) -> dict:
+    return {
+        "chunk_id": res["chunk_id"],
+        "title": res.get("nome_arquivo", "Documento Sem Título"),
+        "text": res["text"],
+    }
+
+def retrieve_context(pergunta: str, debug_rag=False, min_score=None) -> list[dict]:
     if min_score is None:
         min_score = config.getfloat("retrieval", "MIN_SCORE", fallback=0.015)
 
     db = conectar_banco()
 
     if "notas_medicas" not in db.table_names():
-        return "", set()
+        return []
 
     table = db.open_table("notas_medicas")
     vetor_query = _tokenize_query(pergunta)
@@ -188,23 +201,37 @@ def retrieve_context(pergunta: str, debug_rag=False, min_score=None, label_chunk
         .to_list()
     )
 
-    blocos_validos = []
-    fontes_validas = set()
-
+    chunks = []
     for res in select_chunks(resultados, min_score):
         score = res.get("_relevance_score", 0.0)
 
-        nome_documento = res.get("nome_arquivo", "Documento Sem Título")
         if (debug_rag):
-            print("Found this document with score of", score, "and title:", nome_documento)
-                
-        blocos_validos.append(format_chunk(nome_documento, res["text"], label_chunks))
-        if (nome_documento not in fontes_validas):
-            fontes_validas.add(nome_documento)
-        
-        
-    if not blocos_validos:
-        return None, []
-        
-    contexto_unificado = "\n\n---\n\n".join(blocos_validos)
-    return contexto_unificado, list(fontes_validas)
+            print("Found this document with score of", score, "and title:", res.get("nome_arquivo", "Documento Sem Título"))
+
+        chunks.append(_to_chunk(res))
+
+    return chunks
+
+def fetch_chunks(chunk_ids: list[str]) -> list[dict]:
+    if not chunk_ids:
+        return []
+
+    db = conectar_banco()
+    if "notas_medicas" not in db.table_names():
+        return []
+
+    table = db.open_table("notas_medicas")
+    ids_escapados = ", ".join("'" + chunk_id.replace("'", "''") + "'" for chunk_id in chunk_ids)
+    resultados = table.search().where(f"chunk_id IN ({ids_escapados})").limit(len(chunk_ids)).to_list()
+
+    return [_to_chunk(res) for res in resultados]
+
+def merge_chunks(*chunk_lists: list[dict]) -> list[dict]:
+    vistos = {}
+    for chunks in chunk_lists:
+        for chunk in chunks:
+            vistos.setdefault(chunk["chunk_id"], chunk)
+    return list(vistos.values())
+
+def format_context(chunks: list[dict], label_chunks=False) -> str:
+    return "\n\n---\n\n".join(format_chunk(chunk["title"], chunk["text"], label_chunks) for chunk in chunks)
