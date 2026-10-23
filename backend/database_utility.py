@@ -178,6 +178,7 @@ def _to_chunk(res: dict) -> dict:
         "chunk_id": res["chunk_id"],
         "title": res.get("nome_arquivo", "Documento Sem Título"),
         "text": res["text"],
+        "vector": res["vector"],
     }
 
 def retrieve_context(pergunta: str, debug_rag=False, min_score=None) -> list[dict]:
@@ -233,5 +234,16 @@ def merge_chunks(*chunk_lists: list[dict]) -> list[dict]:
             vistos.setdefault(chunk["chunk_id"], chunk)
     return list(vistos.values())
 
-def format_context(chunks: list[dict], label_chunks=False) -> str:
-    return "\n\n---\n\n".join(format_chunk(chunk["title"], chunk["text"], label_chunks) for chunk in chunks)
+def format_context(chunks: list[dict], label_chunks=False, number_chunks=False) -> str:
+    blocos = []
+    for indice, chunk in enumerate(chunks, start=1):
+        bloco = format_chunk(chunk["title"], chunk["text"], label_chunks)
+        blocos.append(f"[{indice}] {bloco}" if number_chunks else bloco)
+    return "\n\n---\n\n".join(blocos)
+
+def embed_sources(texts: list[str]) -> list[list[float]]:
+    global embedding_model
+    if (not embedding_model):
+        load_embedding_model()
+
+    return [list(vector) for vector in embedding_model.compute_source_embeddings(texts)]

@@ -6,9 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pathlib import Path
 
-from database_utility import needs_indexing, index_data, retrieve_context, fetch_chunks, merge_chunks, format_context
+from database_utility import needs_indexing, index_data, retrieve_context, fetch_chunks, merge_chunks, format_context, embed_sources
 
 from ollama_interaction import create_payload
+from attribution_logic import split_sentences, similar_chunks, extract_citations, cited_chunks, intersect_chunks
 import providers
 from user_prompt_proccessing import get_message, get_command, execute_command, complete_step
 
@@ -40,6 +41,8 @@ parser.add_argument("--chunking", choices=["paragraph", "window"], default="para
 parser.add_argument("--clean_latex", action="store_true", help="Strip LaTeX from math spans in notes before chunking")
 parser.add_argument("--min_score", type=float, default=None, help="Minimum relevance score for retrieved chunks (0 disables the filter; default from config.ini)")
 parser.add_argument("--label_chunks", action="store_true", help="Prefix each retrieved chunk with its source document title")
+parser.add_argument("--source_attribution", nargs="*", choices=["similarity", "citations"], default=[], help="Methods used to keep only the sources that answered the question; combine both to require agreement (default: show every retrieved source)")
+parser.add_argument("--attribution_threshold", type=float, default=None, help="Minimum cosine similarity between an answer sentence and a chunk for similarity attribution (default from config.ini)")
 parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
 parser.add_argument("--reload", action="store_true", help="Enable auto reload on code changes (development only)")
 parser.add_argument("--agent_prompt", action="store", default="config_agent.md", help="Path to the agent system prompt file")
@@ -66,6 +69,25 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: list[ChatMessage]
+
+def attribute_sources(answer, candidates):
+    content = answer["message"]["content"]
+    selected = candidates
+
+    if "citations" in args.source_attribution:
+        content, cited_indexes = extract_citations(content, len(candidates))
+        answer["message"]["content"] = content
+        selected = intersect_chunks(selected, cited_chunks(candidates, cited_indexes))
+
+    if "similarity" in args.source_attribution:
+        threshold = args.attribution_threshold
+        if threshold is None:
+            threshold = config.getfloat("attribution", "SIMILARITY_THRESHOLD")
+        sentences = split_sentences(content)
+        sentence_vectors = embed_sources(sentences) if sentences else []
+        selected = intersect_chunks(selected, similar_chunks(sentence_vectors, candidates, threshold))
+
+    return selected
 
 def group_by_title(chunks):
     grouped = {}
@@ -105,14 +127,21 @@ async def process_message(item: ChatRequest):
             
     chunks_novos = retrieve_context(message, debug_rag, args.min_score)
     chunks_anteriores = fetch_chunks(chunk_ids_anteriores)
-    contexto = format_context(merge_chunks(chunks_anteriores, chunks_novos), args.label_chunks)
+    chunks_contexto = merge_chunks(chunks_anteriores, chunks_novos)
+    citations = "citations" in args.source_attribution
+    contexto = format_context(chunks_contexto, args.label_chunks, citations)
 
-    payload = create_payload(historico_conversa, message, contexto, args.agent_prompt)
+    payload = create_payload(historico_conversa, message, contexto, args.agent_prompt, citations)
 
     answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
 
     respondeu_sem_dados = frase_sem_dados in answer["message"]["content"]
-    fontes = [] if respondeu_sem_dados else group_by_title(chunks_novos)
+    if respondeu_sem_dados:
+        fontes = []
+    elif args.source_attribution:
+        fontes = group_by_title(attribute_sources(answer, chunks_contexto))
+    else:
+        fontes = group_by_title(chunks_novos)
 
     return {"answer": answer,
             "sources": fontes}
