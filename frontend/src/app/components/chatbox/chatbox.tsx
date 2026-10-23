@@ -3,8 +3,10 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import { ChatInput } from "./chatInput";
+import { MessageSources } from "./messageSources";
 
-export type messageType = { content: string, sender: "user" | "bot" };
+export type sourceType = { title: string, chunk_ids: string[] };
+export type messageType = { content: string, sender: "user" | "bot", sources?: sourceType[] };
 
 export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: messageType[], isProcessing: boolean, onSendMessage: (message: string) => void }) {
     const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -28,6 +30,7 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                         {message.content}
                     </ReactMarkdown>
+                    <MessageSources sources={message.sources ?? []} />
                 </div>
             )
         }

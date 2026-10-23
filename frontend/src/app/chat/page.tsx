@@ -12,9 +12,6 @@ function AsyncMessenger() {
   const [receivedMessage, setReceivedMessage] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const [context, setContext] = useState<String>("");
-  const [fontes, setFontes] = useState<String[]>([]);
-
   const [messages, setMessages] = useState<messageType[]>([]);
   
   const socketRef = useRef(null);
@@ -81,17 +78,13 @@ function AsyncMessenger() {
         method: "POST",
         body: JSON.stringify({
           messages: payload,
-          context: context,
-          sources: fontes,
         }),
         headers: {"Content-Type": "application/json"}
       })
       const data = await response.json()
       setIsProcessing(false);
 
-      setMessages([...messages, {sender: "user", content: inputMessage}, {sender: "bot", content: data["answer"].message.content}])
-      setContext(data["context"]);
-      setFontes(data["sources"]);
+      setMessages([...messages, {sender: "user", content: inputMessage}, {sender: "bot", content: data["answer"].message.content, sources: data["sources"]}])
       console.log(response)
     } catch (e) {
       console.log(e)
