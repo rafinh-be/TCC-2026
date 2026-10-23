@@ -6,7 +6,10 @@ from pathlib import Path
 from dotenv import load_dotenv
 from lancedb.pydantic import LanceModel, Vector
 import providers
+from retrieval_logic import select_chunks, format_chunk
 from huggingface_hub import login
+from chunking import chunk_text
+from text_cleaning import clean_latex_math
 
 #load_dotenv() 
 #huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
@@ -19,6 +22,9 @@ config.read('config.ini', encoding='utf-8')
 NOTES_DIR = config.get("database", "NOTES_DIR")
 MEMORY_FILE = config.get("database", "MEMORY_FILE")
 DB_PATH = config.get("database", "DB_PATH")
+CHUNK_SIZE = config.getint("database", "CHUNK_SIZE")
+CHUNK_OVERLAP = config.getint("database", "CHUNK_OVERLAP")
+LEGACY_CHUNKING = {"strategy": "paragraph", "clean_latex": False}
 
 embedding_model = None
 registry = None
@@ -27,7 +33,20 @@ def load_embedding_model():
     global embedding_model
     embedding_model = providers.create_embedding_model()
 
-def needs_indexing(verbose=False) -> bool:
+def chunking_signature(chunking="paragraph", clean_latex=False):
+    return {
+        "strategy": chunking,
+        "size": CHUNK_SIZE,
+        "overlap": CHUNK_OVERLAP,
+        "clean_latex": clean_latex,
+    }
+
+def comparable_chunking(signature):
+    if signature["strategy"] == "paragraph":
+        return {"strategy": "paragraph", "clean_latex": signature["clean_latex"]}
+    return signature
+
+def needs_indexing(verbose=False, chunking="paragraph", clean_latex=False) -> bool:
     path_dir = Path(NOTES_DIR)
     if not path_dir.exists():
         path_dir.mkdir(exist_ok=True)
@@ -53,7 +72,14 @@ def needs_indexing(verbose=False) -> bool:
         if (verbose):
             print("Embedding provider changed since last sync")
         return True
-    memoria_salva = memoria_salva["files"]
+    chunking_salvo = memoria_salva.get("chunking", LEGACY_CHUNKING)
+    if comparable_chunking(chunking_salvo) != comparable_chunking(chunking_signature(chunking, clean_latex)):
+        if (verbose):
+            print("Chunking options changed since last sync")
+        return True
+    if not (Path(DB_PATH) / "notas_medicas.lance").exists():
+        return True
+    memoria_salva = memoria_salva.get("files", {})
 
     if len(estado_atual) != len(memoria_salva):
         return True
@@ -70,20 +96,20 @@ def needs_indexing(verbose=False) -> bool:
 
     return False
 
-def update_memory():
+def update_memory(chunking="paragraph", clean_latex=False):
     path_dir = Path(NOTES_DIR)
     estado_atual = {}
     for arquivo_md in path_dir.glob("*.md"):
         estado_atual[arquivo_md.name] = os.path.getmtime(arquivo_md)
         
     with open(MEMORY_FILE, "w", encoding="utf-8") as f:
-        json.dump({"embedding": providers.embedding_signature(), "files": estado_atual}, f, indent=4)
+        json.dump({"embedding": providers.embedding_signature(), "chunking": chunking_signature(chunking, clean_latex), "files": estado_atual}, f, indent=4)
 
 def conectar_banco():
     Path(DB_PATH).mkdir(exist_ok=True)
     return lancedb.connect(DB_PATH)
         
-def index_data(verbose=False):
+def index_data(verbose=False, chunking="paragraph", clean_latex=False):
     db = conectar_banco()
     path_dir = Path(NOTES_DIR)
     path_dir.mkdir(exist_ok=True)
@@ -105,10 +131,10 @@ def index_data(verbose=False):
         post = frontmatter.load(arquivo_md)
         
         tags = post.get("tags", [])
-        conteudo_limpo = post.content
+        conteudo_limpo = clean_latex_math(post.content) if clean_latex else post.content
         
         # paragrafos = [conteudo_limpo]
-        paragrafos = [p.strip() for p in conteudo_limpo.split("\n\n") if p.strip()]
+        paragrafos = chunk_text(conteudo_limpo, chunking, CHUNK_SIZE, CHUNK_OVERLAP)
         
         if (verbose):
             print("Indexing:", post.get("titulo", arquivo_md.stem))
@@ -131,7 +157,7 @@ def index_data(verbose=False):
     
     table.create_fts_index("text", replace=True)
     
-    update_memory()
+    update_memory(chunking, clean_latex)
     
 def _tokenize_query(pergunta: str) -> list[float]:
     global embedding_model
@@ -141,7 +167,10 @@ def _tokenize_query(pergunta: str) -> list[float]:
     
     return embedding_model.compute_query_embeddings(pergunta)[0]
 
-def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
+def retrieve_context(pergunta: str, debug_rag=False, min_score=None, label_chunks=False) -> tuple[str, set[str]]:
+    if min_score is None:
+        min_score = config.getfloat("retrieval", "MIN_SCORE", fallback=0.015)
+
     db = conectar_banco()
 
     if "notas_medicas" not in db.table_names():
@@ -149,8 +178,6 @@ def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
 
     table = db.open_table("notas_medicas")
     vetor_query = _tokenize_query(pergunta)
-
-    SCORE_MINIMO = 0.015
 
     resultados = (
         table.search(query_type="hybrid")
@@ -164,17 +191,14 @@ def retrieve_context(pergunta: str, debug_rag=False) -> tuple[str, set[str]]:
     blocos_validos = []
     fontes_validas = set()
 
-    for res in resultados:
+    for res in select_chunks(resultados, min_score):
         score = res.get("_relevance_score", 0.0)
 
-        if score < SCORE_MINIMO:
-            continue
-        
         nome_documento = res.get("nome_arquivo", "Documento Sem Título")
         if (debug_rag):
             print("Found this document with score of", score, "and title:", nome_documento)
                 
-        blocos_validos.append(res["text"])
+        blocos_validos.append(format_chunk(nome_documento, res["text"], label_chunks))
         if (nome_documento not in fontes_validas):
             fontes_validas.add(nome_documento)
         
