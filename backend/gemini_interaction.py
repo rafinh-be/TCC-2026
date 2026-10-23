@@ -24,7 +24,10 @@ def chat(payload, verbose=False, debug_model=False):
         contents=contents,
         config=types.GenerateContentConfig(
             system_instruction=system_prompt,
-            thinking_config=types.ThinkingConfig(thinking_level=config.get("gemini", "thinking_level")),
+            thinking_config=types.ThinkingConfig(
+                thinking_level=config.get("gemini", "thinking_level"),
+                include_thoughts=debug_model,
+            ),
             max_output_tokens=config.getint("gemini", "max_output_tokens"),
         ),
     )
@@ -33,5 +36,9 @@ def chat(payload, verbose=False, debug_model=False):
         raise RuntimeError("Gemini não retornou texto. Verifique os filtros de segurança do modelo.")
     if (response.candidates[0].finish_reason != types.FinishReason.STOP):
         raise RuntimeError(f"Gemini não concluiu a resposta: {response.candidates[0].finish_reason}")
+
+    if (debug_model):
+        thoughts = "\n".join(part.text for part in response.candidates[0].content.parts if part.thought and part.text)
+        print("Gemini thoughts:\n" + (thoughts or "(no thought summary returned)"))
 
     return {"message": {"role": "assistant", "content": response.text}}
