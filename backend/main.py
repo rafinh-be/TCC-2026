@@ -35,6 +35,8 @@ parser.add_argument("--provider", required=True, choices=providers.PROVIDERS, he
 parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output for debugging")
 parser.add_argument("--debug_rag", action="store_true", help="Enables extra verbose output for the RAG sections of the code")
 parser.add_argument("--debug_model", action="store_true", help="Enables extra verbose output for the LLM Model processing sections of the code")
+parser.add_argument("--chunking", choices=["paragraph", "window"], default="paragraph", help="Strategy used to split notes into chunks when indexing")
+parser.add_argument("--clean_latex", action="store_true", help="Strip LaTeX from math spans in notes before chunking")
 parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
 parser.add_argument("--reload", action="store_true", help="Enable auto reload on code changes (development only)")
 parser.add_argument("--host", action="store", default="127.0.0.1", help="Configure host address")
@@ -44,10 +46,10 @@ args = parser.parse_args()
 providers.set_provider(args.provider)
 
 def handle_indexing(verbose, debug_rag):
-    if needs_indexing((verbose or debug_rag)):
+    if needs_indexing((verbose or debug_rag), args.chunking, args.clean_latex):
         if (verbose or debug_rag):
             print("Updating LanceDB index...")
-        index_data((verbose or debug_rag))
+        index_data((verbose or debug_rag), args.chunking, args.clean_latex)
 
 class ChatMessage(BaseModel):
     sender: str
@@ -119,10 +121,10 @@ async def start_agent(websocket: WebSocket = None):
         print("WebSocket connection established")
         print(websocket)
         
-    if needs_indexing((verbose or debug_rag)):
+    if needs_indexing((verbose or debug_rag), args.chunking, args.clean_latex):
         if (verbose or debug_rag):
             print("Updating LanceDB index...")
-        index_data((verbose or debug_rag))
+        index_data((verbose or debug_rag), args.chunking, args.clean_latex)
     
     contexto, fontes = "", []
     historico_conversa = []
