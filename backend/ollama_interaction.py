@@ -3,12 +3,12 @@ import configparser, ollama
 config = configparser.ConfigParser()
 config.read('config.ini', encoding='utf-8')
 
-def create_payload(historico_conversa, message, contexto, fontes):
+def create_payload(historico_conversa, message, contexto, fontes, agent_file="config_agent.md"):
     payload = []
 
     # Prompt inicial
     try:
-        with open("config_agent.md", "r", encoding="utf-8") as f:
+        with open(agent_file, "r", encoding="utf-8") as f:
             prompt_sistema = f.read()
     except FileNotFoundError:
         prompt_sistema = config.get('prompts', 'prompt_sistema')

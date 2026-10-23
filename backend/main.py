@@ -37,6 +37,7 @@ parser.add_argument("--debug_rag", action="store_true", help="Enables extra verb
 parser.add_argument("--debug_model", action="store_true", help="Enables extra verbose output for the LLM Model processing sections of the code")
 parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
 parser.add_argument("--reload", action="store_true", help="Enable auto reload on code changes (development only)")
+parser.add_argument("--agent_prompt", action="store", default="config_agent.md", help="Path to the agent system prompt file")
 parser.add_argument("--host", action="store", default="127.0.0.1", help="Configure host address")
 parser.add_argument("--port", action="store", type=int, default=8000, help="Configure host port")
 
@@ -98,7 +99,7 @@ async def process_message(item: ChatRequest):
             fontes.append(fonte)
 
     # Debatendo ainda se deveria passar contexto total ou apenas contexto novo. Nao decidi ainda. Vou deixar contexto total por enquanto
-    payload = create_payload(historico_conversa, message, contexto, fontes)
+    payload = create_payload(historico_conversa, message, contexto, fontes, args.agent_prompt)
 
     answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
 
@@ -148,7 +149,7 @@ async def start_agent(websocket: WebSocket = None):
                     fontes.append(fonte)
 
             # Debatendo ainda se deveria passar contexto total ou apenas contexto novo. Nao decidi ainda. Vou deixar contexto total por enquanto
-            payload = create_payload(historico_conversa, message, contexto, fontes)
+            payload = create_payload(historico_conversa, message, contexto, fontes, args.agent_prompt)
 
             answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
             
