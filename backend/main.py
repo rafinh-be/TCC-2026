@@ -35,6 +35,8 @@ parser.add_argument("--provider", required=True, choices=providers.PROVIDERS, he
 parser.add_argument("-v", "--verbose", action="store_true", help="Enable verbose output for debugging")
 parser.add_argument("--debug_rag", action="store_true", help="Enables extra verbose output for the RAG sections of the code")
 parser.add_argument("--debug_model", action="store_true", help="Enables extra verbose output for the LLM Model processing sections of the code")
+parser.add_argument("--min_score", type=float, default=None, help="Minimum relevance score for retrieved chunks (0 disables the filter; default from config.ini)")
+parser.add_argument("--label_chunks", action="store_true", help="Prefix each retrieved chunk with its source document title")
 parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
 parser.add_argument("--reload", action="store_true", help="Enable auto reload on code changes (development only)")
 parser.add_argument("--host", action="store", default="127.0.0.1", help="Configure host address")
@@ -90,7 +92,7 @@ async def process_message(item: ChatRequest):
         # Alguns comandos que "terminam" o processo devem usar 'continue' para nao encerrar o loop
         return command
             
-    contexto_novo, fontes_novas = retrieve_context(message, debug_rag)
+    contexto_novo, fontes_novas = retrieve_context(message, debug_rag, args.min_score, args.label_chunks)
     if contexto_novo and contexto_novo not in contexto:
         contexto = (contexto + "\n\n---\n\n" + contexto_novo).strip()
     for fonte in fontes_novas:
@@ -140,7 +142,7 @@ async def start_agent(websocket: WebSocket = None):
                     print("Continuando...")
                     continue
             
-            contexto_novo, fontes_novas = retrieve_context(message, debug_rag)
+            contexto_novo, fontes_novas = retrieve_context(message, debug_rag, args.min_score, args.label_chunks)
             if contexto_novo and contexto_novo not in contexto:
                 contexto = (contexto + "\n\n---\n\n" + contexto_novo).strip()
             for fonte in fontes_novas:
