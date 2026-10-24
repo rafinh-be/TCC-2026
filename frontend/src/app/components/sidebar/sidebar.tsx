@@ -1,4 +1,5 @@
 import { NewChatLink } from "./newChatLink";
+import { DocumentLinks } from "./documentLinks";
 
 export function Sidebar({ children, content }: { children?: React.ReactNode, content?: React.ReactNode }) {
 
@@ -27,6 +28,7 @@ export function Sidebar({ children, content }: { children?: React.ReactNode, con
                                 <span className="is-drawer-close:hidden">Nova conversa</span>
                             </NewChatLink>
                         </li>
+                        <DocumentLinks />
                         {children}
                     </ul>
                 </div>
