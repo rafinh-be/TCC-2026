@@ -1,13 +1,14 @@
 import configparser, sys, json, os, ollama, asyncio, uvicorn, argparse
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from pydantic import BaseModel
 from pathlib import Path
 
-from database_utility import needs_indexing, index_data, retrieve_context, fetch_chunks, merge_chunks, format_context, embed_sources
+from database_utility import needs_indexing, index_data, retrieve_context, fetch_chunks, merge_chunks, format_context, embed_sources, load_documents
 
+from documents_logic import summarize, find_by_id
 from ollama_interaction import create_payload
 from attribution_logic import split_sentences, similar_chunks, extract_citations, cited_chunks, intersect_chunks
 import providers
@@ -108,6 +109,17 @@ def group_by_title(chunks):
 async def hello_world(item: ChatRequest):
     return {"answer": "hello world!",
            "sources": []}
+
+@app.get("/documents")
+async def list_documents():
+    return [summarize(document) for document in load_documents()]
+
+@app.get("/documents/{document_id}")
+async def read_document(document_id: str):
+    document = find_by_id(load_documents(), document_id)
+    if document is None:
+        raise HTTPException(status_code=404, detail="Documento não encontrado")
+    return document
 
 @app.post("/chat")
 async def process_message(item: ChatRequest):
