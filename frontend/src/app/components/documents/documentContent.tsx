@@ -1,5 +1,8 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import "katex/dist/katex.min.css";
 
 export type documentType = { id: string, title: string, tags: string[], content: string };
 
@@ -15,7 +18,7 @@ export function DocumentContent({ document }: { document: documentType }) {
                     ))}
                 </div>
                 <div className="answer-prose max-w-[68ch]">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
                         {document.content}
                     </ReactMarkdown>
                 </div>
