@@ -159,3 +159,9 @@ body {
     animation: none;
   }
 }
+
+.paragraph-highlight {
+  background-color: var(--primary-soft);
+  box-shadow: -0.5rem 0 0 var(--primary-soft);
+  border-radius: 2px;
+}

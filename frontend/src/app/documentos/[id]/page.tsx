@@ -11,10 +11,12 @@ async function fetchDocument(id: string): Promise<documentType | null> {
     return response.json();
 }
 
-export default async function DocumentPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function DocumentPage({ params, searchParams }: { params: Promise<{ id: string }>, searchParams: Promise<{ trecho?: string }> }) {
     const { id } = await params;
+    const { trecho } = await searchParams;
+    const highlightedParagraph = trecho !== undefined && /^\d+$/.test(trecho) ? Number(trecho) : null;
     const document = await fetchDocument(id);
     if (!document) notFound();
 
-    return <Sidebar content={<DocumentContent document={document} />} />;
+    return <Sidebar content={<DocumentContent document={document} highlightedParagraph={highlightedParagraph} />} />;
 }

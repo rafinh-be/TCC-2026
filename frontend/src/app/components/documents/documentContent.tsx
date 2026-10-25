@@ -4,11 +4,15 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import "katex/dist/katex.min.css";
 
-export type documentType = { id: string, title: string, tags: string[], content: string };
+import { paragraphSpanType, rehypeParagraphMarks } from "@/utils/rehypeParagraphMarks";
+import { ScrollToParagraph } from "./scrollToParagraph";
 
-export function DocumentContent({ document }: { document: documentType }) {
+export type documentType = { id: string, title: string, tags: string[], content: string, paragraph_spans: paragraphSpanType[] };
+
+export function DocumentContent({ document, highlightedParagraph }: { document: documentType, highlightedParagraph: number | null }) {
     return (
         <div className="min-h-0 flex-1 overflow-y-auto">
+            {highlightedParagraph !== null && <ScrollToParagraph index={highlightedParagraph} />}
             <article className="mx-auto w-full max-w-3xl px-6 pt-10 pb-16">
                 <div className="mb-6 flex flex-wrap gap-2 text-sm">
                     {document.tags.map((tag) => (
@@ -18,7 +22,7 @@ export function DocumentContent({ document }: { document: documentType }) {
                     ))}
                 </div>
                 <div className="answer-prose max-w-[68ch]">
-                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex]}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex, rehypeParagraphMarks(document.paragraph_spans, highlightedParagraph)]}>
                         {document.content}
                     </ReactMarkdown>
                 </div>
