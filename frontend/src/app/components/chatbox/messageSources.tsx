@@ -3,11 +3,13 @@ import Link from "next/link";
 
 import { useDocuments } from "@/hooks/useDocuments";
 import { sourceType } from "./chatbox";
+import { useDocumentOpener } from "./documentOpener";
 
 const chipClassName = "rounded-full border border-line bg-primary-soft px-3 py-1 text-primary-ink";
 
 export function MessageSources({ sources }: { sources: sourceType[] }) {
     const documents = useDocuments();
+    const openDocument = useDocumentOpener();
 
     if (sources.length === 0) return null;
 
@@ -20,7 +22,16 @@ export function MessageSources({ sources }: { sources: sourceType[] }) {
                     return <span key={source.title} className={chipClassName}>{source.title}</span>;
                 }
                 return (
-                    <Link key={source.title} href={`/documentos/${encodeURIComponent(document.id)}`} className={`${chipClassName} hover:border-primary`}>
+                    <Link
+                        key={source.title}
+                        href={`/documentos/${encodeURIComponent(document.id)}`}
+                        onClick={(event) => {
+                            if (!openDocument) return;
+                            event.preventDefault();
+                            openDocument({ id: document.id, paragraph: null });
+                        }}
+                        className={`${chipClassName} hover:border-primary`}
+                    >
                         {source.title}
                     </Link>
                 );
