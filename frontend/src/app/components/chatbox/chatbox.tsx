@@ -4,9 +4,11 @@ import remarkGfm from "remark-gfm";
 
 import { ChatInput } from "./chatInput";
 import { MessageSources } from "./messageSources";
+import { CitationLink } from "./citationLink";
+import { citationType, linkCitations } from "@/utils/linkCitations";
 
 export type sourceType = { title: string, chunk_ids: string[] };
-export type messageType = { content: string, sender: "user" | "bot", sources?: sourceType[] };
+export type messageType = { content: string, sender: "user" | "bot", sources?: sourceType[], citations?: citationType[] };
 
 export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: messageType[], isProcessing: boolean, onSendMessage: (message: string) => void }) {
     const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -27,8 +29,15 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
         } else if (message.sender == "bot") {
             return(
                 <div key={index} className="rise-in answer-prose max-w-[68ch]">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {message.content}
+                    <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                            a: ({ href, children }) => href?.startsWith("/documentos/")
+                                ? <CitationLink href={href} title="Abrir trecho na fonte">{children}</CitationLink>
+                                : <a href={href}>{children}</a>,
+                        }}
+                    >
+                        {linkCitations(message.content, message.citations ?? [])}
                     </ReactMarkdown>
                     <MessageSources sources={message.sources ?? []} />
                 </div>

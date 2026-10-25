@@ -10,6 +10,7 @@ from retrieval_logic import select_chunks, format_chunk
 from huggingface_hub import login
 from chunking import chunk_text
 from text_cleaning import clean_latex_math
+from documents_logic import build_document, sort_by_title
 
 #load_dotenv() 
 #huggingface_token = os.getenv("HUGGINGFACE_TOKEN")
@@ -108,6 +109,13 @@ def update_memory(chunking="paragraph", clean_latex=False):
         
     with open(MEMORY_FILE, "w", encoding="utf-8") as f:
         json.dump({"embedding": providers.embedding_signature(), "chunking": chunking_signature(chunking, clean_latex), "files": estado_atual}, f, indent=4)
+
+def load_documents() -> list[dict]:
+    documents = []
+    for arquivo_md in Path(NOTES_DIR).glob("*.md"):
+        post = frontmatter.load(arquivo_md)
+        documents.append(build_document(post.metadata, post.content, arquivo_md.stem))
+    return sort_by_title(documents)
 
 def conectar_banco():
     Path(DB_PATH).mkdir(exist_ok=True)

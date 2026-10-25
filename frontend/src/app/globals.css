@@ -159,3 +159,33 @@ body {
     animation: none;
   }
 }
+
+[data-trecho] {
+  transition: background-color 1s ease, box-shadow 1s ease;
+}
+
+.paragraph-highlight {
+  background-color: var(--primary-soft);
+  box-shadow: -0.5rem 0 0 var(--primary-soft);
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-trecho] {
+    transition: none;
+  }
+}
+
+.marker-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.marker-bar {
+  position: absolute;
+  background-color: var(--primary-soft);
+  border-radius: 3px;
+  transform-origin: left center;
+}

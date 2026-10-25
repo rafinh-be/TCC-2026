@@ -5,6 +5,7 @@ import { Sidebar } from '../components/sidebar/sidebar';
 import { Chatbox } from '../components/chatbox/chatbox';
 
 import { messageType } from '../components/chatbox/chatbox';
+import { citedDocumentIds } from '@/utils/citedDocuments';
 
 function AsyncMessenger() {
   //const [inputMessage, setInputMessage] = useState("");
@@ -84,7 +85,7 @@ function AsyncMessenger() {
       const data = await response.json()
       setIsProcessing(false);
 
-      setMessages([...messages, {sender: "user", content: inputMessage}, {sender: "bot", content: data["answer"].message.content, sources: data["sources"]}])
+      setMessages([...messages, {sender: "user", content: inputMessage}, {sender: "bot", content: data["answer"].message.content, sources: data["sources"], citations: data["citations"]}])
       console.log(response)
     } catch (e) {
       console.log(e)
@@ -135,7 +136,7 @@ function AsyncMessenger() {
     );}
 
   return (
-    <Sidebar content={pageContent()} />
+    <Sidebar content={pageContent()} citedDocumentIds={citedDocumentIds(messages)} />
   );
 }
 

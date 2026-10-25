@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from attribution_logic import split_sentences, cosine, similar_chunks, extract_citations, cited_chunks, intersect_chunks
+from attribution_logic import split_sentences, cosine, similar_chunks, extract_citations, cited_chunks, intersect_chunks, keep_valid_citations, strip_citations, build_citations
 
 
 def chunk(chunk_id, vector=None):
@@ -51,3 +51,28 @@ def test_intersect_chunks_keeps_first_list_order():
     first = [chunk("a"), chunk("b"), chunk("c")]
     second = [chunk("c"), chunk("a")]
     assert intersect_chunks(first, second) == [first[0], first[2]]
+
+
+def test_keep_valid_citations_drops_out_of_range_numbers():
+    answer = "Fato um [1]. Fato dois [2, 9]. Fato inventado [7]."
+    assert keep_valid_citations(answer, 3) == "Fato um [1]. Fato dois [2]. Fato inventado."
+
+
+def test_strip_citations_removes_every_marker():
+    assert strip_citations("Fato um [1]. Fato dois [2, 3].") == "Fato um. Fato dois."
+
+
+def test_build_citations_maps_numbers_to_documents_and_paragraphs():
+    chunks = [
+        {"chunk_id": "pre_eclampsia:4", "title": "Pré-eclâmpsia"},
+        {"chunk_id": "diabetes:0", "title": "Diabetes"},
+    ]
+    assert build_citations(chunks, {1, 0}, True) == [
+        {"number": 1, "doc_id": "pre_eclampsia", "title": "Pré-eclâmpsia", "chunk_index": 4},
+        {"number": 2, "doc_id": "diabetes", "title": "Diabetes", "chunk_index": 0},
+    ]
+
+
+def test_build_citations_without_paragraph_chunks_has_no_chunk_index():
+    chunks = [{"chunk_id": "pre_eclampsia:4", "title": "Pré-eclâmpsia"}]
+    assert build_citations(chunks, {0}, False)[0]["chunk_index"] is None

@@ -1,6 +1,6 @@
 import pytest
 
-from chunking import chunk_text, split_paragraphs, split_window
+from chunking import chunk_text, paragraph_spans, split_paragraphs, split_window
 
 
 def old_paragraph_split(text):
@@ -72,3 +72,13 @@ def test_unbreakable_word_is_kept_whole():
 def test_unknown_strategy_raises():
     with pytest.raises(ValueError):
         chunk_text("texto", "desconhecida", 50, 10)
+
+
+def test_paragraph_spans_locate_each_paragraph_in_the_text():
+    text = "  um\n\n\n\ndois linhas\ncontinua\n\n   \n\ntres  "
+    spans = paragraph_spans(text)
+    assert [text[start:end] for start, end in spans] == split_paragraphs(text)
+
+
+def test_paragraph_spans_of_empty_text():
+    assert paragraph_spans("") == []
