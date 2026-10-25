@@ -5,17 +5,18 @@ import remarkGfm from "remark-gfm";
 import { ChatInput } from "./chatInput";
 import { MessageSources } from "./messageSources";
 import { CitationLink } from "./citationLink";
+import { LiveThinking, ThinkingSummary } from "./thinkingSummary";
 import { citationType, linkCitations } from "@/utils/linkCitations";
 
 export type sourceType = { title: string, chunk_ids: string[] };
-export type messageType = { content: string, sender: "user" | "bot", sources?: sourceType[], citations?: citationType[] };
+export type messageType = { content: string, sender: "user" | "bot", sources?: sourceType[], citations?: citationType[], thinking?: string };
 
-export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: messageType[], isProcessing: boolean, onSendMessage: (message: string) => void }) {
+export function Chatbox({ messages, isProcessing, liveThinking = [], onSendMessage }: { messages: messageType[], isProcessing: boolean, liveThinking?: string[], onSendMessage: (message: string) => void }) {
     const bottomRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages, isProcessing]);
+    }, [messages, isProcessing, liveThinking]);
 
     const chatItems : React.ReactNode[] = messages.map((message, index) => {
         if (message.sender == "user") {
@@ -40,12 +41,13 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
                         {linkCitations(message.content, message.citations ?? [])}
                     </ReactMarkdown>
                     <MessageSources sources={message.sources ?? []} />
+                    {message.thinking && <ThinkingSummary thinking={message.thinking} />}
                 </div>
             )
         }
     })
 
-    const waitingIndicator = isProcessing && (
+    const waitingIndicator = isProcessing && (liveThinking.length > 0 ? <LiveThinking blocks={liveThinking} /> : (
         <div className="rise-in flex items-center gap-3 text-sm text-ink-muted">
             <div className="flex items-center gap-1.5">
                 <span className="typing-dot" />
@@ -54,7 +56,7 @@ export function Chatbox({ messages, isProcessing, onSendMessage }: { messages: m
             </div>
             <span>Consultando a base de conhecimento</span>
         </div>
-    );
+    ));
 
     return (
         <div className="flex min-h-0 flex-1 flex-col">
