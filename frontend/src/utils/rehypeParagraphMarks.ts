@@ -20,7 +20,7 @@ function paragraphIndexAt(spans: paragraphSpanType[], offset: number) {
     return spans.findIndex(([start, end]) => offset >= start && offset < end);
 }
 
-export function rehypeParagraphMarks(spans: paragraphSpanType[], highlighted: number | null) {
+export function rehypeParagraphMarks(spans: paragraphSpanType[]) {
     return () => (tree: hastNode) => {
         const identified = new Set<number>();
 
@@ -37,7 +37,6 @@ export function rehypeParagraphMarks(spans: paragraphSpanType[], highlighted: nu
                         properties.id = paragraphElementId(index);
                         identified.add(index);
                     }
-                    if (index === highlighted) properties.className = [HIGHLIGHT_CLASS_NAME];
                     node.properties = properties;
                 }
             }

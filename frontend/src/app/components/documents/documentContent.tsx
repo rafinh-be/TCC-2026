@@ -22,7 +22,7 @@ export function DocumentContent({ document, highlightedParagraph }: { document: 
                     ))}
                 </div>
                 <div className="answer-prose max-w-[68ch]">
-                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex, rehypeParagraphMarks(document.paragraph_spans, highlightedParagraph)]}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]} rehypePlugins={[rehypeKatex, rehypeParagraphMarks(document.paragraph_spans)]}>
                         {document.content}
                     </ReactMarkdown>
                 </div>
