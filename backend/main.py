@@ -1,7 +1,8 @@
-import configparser, sys, json, os, ollama, asyncio, uvicorn, argparse
+import configparser, sys, json, os, ollama, asyncio, uvicorn, argparse, traceback
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 
 from pydantic import BaseModel
 from pathlib import Path
@@ -12,6 +13,7 @@ from documents_logic import summarize, find_by_id
 from ollama_interaction import create_payload
 from attribution_logic import split_sentences, similar_chunks, extract_citations, cited_chunks, intersect_chunks, keep_valid_citations, strip_citations, build_citations
 import providers
+from stream_logic import final_event, error_event, encode_event
 from user_prompt_proccessing import get_message, get_command, execute_command, complete_step
 
 config = configparser.ConfigParser()
@@ -129,14 +131,10 @@ async def read_document(document_id: str):
         raise HTTPException(status_code=404, detail="Documento não encontrado")
     return document
 
-@app.post("/chat")
-async def process_message(item: ChatRequest):
-    global args
-    local = args.local
+def prepare_chat(item: ChatRequest):
     verbose = args.verbose
-    debug_model = args.debug_model
     debug_rag = args.debug_rag
-    
+
     handle_indexing(verbose, debug_rag)
 
     historico_conversa = []
@@ -151,10 +149,8 @@ async def process_message(item: ChatRequest):
 
     command = get_command(message, verbose)
     if command:
-        # Executa o comando e envia a resposta para o usuario
-        # Alguns comandos que "terminam" o processo devem usar 'continue' para nao encerrar o loop
-        return command
-            
+        return command, None, None, None
+
     chunks_novos = retrieve_context(message, debug_rag, args.min_score)
     chunks_anteriores = fetch_chunks(chunk_ids_anteriores)
     chunks_contexto = merge_chunks(chunks_anteriores, chunks_novos)
@@ -163,13 +159,50 @@ async def process_message(item: ChatRequest):
 
     payload = create_payload(historico_conversa, message, contexto, args.agent_prompt, citations)
 
-    answer = providers.chat(payload, verbose=verbose, debug_model=debug_model)
+    return "", payload, chunks_contexto, chunks_novos
 
+def finish_chat(answer, chunks_contexto, chunks_novos):
     fontes = group_by_title(select_sources(answer, chunks_contexto, chunks_novos))
 
     return {"answer": answer,
             "sources": fontes,
             "citations": answer.get("citations", [])}
+
+@app.post("/chat")
+async def process_message(item: ChatRequest):
+    command, payload, chunks_contexto, chunks_novos = prepare_chat(item)
+    if command:
+        # Executa o comando e envia a resposta para o usuario
+        # Alguns comandos que "terminam" o processo devem usar 'continue' para nao encerrar o loop
+        return command
+
+    answer = providers.chat(payload, verbose=args.verbose, debug_model=args.debug_model)
+
+    return finish_chat(answer, chunks_contexto, chunks_novos)
+
+def chat_events(item: ChatRequest):
+    try:
+        command, payload, chunks_contexto, chunks_novos = prepare_chat(item)
+        if command:
+            yield error_event("Comandos não são suportados nesta interface.")
+            return
+        for event in providers.chat_stream(payload, verbose=args.verbose, debug_model=args.debug_model):
+            if event["type"] == "answer":
+                result = finish_chat(event["answer"], chunks_contexto, chunks_novos)
+                yield final_event(result["answer"], result["sources"], result["citations"])
+            else:
+                yield event
+    except Exception:
+        traceback.print_exc()
+        yield error_event("Não foi possível gerar a resposta. Tente novamente.")
+
+@app.post("/chat/stream")
+def stream_message(item: ChatRequest):
+    return StreamingResponse(
+        (encode_event(event) for event in chat_events(item)),
+        media_type="application/x-ndjson",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
 
 @app.websocket("/ws/chat")
 async def start_agent(websocket: WebSocket = None):
