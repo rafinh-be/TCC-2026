@@ -13,7 +13,7 @@ export function DocumentContent({ document, highlightedParagraph }: { document: 
     return (
         <div className="min-h-0 flex-1 overflow-y-auto">
             {highlightedParagraph !== null && <ScrollToParagraph index={highlightedParagraph} />}
-            <article className="mx-auto w-full max-w-3xl px-6 pt-10 pb-16">
+            <article className="relative mx-auto w-full max-w-3xl px-6 pt-10 pb-16">
                 <div className="mb-6 flex flex-wrap gap-2 text-sm">
                     {document.tags.map((tag) => (
                         <span key={tag} className="rounded-full border border-line bg-primary-soft px-3 py-1 text-primary-ink">

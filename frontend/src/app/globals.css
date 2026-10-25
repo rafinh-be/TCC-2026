@@ -175,3 +175,17 @@ body {
     transition: none;
   }
 }
+
+.marker-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.marker-bar {
+  position: absolute;
+  background-color: var(--primary-soft);
+  border-radius: 3px;
+  transform-origin: left center;
+}
