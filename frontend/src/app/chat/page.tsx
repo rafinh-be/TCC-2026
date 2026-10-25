@@ -4,20 +4,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Sidebar } from '../components/sidebar/sidebar';
 import { Chatbox } from '../components/chatbox/chatbox';
 
-import { messageType } from '../components/chatbox/chatbox';
 import { citedDocumentIds } from '@/utils/citedDocuments';
-import { readChatStream } from '@/utils/chatStream';
-import { API_URL } from '@/config/api';
-import { STREAM_THINKING } from '@/config/chat';
+import { useChat } from '@/hooks/useChat';
 
 function AsyncMessenger() {
   //const [inputMessage, setInputMessage] = useState("");
   const [serverStatus, setServerStatus] = useState("Disconnected");
   const [receivedMessage, setReceivedMessage] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const [messages, setMessages] = useState<messageType[]>([]);
-  const [liveThinking, setLiveThinking] = useState<string[]>([]);
+  const { messages, isProcessing, liveThinking, sendMessage } = useChat();
   
   const socketRef = useRef(null);
 
@@ -68,65 +62,6 @@ function AsyncMessenger() {
     }
   };
   */
-
-  const handleSendMessageApi = async (inputMessage: string) => {
-    try {
-      const payload : messageType[] = [...messages, {content: inputMessage, sender: "user"}];
-
-      setMessages([...messages, {sender: "user", content: inputMessage}]);
-
-      console.log("oi")
-
-      setIsProcessing(true);
-      setReceivedMessage("");
-      const response = await fetch(`${API_URL}/chat`, {
-        method: "POST",
-        body: JSON.stringify({
-          messages: payload,
-        }),
-        headers: {"Content-Type": "application/json"}
-      })
-      const data = await response.json()
-      setIsProcessing(false);
-
-      setMessages([...messages, {sender: "user", content: inputMessage}, {sender: "bot", content: data["answer"].message.content, sources: data["sources"], citations: data["citations"]}])
-      console.log(response)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  const handleSendMessageStream = async (inputMessage: string) => {
-    const history: messageType[] = [...messages, {sender: "user", content: inputMessage}];
-    setMessages(history);
-    setIsProcessing(true);
-    setLiveThinking([]);
-    try {
-      const response = await fetch(`${API_URL}/chat/stream`, {
-        method: "POST",
-        body: JSON.stringify({messages: history}),
-        headers: {"Content-Type": "application/json"}
-      })
-      if (!response.ok) throw new Error(`Falha ${response.status}`);
-      await readChatStream(response, (event) => {
-        if (event.type === "thinking") {
-          setLiveThinking((prev) => [...prev, event.text]);
-        } else if (event.type === "final") {
-          setMessages([...history, {sender: "bot", content: event.answer.message.content, thinking: event.answer.message.thinking, sources: event.sources, citations: event.citations}]);
-        } else {
-          setMessages([...history, {sender: "bot", content: event.message}]);
-        }
-      });
-    } catch (e) {
-      console.log(e)
-      setMessages([...history, {sender: "bot", content: "Não foi possível gerar a resposta. Tente novamente."}]);
-    } finally {
-      setIsProcessing(false);
-      setLiveThinking([]);
-    }
-  }
-
-  const sendMessage = STREAM_THINKING ? handleSendMessageStream : handleSendMessageApi;
 
   useEffect(() => {
     const pendingMessage = sessionStorage.getItem("pendingMessage");
