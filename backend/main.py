@@ -10,7 +10,7 @@ from database_utility import needs_indexing, index_data, retrieve_context, fetch
 
 from documents_logic import summarize, find_by_id
 from ollama_interaction import create_payload
-from attribution_logic import split_sentences, similar_chunks, extract_citations, cited_chunks, intersect_chunks
+from attribution_logic import split_sentences, similar_chunks, extract_citations, cited_chunks, intersect_chunks, keep_valid_citations, strip_citations, build_citations
 import providers
 from user_prompt_proccessing import get_message, get_command, execute_command, complete_step
 
@@ -44,6 +44,7 @@ parser.add_argument("--min_score", type=float, default=None, help="Minimum relev
 parser.add_argument("--label_chunks", action="store_true", help="Prefix each retrieved chunk with its source document title")
 parser.add_argument("--source_attribution", nargs="*", choices=["similarity", "citations"], default=[], help="Methods used to keep only the sources that answered the question; combine both to require agreement (default: show every retrieved source)")
 parser.add_argument("--attribution_threshold", type=float, default=None, help="Minimum cosine similarity between an answer sentence and a chunk for similarity attribution (default from config.ini)")
+parser.add_argument("--inline_citations", action="store_true", help="Keep citation markers in the answer and return the cited sources so the frontend can link them (requires --source_attribution citations)")
 parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
 parser.add_argument("--reload", action="store_true", help="Enable auto reload on code changes (development only)")
 parser.add_argument("--agent_prompt", action="store", default="config_agent.md", help="Path to the agent system prompt file")
@@ -51,6 +52,8 @@ parser.add_argument("--host", action="store", default="127.0.0.1", help="Configu
 parser.add_argument("--port", action="store", type=int, default=8000, help="Configure host port")
 
 args = parser.parse_args()
+if args.inline_citations and "citations" not in args.source_attribution:
+    parser.error("--inline_citations requires --source_attribution citations")
 providers.set_provider(args.provider)
 
 def handle_indexing(verbose, debug_rag):
@@ -78,7 +81,12 @@ def attribute_sources(answer, candidates):
     if "citations" in args.source_attribution:
         if args.debug_model:
             answer["message"]["raw_content"] = content
-        content, cited_indexes = extract_citations(content, len(candidates))
+        stripped_content, cited_indexes = extract_citations(content, len(candidates))
+        if args.inline_citations:
+            content = keep_valid_citations(content, len(candidates))
+            answer["citations"] = build_citations(candidates, cited_indexes, args.chunking == "paragraph")
+        else:
+            content = stripped_content
         answer["message"]["content"] = content
         selected = intersect_chunks(selected, cited_chunks(candidates, cited_indexes))
 
@@ -86,7 +94,7 @@ def attribute_sources(answer, candidates):
         threshold = args.attribution_threshold
         if threshold is None:
             threshold = config.getfloat("attribution", "SIMILARITY_THRESHOLD")
-        sentences = split_sentences(content)
+        sentences = split_sentences(strip_citations(content))
         sentence_vectors = embed_sources(sentences) if sentences else []
         selected = intersect_chunks(selected, similar_chunks(sentence_vectors, candidates, threshold))
 
@@ -134,7 +142,8 @@ async def process_message(item: ChatRequest):
     historico_conversa = []
     if (len(item.messages) > 1):
         for message in item.messages[:-1]:
-            historico_conversa.append({"role": message.sender, "content": message.content})
+            content = strip_citations(message.content) if args.inline_citations else message.content
+            historico_conversa.append({"role": message.sender, "content": content})
 
     chunk_ids_anteriores = [chunk_id for message in item.messages[:-1] for source in message.sources for chunk_id in source.chunk_ids]
 
@@ -159,7 +168,8 @@ async def process_message(item: ChatRequest):
     fontes = group_by_title(select_sources(answer, chunks_contexto, chunks_novos))
 
     return {"answer": answer,
-            "sources": fontes}
+            "sources": fontes,
+            "citations": answer.get("citations", [])}
 
 @app.websocket("/ws/chat")
 async def start_agent(websocket: WebSocket = None):
