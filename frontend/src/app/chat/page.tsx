@@ -7,6 +7,8 @@ import { Chatbox } from '../components/chatbox/chatbox';
 import { messageType } from '../components/chatbox/chatbox';
 import { citedDocumentIds } from '@/utils/citedDocuments';
 
+import { API_URL } from "@/config/api";
+
 function AsyncMessenger() {
   //const [inputMessage, setInputMessage] = useState("");
   const [serverStatus, setServerStatus] = useState("Disconnected");
@@ -75,7 +77,7 @@ function AsyncMessenger() {
 
       setIsProcessing(true);
       setReceivedMessage("");
-      const response = await fetch("https://tcc-2026-vdrb.onrender.com/chat", {
+      const response = await fetch(`${API_URL}/chat`, {
         method: "POST",
         body: JSON.stringify({
           messages: payload,
