@@ -5,6 +5,7 @@ import { Sidebar } from '../components/sidebar/sidebar';
 import { Chatbox } from '../components/chatbox/chatbox';
 
 import { messageType } from '../components/chatbox/chatbox';
+import { citedDocumentIds } from '@/utils/citedDocuments';
 
 function AsyncMessenger() {
   //const [inputMessage, setInputMessage] = useState("");
@@ -135,7 +136,7 @@ function AsyncMessenger() {
     );}
 
   return (
-    <Sidebar content={pageContent()} />
+    <Sidebar content={pageContent()} citedDocumentIds={citedDocumentIds(messages)} />
   );
 }
 
