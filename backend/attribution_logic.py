@@ -38,6 +38,31 @@ def extract_citations(answer, chunk_count):
     return CITATION_PATTERN.sub("", answer), cited
 
 
+def keep_valid_citations(answer, chunk_count):
+    def keep(match):
+        numbers = [int(number) for number in match.group(1).split(",")]
+        valid = [number for number in numbers if 1 <= number <= chunk_count]
+        return f" [{', '.join(str(number) for number in valid)}]" if valid else ""
+    return CITATION_PATTERN.sub(keep, answer)
+
+
+def strip_citations(text):
+    return CITATION_PATTERN.sub("", text)
+
+
+def build_citations(chunks, cited_indexes, paragraph_chunks):
+    citations = []
+    for index in sorted(cited_indexes):
+        document_id, _, chunk_index = chunks[index]["chunk_id"].rpartition(":")
+        citations.append({
+            "number": index + 1,
+            "doc_id": document_id,
+            "title": chunks[index]["title"],
+            "chunk_index": int(chunk_index) if paragraph_chunks else None,
+        })
+    return citations
+
+
 def cited_chunks(chunks, cited_indexes):
     return [chunk for index, chunk in enumerate(chunks) if index in cited_indexes]
 
