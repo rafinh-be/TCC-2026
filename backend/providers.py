@@ -32,6 +32,10 @@ def chat(payload, verbose=False, debug_model=False):
     module = import_module(PROVIDER_MODULES[get_provider()])
     return module.chat(payload, verbose=verbose, debug_model=debug_model)
 
+def chat_stream(payload, verbose=False, debug_model=False):
+    module = import_module(PROVIDER_MODULES[get_provider()])
+    return module.chat_stream(payload, verbose=verbose, debug_model=debug_model)
+
 def create_embedding_model():
     module = import_module(EMBEDDING_MODULES[get_provider()])
     return module.create_embedding_model()

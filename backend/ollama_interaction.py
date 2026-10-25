@@ -86,3 +86,12 @@ def chat_with_thought_limit(payload, MAX_THINK_TOKENS=300, verbose=False, debug_
 
 
 chat = chat_with_thought_limit
+
+
+def chat_stream(payload, verbose=False, debug_model=False):
+    response = chat_with_thought_limit(payload, verbose=verbose, debug_model=debug_model)
+    message = {"role": "assistant", "content": response["message"]["content"]}
+    thinking = response["message"].get("thinking")
+    if (thinking):
+        message["thinking"] = thinking
+    yield {"type": "answer", "answer": {"message": message}}
