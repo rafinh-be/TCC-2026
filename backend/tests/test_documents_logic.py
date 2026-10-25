@@ -13,11 +13,12 @@ def test_build_document_reads_frontmatter_fields():
         "title": "Pré-eclâmpsia",
         "tags": ["alto_risco"],
         "content": "corpo",
+        "paragraph_spans": [[0, 5]],
     }
 
 
 def test_build_document_falls_back_to_file_stem():
-    assert build_document({}, "corpo", "arquivo") == {"id": "arquivo", "title": "arquivo", "tags": [], "content": "corpo"}
+    assert build_document({}, "corpo", "arquivo") == {"id": "arquivo", "title": "arquivo", "tags": [], "content": "corpo", "paragraph_spans": [[0, 5]]}
 
 
 def test_summarize_drops_content():

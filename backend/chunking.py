@@ -8,6 +8,18 @@ def split_paragraphs(text):
     return [paragraph.strip() for paragraph in text.split(PARAGRAPH_SEPARATOR) if paragraph.strip()]
 
 
+def paragraph_spans(text):
+    spans = []
+    position = 0
+    for piece in text.split(PARAGRAPH_SEPARATOR):
+        stripped = piece.strip()
+        if stripped:
+            start = position + piece.index(stripped)
+            spans.append([start, start + len(stripped)])
+        position += len(piece) + len(PARAGRAPH_SEPARATOR)
+    return spans
+
+
 def _next_word_start(text, position):
     while position < len(text) and not text[position - 1].isspace():
         position += 1
