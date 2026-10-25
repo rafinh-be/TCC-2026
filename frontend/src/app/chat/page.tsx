@@ -84,7 +84,7 @@ function AsyncMessenger() {
       const data = await response.json()
       setIsProcessing(false);
 
-      setMessages([...messages, {sender: "user", content: inputMessage}, {sender: "bot", content: data["answer"].message.content, sources: data["sources"]}])
+      setMessages([...messages, {sender: "user", content: inputMessage}, {sender: "bot", content: data["answer"].message.content, sources: data["sources"], citations: data["citations"]}])
       console.log(response)
     } catch (e) {
       console.log(e)
