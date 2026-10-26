@@ -1,6 +1,7 @@
 import { ChunkingSlide } from "./chunkingSlide";
 import { CompareSlide } from "./compareSlide";
 import { DemoSlide } from "./demoSlide";
+import { EmbeddingMapSlide } from "./embeddingMapSlide";
 import { MetricsSlide } from "./metricsSlide";
 import { PipelineSlide } from "./pipelineSlide";
 import type { slideType } from "./slides";
@@ -22,6 +23,8 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <DemoSlide slide={slide} />;
         case "chunking":
             return <ChunkingSlide slide={slide} />;
+        case "embeddingMap":
+            return <EmbeddingMapSlide slide={slide} />;
         case "compare":
             return <CompareSlide slide={slide} />;
         case "sources":

@@ -5,9 +5,10 @@ export type pipelineSlideType = { kind: "pipeline", id: string, title: string, s
 export type compareSideType = { label: string, points: string[] };
 export type compareSlideType = { kind: "compare", id: string, title: string, before: compareSideType, after: compareSideType, note: string };
 export type chunkingSlideType = { kind: "chunking", id: string, title: string, strategyNotes: { paragraph: string, window: string } };
+export type embeddingMapSlideType = { kind: "embeddingMap", id: string, title: string, caption: string, modelNotes: Record<string, string> };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | chunkingSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | chunkingSlideType | embeddingMapSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -51,6 +52,17 @@ export const slides: slideType[] = [
         strategyNotes: {
             paragraph: "Estratégia atual: cada parágrafo da base vira um trecho. Preserva o sentido e permite citar o parágrafo exato.",
             window: "Alternativa: agrupa parágrafos até 500 caracteres e divide parágrafos longos com 100 caracteres de sobreposição.",
+        },
+    },
+    {
+        kind: "embeddingMap",
+        id: "embedding-mapa",
+        title: "Do MiniLM ao Gemini Embedding",
+        refs: ["minilm", "gemini-embedding", "gemini-embeddings-docs", "matryoshka"],
+        caption: "Cada ponto é um trecho da base. Passe o mouse para destacar o documento. Projeção 2D (PCA): mostra proximidade entre trechos, não a qualidade da busca.",
+        modelNotes: {
+            minilm: "Antes: modelo local de 384 dimensões, treinado para frases em vários idiomas{ref:minilm}.",
+            gemini: "Agora: 768 dimensões, com tipos de tarefa distintos para documento e pergunta{ref:gemini-embeddings-docs}, um corte do vetor completo (Matryoshka){ref:matryoshka}{ref:gemini-embedding}.",
         },
     },
     {
