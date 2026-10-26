@@ -4,9 +4,10 @@ export type demoSlideType = { kind: "demo", id: string, claim: string, title: st
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
 export type compareSideType = { label: string, points: string[] };
 export type compareSlideType = { kind: "compare", id: string, title: string, before: compareSideType, after: compareSideType, note: string };
+export type chunkingSlideType = { kind: "chunking", id: string, title: string, strategyNotes: { paragraph: string, window: string } };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | chunkingSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -41,6 +42,16 @@ export const slides: slideType[] = [
             "Interface: do terminal para um aplicativo web com documentos e citações.",
             "Base de conhecimento: 16 documentos, incluindo materiais do HU-USP.",
         ],
+    },
+    {
+        kind: "chunking",
+        id: "chunking",
+        title: "Como a base é dividida em trechos",
+        refs: ["rag"],
+        strategyNotes: {
+            paragraph: "Estratégia atual: cada parágrafo da base vira um trecho. Preserva o sentido e permite citar o parágrafo exato.",
+            window: "Alternativa: agrupa parágrafos até 500 caracteres e divide parágrafos longos com 100 caracteres de sobreposição.",
+        },
     },
     {
         kind: "pipeline",
