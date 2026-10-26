@@ -1,3 +1,4 @@
+import { CompareSlide } from "./compareSlide";
 import { DemoSlide } from "./demoSlide";
 import { MetricsSlide } from "./metricsSlide";
 import { PipelineSlide } from "./pipelineSlide";
@@ -18,6 +19,8 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <MetricsSlide slide={slide} />;
         case "demo":
             return <DemoSlide slide={slide} />;
+        case "compare":
+            return <CompareSlide slide={slide} />;
         case "sources":
             return <SourcesSlide slide={slide} />;
     }

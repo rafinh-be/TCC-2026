@@ -2,9 +2,11 @@ export type titleSlideType = { kind: "title", id: string, kicker: string, title:
 export type textSlideType = { kind: "text", id: string, title: string, bullets: string[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
+export type compareSideType = { label: string, points: string[] };
+export type compareSlideType = { kind: "compare", id: string, title: string, before: compareSideType, after: compareSideType, note: string };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -39,6 +41,42 @@ export const slides: slideType[] = [
             "Interface: do terminal para um aplicativo web com documentos e citações.",
             "Base de conhecimento: 16 documentos, incluindo materiais do HU-USP.",
         ],
+    },
+    {
+        kind: "pipeline",
+        id: "pensamento",
+        title: "O que é pensar antes de responder",
+        refs: ["cot", "gemini-thinking"],
+        stages: [
+            { label: "Pergunta", detail: "A pergunta e os trechos recuperados chegam ao modelo" },
+            { label: "Raciocínio", detail: "O modelo gera passos intermediários antes de responder{ref:cot}" },
+            { label: "Resumo exibido", detail: "A API devolve um resumo do raciocínio, não os passos completos{ref:gemini-thinking}" },
+            { label: "Resposta", detail: "Só então o modelo escreve a resposta com citações" },
+        ],
+        note: "O nível de raciocínio é configurável (minimal, low, medium, high): mais raciocínio, mais latência. A interface usa o nível medium.",
+    },
+    {
+        kind: "compare",
+        id: "pensamento-vs-verificacao",
+        title: "Por que o raciocínio substitui a verificação",
+        refs: ["self-refine", "self-correct", "cot"],
+        before: {
+            label: "Antes: gerar, criticar e refinar",
+            points: [
+                "Uma chamada gera a resposta.",
+                "Chamadas extras criticam e refinam a resposta.",
+                "Cada pergunta custa várias chamadas ao modelo.",
+            ],
+        },
+        after: {
+            label: "Agora: pensar e responder",
+            points: [
+                "Uma chamada: o modelo raciocina e responde{ref:cot}.",
+                "O resumo do raciocínio fica visível ao usuário.",
+                "Menos chamadas por pergunta.",
+            ],
+        },
+        note: "A literatura mostra os dois lados: o refinamento iterativo melhora saídas em várias tarefas{ref:self-refine}, mas modelos nem sempre corrigem o próprio raciocínio sem feedback externo{ref:self-correct}. A fidelidade das respostas é medida na etapa de avaliação.",
     },
     {
         kind: "demo",
