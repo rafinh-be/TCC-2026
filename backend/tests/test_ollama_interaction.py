@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+import ollama
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -65,3 +66,29 @@ def test_fallback_gives_up_after_one_retry(scripted_chat):
     result = ollama_interaction.chat_with_thought_limit(PAYLOAD)
     assert result["message"]["content"] == ""
     assert len(calls) == 3
+
+
+def typed_response(content, done_reason="stop", thinking=None):
+    return ollama.ChatResponse(model="qwen", done_reason=done_reason, message=ollama.Message(role="assistant", content=content, thinking=thinking))
+
+
+def test_answer_accepts_citations_and_raw_content_like_the_gemini_answer(scripted_chat):
+    scripted_chat([typed_response("resposta [1]")])
+    answer = ollama_interaction.chat_with_thought_limit(PAYLOAD)
+    answer["message"]["raw_content"] = "resposta [1]"
+    answer["citations"] = []
+    assert answer["message"]["content"] == "resposta [1]"
+
+
+def test_fallback_answer_is_a_plain_dict_with_thinking(scripted_chat):
+    scripted_chat([typed_response("", "length", "pensando"), typed_response("resposta final")])
+    answer = ollama_interaction.chat_with_thought_limit(PAYLOAD)
+    answer["citations"] = []
+    assert answer["message"]["content"] == "resposta final"
+    assert answer["message"]["thinking"].startswith("<think>")
+
+
+def test_stream_answer_event_carries_the_plain_answer(scripted_chat):
+    scripted_chat([typed_response("resposta")])
+    events = list(ollama_interaction.chat_stream(PAYLOAD))
+    assert events == [{"type": "answer", "answer": {"message": {"role": "assistant", "content": "resposta"}}}]
