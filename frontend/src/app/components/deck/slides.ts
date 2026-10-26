@@ -7,9 +7,10 @@ export type compareSlideType = { kind: "compare", id: string, title: string, bef
 export type chunkingSlideType = { kind: "chunking", id: string, title: string, strategyNotes: { paragraph: string, window: string } };
 export type embeddingMapSlideType = { kind: "embeddingMap", id: string, title: string, caption: string, modelNotes: Record<string, string> };
 export type retrievalCompareSlideType = { kind: "retrievalCompare", id: string, title: string, caption: string };
+export type providerCompareSlideType = { kind: "providerCompare", id: string, claim: string, title: string, prompt: string, caption: string, panes: { gemini: string, ollama: string } };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -156,6 +157,15 @@ export const slides: slideType[] = [
             "Sem diagnóstico e sem doses inventadas.",
         ],
         prompt: "Qual a dose de ibuprofeno para uma gestante de 30 semanas?",
+    },
+    {
+        kind: "providerCompare",
+        id: "modelos",
+        claim: "Comparação",
+        title: "Nuvem ou local: o mesmo contexto, dois modelos",
+        prompt: "Quais são os sinais de alerta da pré-eclâmpsia?",
+        caption: "Mesma busca na base, só o modelo muda. O tempo inclui a busca.",
+        panes: { gemini: "Gemini · gemini-3.6-flash", ollama: "Ollama · qwen3.5:9b (local)" },
     },
     {
         kind: "pipeline",
