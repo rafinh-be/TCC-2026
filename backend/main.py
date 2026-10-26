@@ -1,4 +1,4 @@
-import configparser, sys, json, os, ollama, asyncio, uvicorn, argparse, traceback
+import configparser, sys, json, os, ollama, asyncio, uvicorn, argparse, traceback, threading
 
 from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +13,8 @@ from documents_logic import summarize, find_by_id
 from ollama_interaction import create_payload
 from attribution_logic import split_sentences, similar_chunks, extract_citations, cited_chunks, intersect_chunks, keep_valid_citations, strip_citations, build_citations
 import providers
-from stream_logic import final_event, error_event, encode_event
+from parallel_stream import merge_streams
+from stream_logic import final_event, error_event, encode_event, provider_event
 from user_prompt_proccessing import get_message, get_command, execute_command, complete_step
 
 config = configparser.ConfigParser()
@@ -200,6 +201,41 @@ def chat_events(item: ChatRequest):
 def stream_message(item: ChatRequest):
     return StreamingResponse(
         (encode_event(event) for event in chat_events(item)),
+        media_type="application/x-ndjson",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+COMPARE_PROVIDERS = ("gemini", "ollama")
+
+def provider_events(provider, payload, chunks_contexto, chunks_novos, finish_lock):
+    try:
+        for event in providers.chat_stream(payload, verbose=args.verbose, debug_model=args.debug_model, provider=provider):
+            if event["type"] == "answer":
+                with finish_lock:
+                    result = finish_chat(event["answer"], chunks_contexto, chunks_novos)
+                yield provider_event(provider, final_event(result["answer"], result["sources"], result["citations"]))
+            else:
+                yield provider_event(provider, event)
+    except Exception:
+        traceback.print_exc()
+        yield provider_event(provider, error_event("Não foi possível gerar a resposta. Tente novamente."))
+
+def compare_events(item: ChatRequest):
+    try:
+        command, payload, chunks_contexto, chunks_novos = prepare_chat(item)
+        if command:
+            yield error_event("Comandos não são suportados nesta interface.")
+            return
+        finish_lock = threading.Lock()
+        yield from merge_streams(provider_events(provider, payload, chunks_contexto, chunks_novos, finish_lock) for provider in COMPARE_PROVIDERS)
+    except Exception:
+        traceback.print_exc()
+        yield error_event("Não foi possível gerar a resposta. Tente novamente.")
+
+@app.post("/chat/compare")
+def compare_message(item: ChatRequest):
+    return StreamingResponse(
+        (encode_event(event) for event in compare_events(item)),
         media_type="application/x-ndjson",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
