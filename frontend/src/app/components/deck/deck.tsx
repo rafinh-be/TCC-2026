@@ -2,6 +2,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 
 import { actionForKey, advance, ignoresKey, slideFromHash, type deckPosition } from "@/utils/deckNavigation";
+import { ReferencesFooter } from "./referencesFooter";
 import { SlideView } from "./slideView";
 import { slides, stepCounts } from "./slides";
 
@@ -18,6 +19,7 @@ export function Deck() {
     const slide = slideFromHash(hash, slides.length);
     const [stepState, setStepState] = useState<deckPosition>({ slide: 0, step: 0 });
     const step = stepState.slide === slide ? stepState.step : 0;
+    const currentRefs = slides[slide].refs;
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -40,7 +42,10 @@ export function Deck() {
             <div className="min-h-0 flex-1">
                 <SlideView key={slides[slide].id} slide={slides[slide]} step={step} />
             </div>
-            <div className="px-6 py-3 text-right text-sm text-ink-muted">{slide + 1} / {slides.length}</div>
+            <div className="flex items-end justify-between gap-6 px-6 py-3">
+                <div className="min-w-0">{currentRefs && <ReferencesFooter ids={currentRefs} />}</div>
+                <span className="shrink-0 text-sm text-ink-muted">{slide + 1} / {slides.length}</span>
+            </div>
         </div>
     );
 }

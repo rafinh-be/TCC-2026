@@ -1,3 +1,4 @@
+import { RichText } from "./richText";
 import type { pipelineSlideType } from "./slides";
 
 export function PipelineSlide({ slide, step }: { slide: pipelineSlideType, step: number }) {
@@ -12,10 +13,11 @@ export function PipelineSlide({ slide, step }: { slide: pipelineSlideType, step:
                     >
                         <span className="text-sm font-medium">{index + 1}</span>
                         <span className="text-xl font-semibold">{stage.label}</span>
-                        <span className="text-base">{stage.detail}</span>
+                        <span className="text-base"><RichText text={stage.detail} /></span>
                     </li>
                 ))}
             </ol>
+            {slide.note && <p className="text-lg text-ink-muted"><RichText text={slide.note} /></p>}
         </div>
     );
 }

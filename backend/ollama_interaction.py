@@ -34,7 +34,18 @@ def create_payload(historico_conversa, message, contexto, agent_file="config_age
     return payload
 
 
-def chat_with_thought_limit(payload, MAX_THINK_TOKENS=300, verbose=False, debug_model=False):
+FALLBACK_ATTEMPTS = 2
+
+
+def plain_answer(response):
+    message = {"role": "assistant", "content": response["message"]["content"]}
+    thinking = response["message"].get("thinking")
+    if (thinking):
+        message["thinking"] = thinking
+    return {"message": message}
+
+
+def chat_with_thought_limit(payload, MAX_THINK_TOKENS=config.getint("model", "max_think_tokens", fallback=300), verbose=False, debug_model=False):
     messages = payload.copy()
     
     # Safely retrieve model name with explicit fallback syntax
@@ -70,18 +81,23 @@ def chat_with_thought_limit(payload, MAX_THINK_TOKENS=300, verbose=False, debug_
         answer_messages.append({'role': 'assistant', 'content': forced_context})
         answer_messages.append({'role': 'user', 'content': 'Dado o raciocinio do agente acima, continue a resposta e gere uma sintese com base na ultima mensagem do usuario, sistema e o raciocinio'})
 
-        final_response = ollama.chat(
-            model=model_name,
-            messages=answer_messages,
-            options={"temperature": 0.6},
-            stream=False,
-            think=False,
-        )
+        for attempt in range(FALLBACK_ATTEMPTS):
+            final_response = ollama.chat(
+                model=model_name,
+                messages=answer_messages,
+                options={"temperature": 0.6},
+                stream=False,
+                think=False,
+            )
+            if (final_response['message']['content'].strip()):
+                break
+            if (verbose or debug_model):
+                print("Empty final response. Retrying..." if attempt < FALLBACK_ATTEMPTS - 1 else "Empty final response after retry.")
         
         final_response['message']['thinking'] = accumulated_thought
-        return final_response
+        return plain_answer(final_response)
     else:
-        return stream
+        return plain_answer(stream)
     
 
 
@@ -89,9 +105,4 @@ chat = chat_with_thought_limit
 
 
 def chat_stream(payload, verbose=False, debug_model=False):
-    response = chat_with_thought_limit(payload, verbose=verbose, debug_model=debug_model)
-    message = {"role": "assistant", "content": response["message"]["content"]}
-    thinking = response["message"].get("thinking")
-    if (thinking):
-        message["thinking"] = thinking
-    yield {"type": "answer", "answer": {"message": message}}
+    yield {"type": "answer", "answer": chat_with_thought_limit(payload, verbose=verbose, debug_model=debug_model)}

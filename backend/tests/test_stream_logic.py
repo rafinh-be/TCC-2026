@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from stream_logic import split_parts, thinking_event, final_event, error_event, encode_event
+from stream_logic import split_parts, thinking_event, final_event, error_event, encode_event, provider_event
 
 
 def part(text, thought=False):
@@ -37,3 +37,9 @@ def test_encode_event_is_one_json_line_keeping_accents():
     assert line.endswith("\n") and line.count("\n") == 1
     assert "pré-eclâmpsia" in line
     assert json.loads(line) == thinking_event("pré-eclâmpsia")
+
+
+def test_provider_event_adds_the_provider_without_changing_the_event():
+    event = thinking_event("x")
+    assert provider_event("gemini", event) == {"type": "thinking", "text": "x", "provider": "gemini"}
+    assert event == {"type": "thinking", "text": "x"}

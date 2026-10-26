@@ -1,7 +1,13 @@
+import { ChunkingSlide } from "./chunkingSlide";
+import { CompareSlide } from "./compareSlide";
 import { DemoSlide } from "./demoSlide";
+import { EmbeddingMapSlide } from "./embeddingMapSlide";
 import { MetricsSlide } from "./metricsSlide";
 import { PipelineSlide } from "./pipelineSlide";
+import { RetrievalCompareSlide } from "./retrievalCompareSlide";
+import { ProviderCompareSlide } from "./providerCompareSlide";
 import type { slideType } from "./slides";
+import { SourcesSlide } from "./sourcesSlide";
 import { TextSlide } from "./textSlide";
 import { TitleSlide } from "./titleSlide";
 
@@ -17,5 +23,17 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <MetricsSlide slide={slide} />;
         case "demo":
             return <DemoSlide slide={slide} />;
+        case "chunking":
+            return <ChunkingSlide slide={slide} />;
+        case "embeddingMap":
+            return <EmbeddingMapSlide slide={slide} />;
+        case "retrievalCompare":
+            return <RetrievalCompareSlide slide={slide} />;
+        case "providerCompare":
+            return <ProviderCompareSlide slide={slide} />;
+        case "compare":
+            return <CompareSlide slide={slide} />;
+        case "sources":
+            return <SourcesSlide slide={slide} />;
     }
 }

@@ -11,7 +11,7 @@ import { citationType, linkCitations } from "@/utils/linkCitations";
 export type sourceType = { title: string, chunk_ids: string[] };
 export type messageType = { content: string, sender: "user" | "bot", sources?: sourceType[], citations?: citationType[], thinking?: string };
 
-export function Chatbox({ messages, isProcessing, liveThinking = [], onSendMessage }: { messages: messageType[], isProcessing: boolean, liveThinking?: string[], onSendMessage: (message: string) => void }) {
+export function Chatbox({ messages, isProcessing, liveThinking = [], onSendMessage, hideInput = false }: { messages: messageType[], isProcessing: boolean, liveThinking?: string[], onSendMessage: (message: string) => void, hideInput?: boolean }) {
     const bottomRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -66,9 +66,11 @@ export function Chatbox({ messages, isProcessing, liveThinking = [], onSendMessa
                         {chatItems}
                         {waitingIndicator}
                     </div>
-                    <div className="sticky bottom-0 mt-auto bg-linear-to-t from-page from-75% to-transparent pt-6 pb-4">
-                        <ChatInput onSendMessage={onSendMessage} />
-                    </div>
+                    {!hideInput && (
+                        <div className="sticky bottom-0 mt-auto bg-linear-to-t from-page from-75% to-transparent pt-6 pb-4">
+                            <ChatInput onSendMessage={onSendMessage} />
+                        </div>
+                    )}
                     <div ref={bottomRef} />
                 </div>
             </div>
