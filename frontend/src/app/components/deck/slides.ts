@@ -6,9 +6,10 @@ export type compareSideType = { label: string, points: string[] };
 export type compareSlideType = { kind: "compare", id: string, title: string, before: compareSideType, after: compareSideType, note: string };
 export type chunkingSlideType = { kind: "chunking", id: string, title: string, strategyNotes: { paragraph: string, window: string } };
 export type embeddingMapSlideType = { kind: "embeddingMap", id: string, title: string, caption: string, modelNotes: Record<string, string> };
+export type retrievalCompareSlideType = { kind: "retrievalCompare", id: string, title: string, caption: string };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | chunkingSlideType | embeddingMapSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -64,6 +65,13 @@ export const slides: slideType[] = [
             minilm: "Antes: modelo local de 384 dimensões, treinado para frases em vários idiomas{ref:minilm}.",
             gemini: "Agora: 768 dimensões, com tipos de tarefa distintos para documento e pergunta{ref:gemini-embeddings-docs}, um corte do vetor completo (Matryoshka){ref:matryoshka}{ref:gemini-embedding}.",
         },
+    },
+    {
+        kind: "retrievalCompare",
+        id: "embedding-busca",
+        title: "A mesma pergunta nos dois índices",
+        refs: ["gemini-embeddings-docs", "lancedb-hybrid"],
+        caption: "Similaridade de cosseno entre a pergunta e cada trecho, só com vetores. O sistema real usa busca híbrida, com vetores e texto{ref:lancedb-hybrid}. Os scores não são comparáveis entre modelos: compare a ordem e os documentos.",
     },
     {
         kind: "pipeline",
