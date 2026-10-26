@@ -1,18 +1,28 @@
+export type titleSlideType = { kind: "title", id: string, kicker: string, title: string, authors: string, institution: string };
 export type textSlideType = { kind: "text", id: string, title: string, bullets: string[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[] };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
-export type slideType = textSlideType | demoSlideType | pipelineSlideType | metricsSlideType;
+export type slideType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | metricsSlideType;
 
 export const slides: slideType[] = [
     {
+        kind: "title",
+        id: "titulo",
+        kicker: "Trabalho de Conclusão de Curso · Apresentação intermediária",
+        title: "Assistente de IA para Letramento em Saúde em Obstetrícia",
+        authors: "Rafa Bertão de Sousa · Victor Rosselli Moraca",
+        institution: "Escola Politécnica da Universidade de São Paulo · 2026",
+    },
+    {
         kind: "text",
-        id: "problema",
-        title: "Letramento em saúde na gestação",
+        id: "recap",
+        title: "Onde estávamos",
         bullets: [
-            "Pacientes com baixo letramento em saúde aderem menos aos tratamentos e sobrecarregam os pronto-socorros.",
-            "Proposta: um assistente de IA que responde apenas a partir de uma base de conhecimento confiável.",
-            "Cinco pilares: base de dados, modelo, engenharia de prompt, verificação e interface.",
+            "Problema: o baixo letramento em saúde reduz a adesão a tratamentos e sobrecarrega os pronto-socorros.",
+            "Proposta: um assistente de IA que responde apenas a partir de uma base de conhecimento confiável (RAG).",
+            "Escopo: obstetrícia, uma área com quadros bem catalogados e pacientes em geral saudáveis.",
+            "Arquitetura: cinco pilares: base de dados, modelo, engenharia de prompt, verificação e interface.",
         ],
     },
     {
