@@ -28,9 +28,13 @@ def get_provider():
     return _active_provider
 
 
-def chat(payload, verbose=False, debug_model=False):
-    module = import_module(PROVIDER_MODULES[get_provider()])
+def chat(payload, verbose=False, debug_model=False, provider=None):
+    module = import_module(PROVIDER_MODULES[provider or get_provider()])
     return module.chat(payload, verbose=verbose, debug_model=debug_model)
+
+def chat_stream(payload, verbose=False, debug_model=False, provider=None):
+    module = import_module(PROVIDER_MODULES[provider or get_provider()])
+    return module.chat_stream(payload, verbose=verbose, debug_model=debug_model)
 
 def create_embedding_model():
     module = import_module(EMBEDDING_MODULES[get_provider()])

@@ -4,8 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Sidebar } from '../components/sidebar/sidebar';
 import { Chatbox } from '../components/chatbox/chatbox';
 
-import { messageType } from '../components/chatbox/chatbox';
 import { citedDocumentIds } from '@/utils/citedDocuments';
+import { useChat } from '@/hooks/useChat';
 
 import { API_URL } from "@/config/api";
 
@@ -13,9 +13,7 @@ function AsyncMessenger() {
   //const [inputMessage, setInputMessage] = useState("");
   const [serverStatus, setServerStatus] = useState("Disconnected");
   const [receivedMessage, setReceivedMessage] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const [messages, setMessages] = useState<messageType[]>([]);
+  const { messages, isProcessing, liveThinking, sendMessage } = useChat();
   
   const socketRef = useRef(null);
 
@@ -98,7 +96,7 @@ function AsyncMessenger() {
     const pendingMessage = sessionStorage.getItem("pendingMessage");
     if (!pendingMessage) return;
     sessionStorage.removeItem("pendingMessage");
-    handleSendMessageApi(pendingMessage);
+    sendMessage(pendingMessage);
   }, []);
 
   const pageContent = () => {
@@ -133,7 +131,7 @@ function AsyncMessenger() {
           <p>{receivedMessage}</p>
         </div>
       )}*/}
-      <Chatbox messages={messages} isProcessing={isProcessing} onSendMessage={handleSendMessageApi} />
+      <Chatbox messages={messages} isProcessing={isProcessing} liveThinking={liveThinking} onSendMessage={sendMessage} />
     </div>
     );}
 
