@@ -1,3 +1,5 @@
+import { RichText } from "./richText";
+
 const sizeClassNames = {
     large: { list: "gap-4", card: "gap-5 px-6 py-5 text-xl", badge: "size-9 text-base" },
     compact: { list: "gap-3", card: "gap-4 px-4 py-3 text-base", badge: "size-7 text-sm" },
@@ -13,7 +15,7 @@ export function PointCards({ points, size }: { points: string[], size: keyof typ
                     <span className={`flex shrink-0 items-center justify-center rounded-full bg-primary-soft font-medium text-primary-ink ${classNames.badge}`}>
                         {index + 1}
                     </span>
-                    <span>{point}</span>
+                    <span><RichText text={point} /></span>
                 </li>
             ))}
         </ol>

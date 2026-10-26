@@ -2,6 +2,7 @@ import { DemoSlide } from "./demoSlide";
 import { MetricsSlide } from "./metricsSlide";
 import { PipelineSlide } from "./pipelineSlide";
 import type { slideType } from "./slides";
+import { SourcesSlide } from "./sourcesSlide";
 import { TextSlide } from "./textSlide";
 import { TitleSlide } from "./titleSlide";
 
@@ -17,5 +18,7 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <MetricsSlide slide={slide} />;
         case "demo":
             return <DemoSlide slide={slide} />;
+        case "sources":
+            return <SourcesSlide slide={slide} />;
     }
 }

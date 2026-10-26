@@ -1,9 +1,11 @@
 export type titleSlideType = { kind: "title", id: string, kicker: string, title: string, authors: string, institution: string };
 export type textSlideType = { kind: "text", id: string, title: string, bullets: string[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
-export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[] };
+export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
-export type slideType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | metricsSlideType;
+export type sourcesSlideType = { kind: "sources", id: string, title: string };
+export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | metricsSlideType | sourcesSlideType;
+export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
     {
@@ -18,9 +20,10 @@ export const slides: slideType[] = [
         kind: "text",
         id: "recap",
         title: "Onde estávamos",
+        refs: ["rag"],
         bullets: [
             "Problema: o baixo letramento em saúde reduz a adesão a tratamentos e sobrecarrega os pronto-socorros.",
-            "Proposta: um assistente de IA que responde apenas a partir de uma base de conhecimento confiável (RAG).",
+            "Proposta: um assistente de IA que responde apenas a partir de uma base de conhecimento confiável (RAG){ref:rag}.",
             "Escopo: obstetrícia, uma área com quadros bem catalogados e pacientes em geral saudáveis.",
             "Arquitetura: cinco pilares: base de dados, modelo, engenharia de prompt, verificação e interface.",
         ],
@@ -29,8 +32,9 @@ export const slides: slideType[] = [
         kind: "text",
         id: "evolucao",
         title: "O que mudou desde a última etapa",
+        refs: ["gemini-thinking"],
         bullets: [
-            "Verificação: a segunda chamada ao modelo foi substituída pelo raciocínio nativo do Gemini.",
+            "Verificação: a segunda chamada ao modelo foi substituída pelo raciocínio nativo do Gemini{ref:gemini-thinking}.",
             "Modelo: provedor local (Ollama) ou Gemini, escolhido na inicialização.",
             "Interface: do terminal para um aplicativo web com documentos e citações.",
             "Base de conhecimento: 16 documentos, incluindo materiais do HU-USP.",
@@ -99,15 +103,22 @@ export const slides: slideType[] = [
         kind: "metrics",
         id: "numeros",
         title: "Avaliação com Ragas",
+        refs: ["ragas"],
     },
     {
         kind: "text",
         id: "proximos-passos",
         title: "Limites e próximos passos",
+        refs: ["ragas"],
         bullets: [
-            "Medir a fidelidade das respostas à base com métricas Ragas.",
+            "Medir a fidelidade das respostas à base com métricas Ragas{ref:ragas}.",
             "Ampliar e revisar a base de conhecimento.",
         ],
+    },
+    {
+        kind: "sources",
+        id: "fontes",
+        title: "Fontes",
     },
 ];
 
