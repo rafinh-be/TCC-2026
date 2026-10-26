@@ -6,6 +6,7 @@ import type { documentTarget } from "@/utils/documentHref";
 import { Chatbox } from "../chatbox/chatbox";
 import { DocumentOpenerContext } from "../chatbox/documentOpener";
 import { DocumentPane } from "./documentPane";
+import { PointCards } from "./pointCards";
 import type { demoSlideType } from "./slides";
 
 export function DemoSlide({ slide }: { slide: demoSlideType }) {
@@ -22,9 +23,7 @@ export function DemoSlide({ slide }: { slide: demoSlideType }) {
             <div className="flex min-h-0 flex-col gap-6 overflow-y-auto px-10 py-12">
                 <p className="text-sm font-medium uppercase tracking-wide text-primary">{slide.claim}</p>
                 <h2 className="text-3xl font-semibold tracking-tight text-ink">{slide.title}</h2>
-                <ul className="flex list-disc flex-col gap-3 pl-5 text-lg text-ink-muted">
-                    {slide.points.map((point) => <li key={point}>{point}</li>)}
-                </ul>
+                <PointCards points={slide.points} size="compact" />
                 <button
                     type="button"
                     disabled={isProcessing}
