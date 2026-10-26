@@ -19,5 +19,9 @@ def error_event(message):
     return {"type": "error", "message": message}
 
 
+def provider_event(provider, event):
+    return {**event, "provider": provider}
+
+
 def encode_event(event):
     return json.dumps(event, ensure_ascii=False) + "\n"

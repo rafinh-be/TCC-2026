@@ -2,9 +2,9 @@ import type { sourceType } from "@/app/components/chatbox/chatbox";
 import type { citationType } from "@/utils/linkCitations";
 
 export type streamEvent =
-    | { type: "thinking", text: string }
-    | { type: "final", answer: { message: { content: string, thinking?: string } }, sources: sourceType[], citations: citationType[] }
-    | { type: "error", message: string };
+    | { type: "thinking", text: string, provider?: string }
+    | { type: "final", answer: { message: { content: string, thinking?: string } }, sources: sourceType[], citations: citationType[], provider?: string }
+    | { type: "error", message: string, provider?: string };
 
 export function parseStreamLines(buffer: string) {
     const lines = buffer.split("\n");
