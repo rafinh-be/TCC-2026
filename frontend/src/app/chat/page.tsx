@@ -7,8 +7,6 @@ import { Chatbox } from '../components/chatbox/chatbox';
 import { citedDocumentIds } from '@/utils/citedDocuments';
 import { useChat } from '@/hooks/useChat';
 
-import { API_URL } from "@/config/api";
-
 function AsyncMessenger() {
   //const [inputMessage, setInputMessage] = useState("");
   const [serverStatus, setServerStatus] = useState("Disconnected");
@@ -64,33 +62,6 @@ function AsyncMessenger() {
     }
   };
   */
-
-  const handleSendMessageApi = async (inputMessage: string) => {
-    try {
-      const payload : messageType[] = [...messages, {content: inputMessage, sender: "user"}];
-
-      setMessages([...messages, {sender: "user", content: inputMessage}]);
-
-      console.log("oi")
-
-      setIsProcessing(true);
-      setReceivedMessage("");
-      const response = await fetch(`${API_URL}/chat`, {
-        method: "POST",
-        body: JSON.stringify({
-          messages: payload,
-        }),
-        headers: {"Content-Type": "application/json"}
-      })
-      const data = await response.json()
-      setIsProcessing(false);
-
-      setMessages([...messages, {sender: "user", content: inputMessage}, {sender: "bot", content: data["answer"].message.content, sources: data["sources"], citations: data["citations"]}])
-      console.log(response)
-    } catch (e) {
-      console.log(e)
-    }
-  }
 
   useEffect(() => {
     const pendingMessage = sessionStorage.getItem("pendingMessage");
