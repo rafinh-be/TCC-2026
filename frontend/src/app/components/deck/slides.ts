@@ -175,6 +175,32 @@ export const slides: slideType[] = [
             },
         ],
     },
+    {
+        kind: "topic",
+        id: "busca-e-conhecimento",
+        title: "Busca e conhecimento",
+        refs: ["minilm", "gemini-embedding", "gemini-embeddings-docs", "lancedb-hybrid"],
+        sections: [
+            {
+                heading: "Embeddings",
+                bullets: [
+                    "Trechos e perguntas viram vetores: textos de sentido parecido ficam próximos.",
+                    "Antes: MiniLM local, com 384 dimensões{ref:minilm}. Agora: Gemini Embedding, com 768 dimensões{ref:gemini-embedding}.",
+                    "Tipos de tarefa distintos para documento e para pergunta{ref:gemini-embeddings-docs}.",
+                    "Permite achar o trecho certo mesmo quando a pergunta usa outras palavras.",
+                ],
+            },
+            {
+                heading: "RAG e chunking",
+                bullets: [
+                    "A base é dividida em trechos antes de ser indexada: cada parágrafo vira um trecho, o que preserva o sentido e permite citar o parágrafo exato.",
+                    "Alternativa em janela: agrupa parágrafos até 500 caracteres, com 100 de sobreposição nos longos.",
+                    "A busca é híbrida, com vetores e texto{ref:lancedb-hybrid}, e entrega até dez trechos ao modelo.",
+                    "A base tem 16 documentos de obstetrícia, incluindo materiais do HU-USP.",
+                ],
+            },
+        ],
+    },
 ];
 
 function stepCount(slide: slideType) {
