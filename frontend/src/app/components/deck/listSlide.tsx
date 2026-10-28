@@ -5,11 +5,11 @@ export function ListSlide({ slide }: { slide: listSlideType }) {
     return (
         <SlideFrame title={slide.title}>
             <div className="flex h-full items-center pb-16">
-                <ul className="flex w-full flex-col gap-3">
+                <ol className="flex w-full list-decimal flex-col gap-4 pl-10 text-3xl text-ink marker:font-semibold marker:text-primary">
                     {slide.items.map((item) => (
-                        <li key={item} className="rounded-2xl border border-line bg-surface px-8 py-4 text-2xl text-ink">{item}</li>
+                        <li key={item} className="pl-3">{item}</li>
                     ))}
-                </ul>
+                </ol>
             </div>
         </SlideFrame>
     );
