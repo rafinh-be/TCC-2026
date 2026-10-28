@@ -5,6 +5,7 @@ export type gridSlideType = { kind: "grid", id: string, title: string, items: gr
 export type listSlideType = { kind: "list", id: string, title: string, items: gridItemType[] };
 export type siteSectionType = { heading: string, bullets: string[] };
 export type siteSlideType = { kind: "site", id: string, title: string, url: string, sections: siteSectionType[] };
+export type modelSlideType = { kind: "model", id: string, title: string, sections: siteSectionType[], prompt: string, panes: { gemini: string, ollama: string } };
 export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
@@ -16,7 +17,7 @@ export type retrievalCompareSlideType = { kind: "retrievalCompare", id: string, 
 export type providerCompareSlideType = { kind: "providerCompare", id: string, claim: string, title: string, prompt: string, caption: string, panes: { gemini: string, ollama: string } };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -83,6 +84,36 @@ export const slides: slideType[] = [
                     "Iniciar o backend várias vezes leva sempre ao mesmo estado: só reindexa quando algo mudou.",
                     "Novas instâncias sobem sem refazer a base de embeddings.",
                     "Abre caminho para escalar e atender N usuários ao mesmo tempo.",
+                ],
+            },
+        ],
+    },
+    {
+        kind: "model",
+        id: "modelo-e-raciocinio",
+        title: "Modelo e raciocínio",
+        prompt: "Quais são os sinais de alerta da pré-eclâmpsia?",
+        panes: { gemini: "Gemini · gemini-3.6-flash", ollama: "Ollama · qwen3.5:9b (local)" },
+        sections: [
+            {
+                heading: "Overhaul do modelo",
+                bullets: [
+                    "O provedor é escolhido na inicialização: Ollama local ou Gemini.",
+                    "Mesma busca na base: só o modelo muda.",
+                ],
+            },
+            {
+                heading: "Thinking",
+                bullets: [
+                    "O modelo raciocina antes de responder, no lugar da segunda chamada de crítica e refinamento.",
+                    "O resumo do raciocínio aparece ao vivo na interface.",
+                ],
+            },
+            {
+                heading: "Processamento na rede",
+                bullets: [
+                    "O Gemini processa na nuvem, fora da máquina local.",
+                    "O tempo de cada resposta aparece ao lado para comparar.",
                 ],
             },
         ],
