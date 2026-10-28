@@ -2,7 +2,7 @@ export type titleSlideType = { kind: "title", id: string, kicker: string, title:
 export type textSlideType = { kind: "text", id: string, title: string, bullets: string[] };
 export type gridItemType = { heading: string, text: string };
 export type gridSlideType = { kind: "grid", id: string, title: string, items: gridItemType[] };
-export type listSlideType = { kind: "list", id: string, title: string, items: string[] };
+export type listSlideType = { kind: "list", id: string, title: string, items: gridItemType[] };
 export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
@@ -55,13 +55,10 @@ export const slides: slideType[] = [
         id: "novos-conceitos",
         title: "Novos conceitos",
         items: [
-            "Overhaul do modelo e dos embeddings + thinking",
-            "Backend idempotente",
-            "Deploy na rede",
-            "Overhaul do embedding e do RAG (chunking)",
-            "Grounding e clarificação",
-            "Atribuição de fontes",
-            "Processamento na rede (pelo Gemini)",
+            { heading: "Infraestrutura", text: "Deploy na rede e backend idempotente" },
+            { heading: "Modelo e raciocínio", text: "Overhaul do modelo, thinking e processamento na rede pelo Gemini" },
+            { heading: "Busca e conhecimento", text: "Overhaul dos embeddings e do RAG (chunking)" },
+            { heading: "Respostas confiáveis", text: "Grounding, clarificação e atribuição de fontes" },
         ],
     },
 ];

@@ -7,9 +7,12 @@ export function ListSlide({ slide }: { slide: listSlideType }) {
             <div className="flex h-full items-center pb-16">
                 <ol className="flex w-full flex-col divide-y divide-line border-y border-line">
                     {slide.items.map((item, index) => (
-                        <li key={item} className="flex items-baseline gap-8 py-4">
+                        <li key={item.heading} className="flex items-baseline gap-8 py-6">
                             <span className="w-14 shrink-0 text-3xl font-light tabular-nums text-primary">{String(index + 1).padStart(2, "0")}</span>
-                            <span className="text-3xl text-ink">{item}</span>
+                            <div className="flex flex-col gap-1">
+                                <span className="text-3xl font-semibold text-ink">{item.heading}</span>
+                                <span className="text-xl text-ink-muted">{item.text}</span>
+                            </div>
                         </li>
                     ))}
                 </ol>
