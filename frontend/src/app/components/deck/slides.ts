@@ -10,6 +10,7 @@ export type topicSlideType = { kind: "topic", id: string, title: string, section
 export type promptDemoSlideType = { kind: "promptDemo", id: string, title: string, section: siteSectionType, prompts: string[] };
 export type flowStepType = { lane: string, label: string, detail: string };
 export type flowSlideType = { kind: "flow", id: string, title: string, steps: flowStepType[] };
+export type closingSlideType = { kind: "closing", id: string, title: string, authors: string };
 export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
@@ -21,7 +22,7 @@ export type retrievalCompareSlideType = { kind: "retrievalCompare", id: string, 
 export type providerCompareSlideType = { kind: "providerCompare", id: string, claim: string, title: string, prompt: string, caption: string, panes: { gemini: string, ollama: string } };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | topicSlideType | promptDemoSlideType | flowSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | topicSlideType | promptDemoSlideType | flowSlideType | closingSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -262,6 +263,29 @@ export const slides: slideType[] = [
             { lane: "Backend", label: "Fontes", detail: "Mantém só os trechos citados. Sem dados, sem fontes." },
             { lane: "Navegador", label: "Resposta final", detail: "Marcadores clicáveis abrem o documento no parágrafo citado." },
         ],
+    },
+    {
+        kind: "grid",
+        id: "proximos-passos",
+        title: "Próximos passos",
+        refs: ["ragas"],
+        items: [
+            { heading: "Avaliação", text: "Medir a fidelidade das respostas à base e a qualidade da busca com métricas Ragas{ref:ragas}." },
+            { heading: "Base de conhecimento", text: "Ampliar e revisar os documentos, em parceria com a maternidade do HU-USP." },
+            { heading: "Limites do grounding", text: "Hoje quem decide se a evidência basta é o modelo; falta um verificador independente das afirmações." },
+            { heading: "Expansão", text: "Outras áreas médicas, integração com sistemas hospitalares e personalização por perfil de paciente." },
+        ],
+    },
+    {
+        kind: "sources",
+        id: "fontes",
+        title: "Fontes",
+    },
+    {
+        kind: "closing",
+        id: "obrigado",
+        title: "Obrigado!",
+        authors: "Rafa Bertão de Sousa · Victor Rosselli Moraca",
     },
 ];
 

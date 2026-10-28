@@ -1,3 +1,4 @@
+import { ClosingSlide } from "./closingSlide";
 import { ChunkingSlide } from "./chunkingSlide";
 import { CompareSlide } from "./compareSlide";
 import { ConceptsSlide } from "./conceptsSlide";
@@ -27,6 +28,8 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <TextSlide slide={slide} />;
         case "flow":
             return <FlowSlide slide={slide} step={step} />;
+        case "closing":
+            return <ClosingSlide slide={slide} />;
         case "grid":
             return <GridSlide slide={slide} />;
         case "promptDemo":
