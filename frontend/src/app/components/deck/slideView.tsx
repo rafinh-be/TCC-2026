@@ -4,6 +4,7 @@ import { ConceptsSlide } from "./conceptsSlide";
 import { DemoSlide } from "./demoSlide";
 import { EmbeddingMapSlide } from "./embeddingMapSlide";
 import { MetricsSlide } from "./metricsSlide";
+import { FlowSlide } from "./flowSlide";
 import { GridSlide } from "./gridSlide";
 import { ListSlide } from "./listSlide";
 import { SiteSlide } from "./siteSlide";
@@ -24,6 +25,8 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <TitleSlide slide={slide} />;
         case "text":
             return <TextSlide slide={slide} />;
+        case "flow":
+            return <FlowSlide slide={slide} step={step} />;
         case "grid":
             return <GridSlide slide={slide} />;
         case "promptDemo":

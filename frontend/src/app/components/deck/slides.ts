@@ -8,6 +8,8 @@ export type siteSlideType = { kind: "site", id: string, title: string, url: stri
 export type modelSlideType = { kind: "model", id: string, title: string, sections: siteSectionType[], prompt: string, panes: { gemini: string, ollama: string } };
 export type topicSlideType = { kind: "topic", id: string, title: string, sections: siteSectionType[] };
 export type promptDemoSlideType = { kind: "promptDemo", id: string, title: string, section: siteSectionType, prompts: string[] };
+export type flowStepType = { lane: string, label: string, detail: string };
+export type flowSlideType = { kind: "flow", id: string, title: string, steps: flowStepType[] };
 export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
@@ -19,7 +21,7 @@ export type retrievalCompareSlideType = { kind: "retrievalCompare", id: string, 
 export type providerCompareSlideType = { kind: "providerCompare", id: string, claim: string, title: string, prompt: string, caption: string, panes: { gemini: string, ollama: string } };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | topicSlideType | promptDemoSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | topicSlideType | promptDemoSlideType | flowSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -246,11 +248,27 @@ export const slides: slideType[] = [
             ],
         },
     },
+    {
+        kind: "flow",
+        id: "pipeline",
+        title: "Pipeline de uma mensagem",
+        steps: [
+            { lane: "Navegador", label: "Pergunta", detail: "O usuário envia a mensagem e o histórico da conversa." },
+            { lane: "Backend", label: "Índice", detail: "Verifica a base e só reindexa se algo mudou." },
+            { lane: "Base", label: "Busca híbrida", detail: "Vetores e texto trazem até dez trechos relevantes." },
+            { lane: "Backend", label: "Prompt", detail: "Junta prompt de sistema, histórico, trechos numerados e pergunta." },
+            { lane: "Modelo", label: "Raciocínio", detail: "O modelo pensa antes de responder e o resumo aparece ao vivo." },
+            { lane: "Modelo", label: "Resposta", detail: "Escreve só com os trechos, citando [1], [2]." },
+            { lane: "Backend", label: "Fontes", detail: "Mantém só os trechos citados. Sem dados, sem fontes." },
+            { lane: "Navegador", label: "Resposta final", detail: "Marcadores clicáveis abrem o documento no parágrafo citado." },
+        ],
+    },
 ];
 
 function stepCount(slide: slideType) {
     if (slide.kind === "pipeline") return slide.stages.length;
     if (slide.kind === "concepts") return slide.items.length;
+    if (slide.kind === "flow") return slide.steps.length;
     return 1;
 }
 
