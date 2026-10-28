@@ -206,7 +206,7 @@ export const slides: slideType[] = [
         kind: "promptDemo",
         id: "prompt-grounding",
         title: "Prompt de sistema",
-        prompts: ["Quais são os sinais de alerta da pré-eclâmpsia?", "Qual a dose de ibuprofeno para uma gestante de 30 semanas?"],
+        prompts: ["Quem é você e o que você sabe sobre microcontroladores?", "Quais são os sinais de alerta da pré-eclâmpsia?"],
         section: {
             heading: "Grounding",
             bullets: [
