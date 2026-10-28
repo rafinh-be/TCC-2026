@@ -6,6 +6,7 @@ export type listSlideType = { kind: "list", id: string, title: string, items: gr
 export type siteSectionType = { heading: string, bullets: string[] };
 export type siteSlideType = { kind: "site", id: string, title: string, url: string, sections: siteSectionType[] };
 export type modelSlideType = { kind: "model", id: string, title: string, sections: siteSectionType[], prompt: string, panes: { gemini: string, ollama: string } };
+export type topicSlideType = { kind: "topic", id: string, title: string, sections: siteSectionType[] };
 export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
@@ -17,7 +18,7 @@ export type retrievalCompareSlideType = { kind: "retrievalCompare", id: string, 
 export type providerCompareSlideType = { kind: "providerCompare", id: string, claim: string, title: string, prompt: string, caption: string, panes: { gemini: string, ollama: string } };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | topicSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -89,31 +90,87 @@ export const slides: slideType[] = [
         ],
     },
     {
+        kind: "topic",
+        id: "overhaul-modelo",
+        title: "Overhaul do modelo",
+        sections: [
+            {
+                heading: "O que é",
+                bullets: [
+                    "O modelo de linguagem deixou de ser fixo: o provedor é escolhido ao iniciar o backend.",
+                    "Dois provedores: Ollama, rodando localmente (qwen3.5:9b), e Gemini, na nuvem (gemini-3.6-flash).",
+                ],
+            },
+            {
+                heading: "Por que importa",
+                bullets: [
+                    "É o modelo que escreve a resposta final: sua capacidade define a qualidade do texto.",
+                    "Modelos mais capazes tendem a seguir melhor instruções longas, como não diagnosticar e responder só com a base.",
+                ],
+            },
+            {
+                heading: "Na prática",
+                bullets: [
+                    "O resto do pipeline não muda: mesma busca, mesmo prompt, mesmas citações.",
+                    "Trocar de modelo é uma opção de inicialização, não uma reescrita.",
+                ],
+            },
+        ],
+    },
+    {
+        kind: "topic",
+        id: "thinking",
+        title: "Thinking",
+        refs: ["cot", "gemini-thinking", "self-refine", "self-correct"],
+        sections: [
+            {
+                heading: "O que é",
+                bullets: [
+                    "Antes de responder, o modelo gera passos intermediários de raciocínio{ref:cot}.",
+                    "A API do Gemini devolve um resumo desse raciocínio, não os passos completos{ref:gemini-thinking}.",
+                ],
+            },
+            {
+                heading: "Por que importa",
+                bullets: [
+                    "Substitui a segunda chamada de crítica e refinamento: menos chamadas por pergunta.",
+                    "O refinamento iterativo melhora saídas{ref:self-refine}, mas modelos nem sempre corrigem o próprio raciocínio sem feedback externo{ref:self-correct}.",
+                ],
+            },
+            {
+                heading: "Na prática",
+                bullets: [
+                    "O nível de raciocínio é configurável (minimal, low, medium, high): mais raciocínio, mais latência.",
+                    "A interface usa o nível medium e mostra o resumo ao vivo enquanto o modelo pensa.",
+                ],
+            },
+        ],
+    },
+    {
         kind: "model",
-        id: "modelo-e-raciocinio",
-        title: "Modelo e raciocínio",
+        id: "processamento-na-rede",
+        title: "Processamento na rede",
         prompt: "Quais são os sinais de alerta da pré-eclâmpsia?",
         panes: { gemini: "Gemini · gemini-3.6-flash", ollama: "Ollama · qwen3.5:9b (local)" },
         sections: [
             {
-                heading: "Overhaul do modelo",
+                heading: "O que é",
                 bullets: [
-                    "O provedor é escolhido na inicialização: Ollama local ou Gemini.",
-                    "Mesma busca na base: só o modelo muda.",
+                    "O modelo roda na API do Gemini, na nuvem, e não mais na máquina local.",
                 ],
             },
             {
-                heading: "Thinking",
+                heading: "Por que importa",
                 bullets: [
-                    "O modelo raciocina antes de responder, no lugar da segunda chamada de crítica e refinamento.",
-                    "O resumo do raciocínio aparece ao vivo na interface.",
+                    "O app não depende do hardware de quem o executa: qualquer navegador usa o mesmo modelo.",
+                    "O servidor publicado não precisa de uma GPU própria.",
                 ],
             },
             {
-                heading: "Processamento na rede",
+                heading: "Na prática",
                 bullets: [
-                    "O Gemini processa na nuvem, fora da máquina local.",
-                    "O tempo de cada resposta aparece ao lado para comparar.",
+                    "A chave de API fica no servidor, nunca no navegador.",
+                    "Cada resposta mostra seu tempo, ao lado do modelo local respondendo à mesma pergunta.",
                 ],
             },
         ],

@@ -15,6 +15,7 @@ import type { slideType } from "./slides";
 import { SourcesSlide } from "./sourcesSlide";
 import { TextSlide } from "./textSlide";
 import { TitleSlide } from "./titleSlide";
+import { TopicSlide } from "./topicSlide";
 
 export function SlideView({ slide, step }: { slide: slideType, step: number }) {
     switch (slide.kind) {
@@ -24,6 +25,8 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <TextSlide slide={slide} />;
         case "grid":
             return <GridSlide slide={slide} />;
+        case "topic":
+            return <TopicSlide slide={slide} />;
         case "model":
             return <ModelSlide slide={slide} />;
         case "site":
