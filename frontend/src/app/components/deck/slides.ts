@@ -72,17 +72,17 @@ export const slides: slideType[] = [
             {
                 heading: "Deploy na rede",
                 bullets: [
-                    "O app fica publicado e abre em qualquer navegador, sem instalar nada.",
-                    "A chave do Gemini fica no servidor, nunca no navegador.",
-                    "O backend aceita requisições só do endereço do site (CORS).",
+                    "Do protótipo local para um app publicado, acessível a qualquer pessoa pela internet.",
+                    "Frontend totalmente novo, em Next.js.",
+                    "O projeto chega a um estado muito mais próximo de um produto acabado.",
                 ],
             },
             {
                 heading: "Backend idempotente",
                 bullets: [
-                    "Ao iniciar, compara notas, modelo de embeddings e divisão em trechos com o estado salvo.",
-                    "Só reindexa quando algo mudou.",
-                    "Reiniciar o servidor não refaz os embeddings.",
+                    "Iniciar o backend várias vezes leva sempre ao mesmo estado: só reindexa quando algo mudou.",
+                    "Novas instâncias sobem sem refazer a base de embeddings.",
+                    "Abre caminho para escalar e atender N usuários ao mesmo tempo.",
                 ],
             },
         ],
