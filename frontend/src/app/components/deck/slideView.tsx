@@ -1,5 +1,6 @@
 import { ChunkingSlide } from "./chunkingSlide";
 import { CompareSlide } from "./compareSlide";
+import { ConceptsSlide } from "./conceptsSlide";
 import { DemoSlide } from "./demoSlide";
 import { EmbeddingMapSlide } from "./embeddingMapSlide";
 import { MetricsSlide } from "./metricsSlide";
@@ -20,6 +21,8 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <TextSlide slide={slide} />;
         case "grid":
             return <GridSlide slide={slide} />;
+        case "concepts":
+            return <ConceptsSlide slide={slide} step={step} />;
         case "pipeline":
             return <PipelineSlide slide={slide} step={step} />;
         case "metrics":
