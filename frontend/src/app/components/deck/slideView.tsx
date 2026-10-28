@@ -1,15 +1,24 @@
+import { ClosingSlide } from "./closingSlide";
 import { ChunkingSlide } from "./chunkingSlide";
 import { CompareSlide } from "./compareSlide";
+import { ConceptsSlide } from "./conceptsSlide";
 import { DemoSlide } from "./demoSlide";
 import { EmbeddingMapSlide } from "./embeddingMapSlide";
 import { MetricsSlide } from "./metricsSlide";
+import { FlowSlide } from "./flowSlide";
+import { GridSlide } from "./gridSlide";
+import { ListSlide } from "./listSlide";
+import { SiteSlide } from "./siteSlide";
+import { ModelSlide } from "./modelSlide";
 import { PipelineSlide } from "./pipelineSlide";
 import { RetrievalCompareSlide } from "./retrievalCompareSlide";
+import { PromptDemoSlide } from "./promptDemoSlide";
 import { ProviderCompareSlide } from "./providerCompareSlide";
 import type { slideType } from "./slides";
 import { SourcesSlide } from "./sourcesSlide";
 import { TextSlide } from "./textSlide";
 import { TitleSlide } from "./titleSlide";
+import { TopicSlide } from "./topicSlide";
 
 export function SlideView({ slide, step }: { slide: slideType, step: number }) {
     switch (slide.kind) {
@@ -17,6 +26,24 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <TitleSlide slide={slide} />;
         case "text":
             return <TextSlide slide={slide} />;
+        case "flow":
+            return <FlowSlide slide={slide} step={step} />;
+        case "closing":
+            return <ClosingSlide slide={slide} />;
+        case "grid":
+            return <GridSlide slide={slide} />;
+        case "promptDemo":
+            return <PromptDemoSlide slide={slide} />;
+        case "topic":
+            return <TopicSlide slide={slide} />;
+        case "model":
+            return <ModelSlide slide={slide} />;
+        case "site":
+            return <SiteSlide slide={slide} />;
+        case "list":
+            return <ListSlide slide={slide} />;
+        case "concepts":
+            return <ConceptsSlide slide={slide} step={step} />;
         case "pipeline":
             return <PipelineSlide slide={slide} step={step} />;
         case "metrics":

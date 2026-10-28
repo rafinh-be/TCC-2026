@@ -1,5 +1,17 @@
 export type titleSlideType = { kind: "title", id: string, kicker: string, title: string, authors: string, institution: string };
 export type textSlideType = { kind: "text", id: string, title: string, bullets: string[] };
+export type gridItemType = { heading: string, text: string };
+export type gridSlideType = { kind: "grid", id: string, title: string, items: gridItemType[] };
+export type listSlideType = { kind: "list", id: string, title: string, items: gridItemType[] };
+export type siteSectionType = { heading: string, bullets: string[] };
+export type siteSlideType = { kind: "site", id: string, title: string, url: string, sections: siteSectionType[] };
+export type modelSlideType = { kind: "model", id: string, title: string, sections: siteSectionType[], prompt: string, panes: { gemini: string, ollama: string } };
+export type topicSlideType = { kind: "topic", id: string, title: string, sections: siteSectionType[] };
+export type promptDemoSlideType = { kind: "promptDemo", id: string, title: string, section: siteSectionType, prompts: string[] };
+export type flowStepType = { lane: string, label: string, detail: string };
+export type flowSlideType = { kind: "flow", id: string, title: string, steps: flowStepType[] };
+export type closingSlideType = { kind: "closing", id: string, title: string, authors: string };
+export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
 export type compareSideType = { label: string, points: string[] };
@@ -10,7 +22,7 @@ export type retrievalCompareSlideType = { kind: "retrievalCompare", id: string, 
 export type providerCompareSlideType = { kind: "providerCompare", id: string, claim: string, title: string, prompt: string, caption: string, panes: { gemini: string, ollama: string } };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | topicSlideType | promptDemoSlideType | flowSlideType | closingSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -23,175 +35,245 @@ export const slides: slideType[] = [
         institution: "Escola Politécnica da Universidade de São Paulo · 2026",
     },
     {
-        kind: "text",
+        kind: "grid",
         id: "recap",
         title: "Onde estávamos",
         refs: ["rag"],
-        bullets: [
-            "Problema: o baixo letramento em saúde reduz a adesão a tratamentos e sobrecarrega os pronto-socorros.",
-            "Proposta: um assistente de IA que responde apenas a partir de uma base de conhecimento confiável (RAG){ref:rag}.",
-            "Escopo: obstetrícia, uma área com quadros bem catalogados e pacientes em geral saudáveis.",
-            "Arquitetura: cinco pilares: base de dados, modelo, engenharia de prompt, verificação e interface.",
+        items: [
+            { heading: "Problema", text: "O baixo letramento em saúde reduz a adesão a tratamentos e sobrecarrega os pronto-socorros." },
+            { heading: "Proposta", text: "Um assistente de IA que responde apenas a partir de uma base de conhecimento confiável (RAG){ref:rag}." },
+            { heading: "Escopo", text: "Obstetrícia, uma área com quadros bem catalogados e pacientes em geral saudáveis." },
+            { heading: "Arquitetura", text: "Cinco pilares: base de dados, modelo, engenharia de prompt, verificação e interface." },
         ],
     },
     {
-        kind: "text",
-        id: "evolucao",
-        title: "O que mudou desde a última etapa",
-        refs: ["gemini-thinking"],
-        bullets: [
-            "Verificação: a segunda chamada ao modelo foi substituída pelo raciocínio nativo do Gemini{ref:gemini-thinking}.",
-            "Modelo: provedor local (Ollama) ou Gemini, escolhido na inicialização.",
-            "Interface: do terminal para um aplicativo web com documentos e citações.",
-            "Base de conhecimento: 16 documentos, incluindo materiais do HU-USP.",
-        ],
-    },
-    {
-        kind: "chunking",
-        id: "chunking",
-        title: "Como a base é dividida em trechos",
+        kind: "concepts",
+        id: "conceitos",
+        title: "Conceitos importantes",
         refs: ["rag"],
-        strategyNotes: {
-            paragraph: "Estratégia atual: cada parágrafo da base vira um trecho. Preserva o sentido e permite citar o parágrafo exato.",
-            window: "Alternativa: agrupa parágrafos até 500 caracteres e divide parágrafos longos com 100 caracteres de sobreposição.",
-        },
-    },
-    {
-        kind: "embeddingMap",
-        id: "embedding-mapa",
-        title: "Do MiniLM ao Gemini Embedding",
-        refs: ["minilm", "gemini-embedding", "gemini-embeddings-docs", "matryoshka"],
-        caption: "Cada ponto é um trecho da base. Passe o mouse para destacar o documento. Projeção 2D (PCA): mostra proximidade entre trechos, não a qualidade da busca.",
-        modelNotes: {
-            minilm: "Antes: modelo local de 384 dimensões, treinado para frases em vários idiomas{ref:minilm}.",
-            gemini: "Agora: 768 dimensões, com tipos de tarefa distintos para documento e pergunta{ref:gemini-embeddings-docs}, um corte do vetor completo (Matryoshka){ref:matryoshka}{ref:gemini-embedding}.",
-        },
-    },
-    {
-        kind: "retrievalCompare",
-        id: "embedding-busca",
-        title: "A mesma pergunta nos dois índices",
-        refs: ["gemini-embeddings-docs", "lancedb-hybrid"],
-        caption: "Similaridade de cosseno entre a pergunta e cada trecho, só com vetores. O sistema real usa busca híbrida, com vetores e texto{ref:lancedb-hybrid}. Os scores não são comparáveis entre modelos: compare a ordem e os documentos.",
-    },
-    {
-        kind: "pipeline",
-        id: "pensamento",
-        title: "O que é pensar antes de responder",
-        refs: ["cot", "gemini-thinking"],
-        stages: [
-            { label: "Pergunta", detail: "A pergunta e os trechos recuperados chegam ao modelo" },
-            { label: "Raciocínio", detail: "O modelo gera passos intermediários antes de responder{ref:cot}" },
-            { label: "Resumo exibido", detail: "A API devolve um resumo do raciocínio, não os passos completos{ref:gemini-thinking}" },
-            { label: "Resposta", detail: "Só então o modelo escreve a resposta com citações" },
+        items: [
+            { heading: "Modelo e agente", text: "Um modelo de linguagem (LLM) é um modelo de aprendizado de máquina que, após treinamentos intensivos, prevê o resultado esperado a partir de entradas e dialoga de forma quase humana. Sozinho, ele alucina: inventa respostas não factuais, porque seu treinamento não é composto só de conteúdo factual e sua diretriz principal é agradar o usuário, não ser preciso. Um agente é uma envoltura sobre o modelo que adiciona contextualização e iteração para gerar resultados mais precisos: engenharia de prompt, gerenciamento de contexto e etapas de verificação contornam os maiores problemas do modelo puro." },
+            { heading: "Engenharia de prompt", text: "É a camada que contextualiza o modelo para o propósito da ferramenta. No projeto, o prompt apresenta o propósito do assistente, o perfil da paciente e a informação médica disponível, e fixa restrições: responder só com a base, não diagnosticar e não estimar números." },
+            { heading: "RAG", text: "O RAG (Retrieval-Augmented Generation) transforma o modelo em um mecanismo de pesquisa: em vez de retornar apenas links, devolve um resumo do conteúdo encontrado, explicado da forma mais conveniente ao usuário{ref:rag}. Ao restringir o contexto a uma base limitada porém confiável, reduz dramaticamente a probabilidade de alucinação. No projeto, a base reúne 16 documentos de obstetrícia." },
+            { heading: "Grounding", text: "Grounding é manter a resposta presa a fontes verificadas: o modelo só afirma o que está nos trechos recuperados, o que garante respostas factuais. Quando a base não traz informação suficiente, o assistente recusa em vez de inventar; diante de uma pergunta ambígua, pergunta antes de responder." },
         ],
-        note: "O nível de raciocínio é configurável (minimal, low, medium, high): mais raciocínio, mais latência. A interface usa o nível medium.",
     },
     {
-        kind: "compare",
-        id: "pensamento-vs-verificacao",
-        title: "Por que o raciocínio substitui a verificação",
-        refs: ["self-refine", "self-correct", "cot"],
-        before: {
-            label: "Antes: gerar, criticar e refinar",
-            points: [
-                "Uma chamada gera a resposta.",
-                "Chamadas extras criticam e refinam a resposta.",
-                "Cada pergunta custa várias chamadas ao modelo.",
-            ],
-        },
-        after: {
-            label: "Agora: pensar e responder",
-            points: [
-                "Uma chamada: o modelo raciocina e responde{ref:cot}.",
-                "O resumo do raciocínio fica visível ao usuário.",
-                "Menos chamadas por pergunta.",
-            ],
-        },
-        note: "A literatura mostra os dois lados: o refinamento iterativo melhora saídas em várias tarefas{ref:self-refine}, mas modelos nem sempre corrigem o próprio raciocínio sem feedback externo{ref:self-correct}. A fidelidade das respostas é medida na etapa de avaliação.",
-    },
-    {
-        kind: "demo",
-        id: "fundamentada",
-        claim: "Afirmação 1",
-        title: "Responde apenas com o que está na base",
-        points: [
-            "A busca recupera trechos da base de conhecimento.",
-            "A resposta é escrita só com esses trechos.",
-            "As fontes usadas aparecem abaixo da resposta.",
+        kind: "list",
+        id: "novos-conceitos",
+        title: "Novos conceitos",
+        items: [
+            { heading: "Infraestrutura", text: "Deploy na rede e backend idempotente" },
+            { heading: "Modelo e raciocínio", text: "Overhaul do modelo, thinking e processamento na rede pelo Gemini" },
+            { heading: "Busca e conhecimento", text: "Overhaul dos embeddings e do RAG (chunking)" },
+            { heading: "Prompt de sistema", text: "Grounding, clarificação e atribuição de fontes" },
         ],
+    },
+    {
+        kind: "site",
+        id: "infraestrutura",
+        title: "Infraestrutura",
+        url: "https://tcc-2026-1.onrender.com/",
+        sections: [
+            {
+                heading: "Deploy na rede",
+                bullets: [
+                    "Do protótipo local para um app publicado, acessível a qualquer pessoa pela internet.",
+                    "Frontend totalmente novo, em Next.js.",
+                    "O projeto chega a um estado muito mais próximo de um produto acabado.",
+                ],
+            },
+            {
+                heading: "Backend idempotente",
+                bullets: [
+                    "Iniciar o backend várias vezes leva sempre ao mesmo estado: só reindexa quando algo mudou.",
+                    "Novas instâncias sobem sem refazer a base de embeddings.",
+                    "Abre caminho para escalar e atender N usuários ao mesmo tempo.",
+                ],
+            },
+        ],
+    },
+    {
+        kind: "topic",
+        id: "overhaul-modelo",
+        title: "Overhaul do modelo",
+        sections: [
+            {
+                heading: "O que é",
+                bullets: [
+                    "O modelo de linguagem deixou de ser fixo: o provedor é escolhido ao iniciar o backend.",
+                    "Dois provedores: Ollama, rodando localmente (qwen3.5:9b), e Gemini, na nuvem (gemini-3.6-flash).",
+                ],
+            },
+            {
+                heading: "Por que importa",
+                bullets: [
+                    "É o modelo que escreve a resposta final: sua capacidade define a qualidade do texto.",
+                    "Modelos mais capazes tendem a seguir melhor instruções longas, como não diagnosticar e responder só com a base.",
+                ],
+            },
+            {
+                heading: "Na prática",
+                bullets: [
+                    "O resto do pipeline não muda: mesma busca, mesmo prompt, mesmas citações.",
+                    "Trocar de modelo é uma opção de inicialização, não uma reescrita.",
+                ],
+            },
+        ],
+    },
+    {
+        kind: "topic",
+        id: "thinking",
+        title: "Thinking",
+        refs: ["cot", "gemini-thinking", "self-refine", "self-correct"],
+        sections: [
+            {
+                heading: "O que é",
+                bullets: [
+                    "Antes de responder, o modelo gera passos intermediários de raciocínio{ref:cot}.",
+                    "A API do Gemini devolve um resumo desse raciocínio, não os passos completos{ref:gemini-thinking}.",
+                ],
+            },
+            {
+                heading: "Por que importa",
+                bullets: [
+                    "Substitui a segunda chamada de crítica e refinamento: menos chamadas por pergunta.",
+                    "O refinamento iterativo melhora saídas{ref:self-refine}, mas modelos nem sempre corrigem o próprio raciocínio sem feedback externo{ref:self-correct}.",
+                ],
+            },
+            {
+                heading: "Na prática",
+                bullets: [
+                    "O nível de raciocínio é configurável (minimal, low, medium, high): mais raciocínio, mais latência.",
+                    "A interface usa o nível medium e mostra o resumo ao vivo enquanto o modelo pensa.",
+                ],
+            },
+        ],
+    },
+    {
+        kind: "model",
+        id: "processamento-na-rede",
+        title: "Processamento na rede",
         prompt: "Quais são os sinais de alerta da pré-eclâmpsia?",
-    },
-    {
-        kind: "demo",
-        id: "raciocinio",
-        claim: "Afirmação 2",
-        title: "Raciocina antes de responder",
-        points: [
-            "Resumos do raciocínio chegam enquanto o modelo pensa.",
-            "Perguntas ambíguas geram um pedido de esclarecimento.",
-            "Substitui a antiga etapa de verificação com uma segunda chamada.",
-        ],
-        prompt: "Estou sentindo dor, o que pode ser?",
-    },
-    {
-        kind: "demo",
-        id: "rastreavel",
-        claim: "Afirmação 3",
-        title: "Cada afirmação aponta para a fonte",
-        points: [
-            "Marcadores numerados ligam a resposta ao trecho original.",
-            "Clique em um marcador para abrir o documento.",
-            "O parágrafo citado fica destacado.",
-        ],
-        prompt: "Como é feito o diagnóstico de diabetes gestacional?",
-    },
-    {
-        kind: "demo",
-        id: "limites",
-        claim: "Afirmação 4",
-        title: "Sabe quando não sabe",
-        points: [
-            "Sem informação na base, a resposta diz isso.",
-            "Nenhuma fonte é exibida nesses casos.",
-            "Sem diagnóstico e sem doses inventadas.",
-        ],
-        prompt: "Qual a dose de ibuprofeno para uma gestante de 30 semanas?",
-    },
-    {
-        kind: "providerCompare",
-        id: "modelos",
-        claim: "Comparação",
-        title: "Nuvem ou local: o mesmo contexto, dois modelos",
-        prompt: "Quais são os sinais de alerta da pré-eclâmpsia?",
-        caption: "Mesma busca na base, só o modelo muda. O tempo inclui a busca.",
         panes: { gemini: "Gemini · gemini-3.6-flash", ollama: "Ollama · qwen3.5:9b (local)" },
-    },
-    {
-        kind: "pipeline",
-        id: "arquitetura",
-        title: "Como a resposta é construída",
-        stages: [
-            { label: "Busca na base", detail: "Trechos relevantes da base de conhecimento" },
-            { label: "Raciocínio", detail: "O modelo pensa antes de responder" },
-            { label: "Resposta com citações", detail: "Marcadores ligam cada afirmação à fonte" },
-            { label: "Limites", detail: "Sem dados na base, o assistente recusa e não cita fontes" },
+        sections: [
+            {
+                heading: "O que é",
+                bullets: [
+                    "O modelo roda na API do Gemini, na nuvem, e não mais na máquina local.",
+                ],
+            },
+            {
+                heading: "Por que importa",
+                bullets: [
+                    "O app não depende do hardware de quem o executa: qualquer navegador usa o mesmo modelo.",
+                    "O servidor publicado não precisa de uma GPU própria.",
+                ],
+            },
+            {
+                heading: "Na prática",
+                bullets: [
+                    "A chave de API fica no servidor, nunca no navegador.",
+                    "Cada resposta mostra seu tempo, ao lado do modelo local respondendo à mesma pergunta.",
+                ],
+            },
         ],
     },
     {
-        kind: "metrics",
-        id: "numeros",
-        title: "Avaliação com Ragas",
-        refs: ["ragas"],
+        kind: "topic",
+        id: "busca-e-conhecimento",
+        title: "Busca e conhecimento",
+        refs: ["minilm", "gemini-embedding", "gemini-embeddings-docs", "lancedb-hybrid"],
+        sections: [
+            {
+                heading: "Embeddings",
+                bullets: [
+                    "Trechos e perguntas viram vetores: textos de sentido parecido ficam próximos.",
+                    "Antes: MiniLM local, com 384 dimensões{ref:minilm}. Agora: Gemini Embedding, com 768 dimensões{ref:gemini-embedding}.",
+                    "Tipos de tarefa distintos para documento e para pergunta{ref:gemini-embeddings-docs}.",
+                    "Permite achar o trecho certo mesmo quando a pergunta usa outras palavras.",
+                ],
+            },
+            {
+                heading: "RAG e chunking",
+                bullets: [
+                    "A base é dividida em trechos antes de ser indexada: cada parágrafo vira um trecho, o que preserva o sentido e permite citar o parágrafo exato.",
+                    "Alternativa em janela: agrupa parágrafos até 500 caracteres, com 100 de sobreposição nos longos.",
+                    "A busca é híbrida, com vetores e texto{ref:lancedb-hybrid}, e entrega até dez trechos ao modelo.",
+                    "A base tem 16 documentos de obstetrícia, incluindo materiais do HU-USP.",
+                ],
+            },
+        ],
     },
     {
-        kind: "text",
+        kind: "promptDemo",
+        id: "prompt-grounding",
+        title: "Prompt de sistema",
+        prompts: ["Quem é você e o que você sabe sobre microcontroladores?", "Quais são os sinais de alerta da pré-eclâmpsia?"],
+        section: {
+            heading: "Grounding",
+            bullets: [
+                "O prompt fixa a identidade do agente e restrições que nada sobrescreve.",
+                "Responde só com o que está nos trechos recuperados, reescrito com as próprias palavras.",
+                "Sem dados suficientes, usa uma frase fixa de recusa em vez de inventar.",
+                "Sem diagnóstico e sem números inventados: os valores dos trechos são preservados.",
+            ],
+        },
+    },
+    {
+        kind: "promptDemo",
+        id: "prompt-clarificacao",
+        title: "Prompt de sistema",
+        prompts: ["Estou sentindo dor, o que pode ser?"],
+        section: {
+            heading: "Clarificação",
+            bullets: [
+                "Antes de responder, avalia se a pergunta tem uma única leitura clara.",
+                "Se for ambígua, faz uma pergunta breve e acolhedora com as possibilidades mais prováveis.",
+                "Dados relacionados na base não provam que servem à dúvida da paciente.",
+                "Não é uma recusa: depois do esclarecimento, as demais regras se aplicam.",
+            ],
+        },
+    },
+    {
+        kind: "promptDemo",
+        id: "prompt-fontes",
+        title: "Prompt de sistema",
+        prompts: ["Como é feito o diagnóstico de diabetes gestacional?"],
+        section: {
+            heading: "Atribuição de fontes",
+            bullets: [
+                "Os trechos chegam numerados e o modelo cita o número ao final de cada frase que os usa.",
+                "Cada marcador vira um link para o documento, com o parágrafo citado destacado.",
+                "A interface pode mostrar só as fontes realmente usadas, por citação, por similaridade ou pelas duas.",
+            ],
+        },
+    },
+    {
+        kind: "flow",
+        id: "pipeline",
+        title: "Pipeline de uma mensagem",
+        steps: [
+            { lane: "Navegador", label: "Pergunta", detail: "O usuário envia a mensagem e o histórico da conversa." },
+            { lane: "Backend", label: "Índice", detail: "Verifica a base e só reindexa se algo mudou." },
+            { lane: "Base", label: "Busca híbrida", detail: "Vetores e texto trazem até dez trechos relevantes." },
+            { lane: "Backend", label: "Prompt", detail: "Junta prompt de sistema, histórico, trechos numerados e pergunta." },
+            { lane: "Modelo", label: "Raciocínio", detail: "O modelo pensa antes de responder e o resumo aparece ao vivo." },
+            { lane: "Modelo", label: "Resposta", detail: "Escreve só com os trechos, citando [1], [2]." },
+            { lane: "Backend", label: "Fontes", detail: "Mantém só os trechos citados. Sem dados, sem fontes." },
+            { lane: "Navegador", label: "Resposta final", detail: "Marcadores clicáveis abrem o documento no parágrafo citado." },
+        ],
+    },
+    {
+        kind: "grid",
         id: "proximos-passos",
-        title: "Limites e próximos passos",
+        title: "Próximos passos",
         refs: ["ragas"],
-        bullets: [
-            "Medir a fidelidade das respostas à base com métricas Ragas{ref:ragas}.",
-            "Ampliar e revisar a base de conhecimento.",
+        items: [
+            { heading: "Avaliação", text: "Medir a fidelidade das respostas à base e a qualidade da busca com métricas Ragas{ref:ragas}." },
+            { heading: "Base de conhecimento", text: "Ampliar e revisar os documentos, em parceria com a maternidade do HU-USP." },
+            { heading: "Limites do grounding", text: "Hoje quem decide se a evidência basta é o modelo; falta um verificador independente das afirmações." },
+            { heading: "Expansão", text: "Outras áreas médicas, integração com sistemas hospitalares e personalização por perfil de paciente." },
         ],
     },
     {
@@ -199,6 +281,19 @@ export const slides: slideType[] = [
         id: "fontes",
         title: "Fontes",
     },
+    {
+        kind: "closing",
+        id: "obrigado",
+        title: "Obrigado!",
+        authors: "Rafa Bertão de Sousa · Victor Rosselli Moraca",
+    },
 ];
 
-export const stepCounts = slides.map((slide) => (slide.kind === "pipeline" ? slide.stages.length : 1));
+function stepCount(slide: slideType) {
+    if (slide.kind === "pipeline") return slide.stages.length;
+    if (slide.kind === "concepts") return slide.items.length;
+    if (slide.kind === "flow") return slide.steps.length;
+    return 1;
+}
+
+export const stepCounts = slides.map(stepCount);
