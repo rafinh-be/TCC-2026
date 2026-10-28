@@ -7,6 +7,11 @@ const blockClassNames = {
         heading: "text-[calc(1.875rem*min(1,100vh/900px))]",
         bullets: "gap-[calc(0.5rem*min(1,100vh/900px))] text-[calc(1.5rem*min(1,100vh/900px))]",
     },
+    dense: {
+        card: "gap-[calc(1rem*min(1,100vh/1080px))] p-[calc(2rem*min(1,100vh/1080px))]",
+        heading: "text-[calc(1.875rem*min(1,100vh/1080px))]",
+        bullets: "gap-[calc(0.5rem*min(1,100vh/1080px))] text-[calc(1.5rem*min(1,100vh/1080px))]",
+    },
     compact: {
         card: "gap-[calc(0.5rem*min(1,100vh/900px))] p-[calc(1.25rem*min(1,100vh/900px))]",
         heading: "text-[calc(1.5rem*min(1,100vh/900px))]",

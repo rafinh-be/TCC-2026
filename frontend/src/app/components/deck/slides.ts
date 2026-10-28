@@ -6,7 +6,7 @@ export type listSlideType = { kind: "list", id: string, title: string, items: gr
 export type siteSectionType = { heading: string, bullets: string[] };
 export type siteSlideType = { kind: "site", id: string, title: string, url: string, sections: siteSectionType[] };
 export type modelSlideType = { kind: "model", id: string, title: string, sections: siteSectionType[], prompt: string, panes: { gemini: string, ollama: string } };
-export type topicSlideType = { kind: "topic", id: string, title: string, sections: siteSectionType[] };
+export type topicSlideType = { kind: "topic", id: string, title: string, sections: siteSectionType[], size?: "regular" | "dense" };
 export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
@@ -62,7 +62,7 @@ export const slides: slideType[] = [
             { heading: "Infraestrutura", text: "Deploy na rede e backend idempotente" },
             { heading: "Modelo e raciocínio", text: "Overhaul do modelo, thinking e processamento na rede pelo Gemini" },
             { heading: "Busca e conhecimento", text: "Overhaul dos embeddings e do RAG (chunking)" },
-            { heading: "Respostas confiáveis", text: "Grounding, clarificação e atribuição de fontes" },
+            { heading: "Prompt de sistema", text: "Grounding, clarificação e atribuição de fontes" },
         ],
     },
     {
@@ -197,6 +197,40 @@ export const slides: slideType[] = [
                     "Alternativa em janela: agrupa parágrafos até 500 caracteres, com 100 de sobreposição nos longos.",
                     "A busca é híbrida, com vetores e texto{ref:lancedb-hybrid}, e entrega até dez trechos ao modelo.",
                     "A base tem 16 documentos de obstetrícia, incluindo materiais do HU-USP.",
+                ],
+            },
+        ],
+    },
+    {
+        kind: "topic",
+        id: "prompt-de-sistema",
+        title: "Prompt de sistema",
+        size: "dense",
+        sections: [
+            {
+                heading: "Grounding",
+                bullets: [
+                    "O prompt fixa a identidade do agente e restrições que nada sobrescreve.",
+                    "Responde só com o que está nos trechos recuperados, reescrito com as próprias palavras.",
+                    "Sem dados suficientes, usa uma frase fixa de recusa em vez de inventar.",
+                    "Sem diagnóstico e sem números inventados: os valores dos trechos são preservados.",
+                ],
+            },
+            {
+                heading: "Clarificação",
+                bullets: [
+                    "Antes de responder, avalia se a pergunta tem uma única leitura clara.",
+                    "Se for ambígua, faz uma pergunta breve e acolhedora com as possibilidades mais prováveis.",
+                    "Dados relacionados na base não provam que servem à dúvida da paciente.",
+                    "Não é uma recusa: depois do esclarecimento, as demais regras se aplicam.",
+                ],
+            },
+            {
+                heading: "Atribuição de fontes",
+                bullets: [
+                    "Os trechos chegam numerados e o modelo cita o número ao final de cada frase que os usa.",
+                    "Cada marcador vira um link para o documento, com o parágrafo citado destacado.",
+                    "A interface pode mostrar só as fontes realmente usadas, por citação, por similaridade ou pelas duas.",
                 ],
             },
         ],

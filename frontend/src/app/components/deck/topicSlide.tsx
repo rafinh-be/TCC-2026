@@ -9,7 +9,7 @@ export function TopicSlide({ slide }: { slide: topicSlideType }) {
         <SlideFrame title={slide.title}>
             <div className={`grid h-full ${columnClassNames[slide.sections.length]} content-center gap-12 pb-16`}>
                 {slide.sections.map((section) => (
-                    <SectionBlock key={section.heading} section={section} />
+                    <SectionBlock key={section.heading} section={section} size={slide.size} />
                 ))}
             </div>
         </SlideFrame>
