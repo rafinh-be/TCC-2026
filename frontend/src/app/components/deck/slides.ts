@@ -49,6 +49,17 @@ export const slides: slideType[] = [
             { heading: "Grounding", text: "Grounding é manter a resposta presa a fontes verificadas: o modelo só afirma o que está nos trechos recuperados, o que garante respostas factuais. Quando a base não traz informação suficiente, o assistente recusa em vez de inventar; diante de uma pergunta ambígua, pergunta antes de responder." },
         ],
     },
+    {
+        kind: "grid",
+        id: "novos-conceitos",
+        title: "Novos conceitos",
+        items: [
+            { heading: "Embeddings", text: "Como o texto vira vetor para a busca, agora com o Gemini Embedding." },
+            { heading: "Thinking", text: "O modelo raciocina antes de responder, no lugar de uma segunda chamada de verificação." },
+            { heading: "Chunking", text: "Como a base é dividida em trechos antes de ser indexada." },
+            { heading: "Atribuição de fontes", text: "Como cada resposta aponta para os trechos que a sustentam." },
+        ],
+    },
 ];
 
 function stepCount(slide: slideType) {
