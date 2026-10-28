@@ -10,6 +10,7 @@ import { SiteSlide } from "./siteSlide";
 import { ModelSlide } from "./modelSlide";
 import { PipelineSlide } from "./pipelineSlide";
 import { RetrievalCompareSlide } from "./retrievalCompareSlide";
+import { PromptDemoSlide } from "./promptDemoSlide";
 import { ProviderCompareSlide } from "./providerCompareSlide";
 import type { slideType } from "./slides";
 import { SourcesSlide } from "./sourcesSlide";
@@ -25,6 +26,8 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <TextSlide slide={slide} />;
         case "grid":
             return <GridSlide slide={slide} />;
+        case "promptDemo":
+            return <PromptDemoSlide slide={slide} />;
         case "topic":
             return <TopicSlide slide={slide} />;
         case "model":

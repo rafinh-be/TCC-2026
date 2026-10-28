@@ -6,7 +6,8 @@ export type listSlideType = { kind: "list", id: string, title: string, items: gr
 export type siteSectionType = { heading: string, bullets: string[] };
 export type siteSlideType = { kind: "site", id: string, title: string, url: string, sections: siteSectionType[] };
 export type modelSlideType = { kind: "model", id: string, title: string, sections: siteSectionType[], prompt: string, panes: { gemini: string, ollama: string } };
-export type topicSlideType = { kind: "topic", id: string, title: string, sections: siteSectionType[], size?: "regular" | "dense" };
+export type topicSlideType = { kind: "topic", id: string, title: string, sections: siteSectionType[] };
+export type promptDemoSlideType = { kind: "promptDemo", id: string, title: string, section: siteSectionType, prompts: string[] };
 export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
@@ -18,7 +19,7 @@ export type retrievalCompareSlideType = { kind: "retrievalCompare", id: string, 
 export type providerCompareSlideType = { kind: "providerCompare", id: string, claim: string, title: string, prompt: string, caption: string, panes: { gemini: string, ollama: string } };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | topicSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | siteSlideType | modelSlideType | topicSlideType | promptDemoSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -202,38 +203,48 @@ export const slides: slideType[] = [
         ],
     },
     {
-        kind: "topic",
-        id: "prompt-de-sistema",
+        kind: "promptDemo",
+        id: "prompt-grounding",
         title: "Prompt de sistema",
-        size: "dense",
-        sections: [
-            {
-                heading: "Grounding",
-                bullets: [
-                    "O prompt fixa a identidade do agente e restrições que nada sobrescreve.",
-                    "Responde só com o que está nos trechos recuperados, reescrito com as próprias palavras.",
-                    "Sem dados suficientes, usa uma frase fixa de recusa em vez de inventar.",
-                    "Sem diagnóstico e sem números inventados: os valores dos trechos são preservados.",
-                ],
-            },
-            {
-                heading: "Clarificação",
-                bullets: [
-                    "Antes de responder, avalia se a pergunta tem uma única leitura clara.",
-                    "Se for ambígua, faz uma pergunta breve e acolhedora com as possibilidades mais prováveis.",
-                    "Dados relacionados na base não provam que servem à dúvida da paciente.",
-                    "Não é uma recusa: depois do esclarecimento, as demais regras se aplicam.",
-                ],
-            },
-            {
-                heading: "Atribuição de fontes",
-                bullets: [
-                    "Os trechos chegam numerados e o modelo cita o número ao final de cada frase que os usa.",
-                    "Cada marcador vira um link para o documento, com o parágrafo citado destacado.",
-                    "A interface pode mostrar só as fontes realmente usadas, por citação, por similaridade ou pelas duas.",
-                ],
-            },
-        ],
+        prompts: ["Quais são os sinais de alerta da pré-eclâmpsia?", "Qual a dose de ibuprofeno para uma gestante de 30 semanas?"],
+        section: {
+            heading: "Grounding",
+            bullets: [
+                "O prompt fixa a identidade do agente e restrições que nada sobrescreve.",
+                "Responde só com o que está nos trechos recuperados, reescrito com as próprias palavras.",
+                "Sem dados suficientes, usa uma frase fixa de recusa em vez de inventar.",
+                "Sem diagnóstico e sem números inventados: os valores dos trechos são preservados.",
+            ],
+        },
+    },
+    {
+        kind: "promptDemo",
+        id: "prompt-clarificacao",
+        title: "Prompt de sistema",
+        prompts: ["Estou sentindo dor, o que pode ser?"],
+        section: {
+            heading: "Clarificação",
+            bullets: [
+                "Antes de responder, avalia se a pergunta tem uma única leitura clara.",
+                "Se for ambígua, faz uma pergunta breve e acolhedora com as possibilidades mais prováveis.",
+                "Dados relacionados na base não provam que servem à dúvida da paciente.",
+                "Não é uma recusa: depois do esclarecimento, as demais regras se aplicam.",
+            ],
+        },
+    },
+    {
+        kind: "promptDemo",
+        id: "prompt-fontes",
+        title: "Prompt de sistema",
+        prompts: ["Como é feito o diagnóstico de diabetes gestacional?"],
+        section: {
+            heading: "Atribuição de fontes",
+            bullets: [
+                "Os trechos chegam numerados e o modelo cita o número ao final de cada frase que os usa.",
+                "Cada marcador vira um link para o documento, com o parágrafo citado destacado.",
+                "A interface pode mostrar só as fontes realmente usadas, por citação, por similaridade ou pelas duas.",
+            ],
+        },
     },
 ];
 
