@@ -3,7 +3,8 @@ export type textSlideType = { kind: "text", id: string, title: string, bullets: 
 export type gridItemType = { heading: string, text: string };
 export type gridSlideType = { kind: "grid", id: string, title: string, items: gridItemType[] };
 export type listSlideType = { kind: "list", id: string, title: string, items: gridItemType[] };
-export type siteSlideType = { kind: "site", id: string, title: string, url: string };
+export type siteSectionType = { heading: string, bullets: string[] };
+export type siteSlideType = { kind: "site", id: string, title: string, url: string, sections: siteSectionType[] };
 export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
@@ -67,6 +68,24 @@ export const slides: slideType[] = [
         id: "infraestrutura",
         title: "Infraestrutura",
         url: "https://tcc-2026-1.onrender.com/",
+        sections: [
+            {
+                heading: "Deploy na rede",
+                bullets: [
+                    "O app fica publicado e abre em qualquer navegador, sem instalar nada.",
+                    "A chave do Gemini fica no servidor, nunca no navegador.",
+                    "O backend aceita requisições só do endereço do site (CORS).",
+                ],
+            },
+            {
+                heading: "Backend idempotente",
+                bullets: [
+                    "Ao iniciar, compara notas, modelo de embeddings e divisão em trechos com o estado salvo.",
+                    "Só reindexa quando algo mudou.",
+                    "Reiniciar o servidor não refaz os embeddings.",
+                ],
+            },
+        ],
     },
 ];
 
