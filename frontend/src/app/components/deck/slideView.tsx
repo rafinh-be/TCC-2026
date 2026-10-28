@@ -5,6 +5,7 @@ import { DemoSlide } from "./demoSlide";
 import { EmbeddingMapSlide } from "./embeddingMapSlide";
 import { MetricsSlide } from "./metricsSlide";
 import { GridSlide } from "./gridSlide";
+import { ListSlide } from "./listSlide";
 import { PipelineSlide } from "./pipelineSlide";
 import { RetrievalCompareSlide } from "./retrievalCompareSlide";
 import { ProviderCompareSlide } from "./providerCompareSlide";
@@ -21,6 +22,8 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
             return <TextSlide slide={slide} />;
         case "grid":
             return <GridSlide slide={slide} />;
+        case "list":
+            return <ListSlide slide={slide} />;
         case "concepts":
             return <ConceptsSlide slide={slide} step={step} />;
         case "pipeline":

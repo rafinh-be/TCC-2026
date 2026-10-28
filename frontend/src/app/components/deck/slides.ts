@@ -2,6 +2,7 @@ export type titleSlideType = { kind: "title", id: string, kicker: string, title:
 export type textSlideType = { kind: "text", id: string, title: string, bullets: string[] };
 export type gridItemType = { heading: string, text: string };
 export type gridSlideType = { kind: "grid", id: string, title: string, items: gridItemType[] };
+export type listSlideType = { kind: "list", id: string, title: string, items: string[] };
 export type conceptsSlideType = { kind: "concepts", id: string, title: string, items: gridItemType[] };
 export type demoSlideType = { kind: "demo", id: string, claim: string, title: string, points: string[], prompt: string };
 export type pipelineSlideType = { kind: "pipeline", id: string, title: string, stages: { label: string, detail: string }[], note?: string };
@@ -13,7 +14,7 @@ export type retrievalCompareSlideType = { kind: "retrievalCompare", id: string, 
 export type providerCompareSlideType = { kind: "providerCompare", id: string, claim: string, title: string, prompt: string, caption: string, panes: { gemini: string, ollama: string } };
 export type metricsSlideType = { kind: "metrics", id: string, title: string };
 export type sourcesSlideType = { kind: "sources", id: string, title: string };
-export type slideKindType = titleSlideType | textSlideType | gridSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
+export type slideKindType = titleSlideType | textSlideType | gridSlideType | listSlideType | conceptsSlideType | demoSlideType | pipelineSlideType | providerCompareSlideType | chunkingSlideType | embeddingMapSlideType | retrievalCompareSlideType | compareSlideType | metricsSlideType | sourcesSlideType;
 export type slideType = slideKindType & { refs?: string[] };
 
 export const slides: slideType[] = [
@@ -50,14 +51,17 @@ export const slides: slideType[] = [
         ],
     },
     {
-        kind: "grid",
+        kind: "list",
         id: "novos-conceitos",
         title: "Novos conceitos",
         items: [
-            { heading: "Embeddings", text: "Como o texto vira vetor para a busca, agora com o Gemini Embedding." },
-            { heading: "Thinking", text: "O modelo raciocina antes de responder, no lugar de uma segunda chamada de verificação." },
-            { heading: "Chunking", text: "Como a base é dividida em trechos antes de ser indexada." },
-            { heading: "Atribuição de fontes", text: "Como cada resposta aponta para os trechos que a sustentam." },
+            "Overhaul do modelo e dos embeddings + thinking",
+            "Backend idempotente",
+            "Deploy na rede",
+            "Overhaul do embedding e do RAG (chunking)",
+            "Grounding e clarificação",
+            "Atribuição de fontes",
+            "Processamento na rede (pelo Gemini)",
         ],
     },
 ];
