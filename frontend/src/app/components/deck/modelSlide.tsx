@@ -13,7 +13,7 @@ export function ModelSlide({ slide }: { slide: modelSlideType }) {
             <div className="flex h-full flex-col gap-5 pb-2">
                 <div className="grid shrink-0 grid-cols-3 gap-5">
                     {slide.sections.map((section) => (
-                        <SectionBlock key={section.heading} section={section} size="compact" />
+                        <SectionBlock key={section.heading} section={section} size="demonstration" />
                     ))}
                 </div>
                 <div className="flex min-h-0 flex-1 flex-col gap-3">
@@ -21,9 +21,9 @@ export function ModelSlide({ slide }: { slide: modelSlideType }) {
                         type="button"
                         disabled={isProcessing}
                         onClick={() => sendMessage(slide.prompt)}
-                        className="self-start rounded-2xl border border-line bg-primary-soft px-4 py-2 text-left text-primary-ink hover:border-primary disabled:opacity-50"
+                        className="self-start rounded-2xl border border-line bg-primary-soft px-4 py-2 text-left text-xl text-primary-ink hover:border-primary disabled:opacity-50"
                     >
-                        {slide.prompt}
+                        Comparar respostas: {slide.prompt}
                     </button>
                     <div className="grid min-h-0 flex-1 grid-cols-2 divide-x divide-line overflow-hidden rounded-2xl border border-line">
                         {COMPARE_PROVIDERS.map((provider) => (

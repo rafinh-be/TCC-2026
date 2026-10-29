@@ -43,14 +43,14 @@ export function FlowSlide({ slide, step }: { slide: flowSlideType, step: number 
                         <div
                             key={flowStep.label}
                             style={{ gridRow: row + 1, gridColumn: column + 1 }}
-                            className={`relative flex flex-col gap-[calc(0.5rem*min(1,100vh/900px))] rounded-2xl border p-[calc(1.5rem*min(1,100vh/900px))] transition ${current ? "border-primary bg-primary-soft" : "border-line bg-surface"} ${reached ? "opacity-100" : "opacity-40"}`}
+                            className={`relative flex min-h-60 flex-col gap-2 rounded-2xl border p-6 transition ${current ? "border-primary bg-primary-soft" : "border-line bg-surface"} ${reached ? "opacity-100" : "opacity-70"}`}
                         >
                             <div className="flex items-center justify-between gap-3">
-                                <span className="text-[calc(1rem*min(1,100vh/900px))] font-medium tabular-nums text-primary">{String(index + 1).padStart(2, "0")}</span>
-                                <span className="rounded-full border border-line bg-page px-3 py-0.5 text-[calc(0.875rem*min(1,100vh/900px))] text-ink-muted">{flowStep.lane}</span>
+                                <span className="text-lg font-medium tabular-nums text-primary">{String(index + 1).padStart(2, "0")}</span>
+                                <span className="rounded-full border border-line bg-page px-3 py-0.5 text-base text-ink-muted">{flowStep.lane}</span>
                             </div>
-                            <h3 className="text-[calc(1.5rem*min(1,100vh/900px))] font-bold leading-tight text-ink">{flowStep.label}</h3>
-                            <p className="text-[calc(1.125rem*min(1,100vh/900px))] leading-snug text-ink-muted"><RichText text={flowStep.detail} /></p>
+                            <h3 className="text-3xl font-bold leading-tight text-ink">{flowStep.label}</h3>
+                            <p className="text-2xl leading-snug text-ink-muted"><RichText text={flowStep.detail} /></p>
                             {direction && <Arrow direction={direction} active={index < step} />}
                         </div>
                     );
