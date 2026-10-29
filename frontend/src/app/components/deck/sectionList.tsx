@@ -2,6 +2,31 @@ import { RichText } from "./richText";
 import type { siteSectionType } from "./slides";
 
 const blockClassNames = {
+    presentation: {
+        card: "min-h-[520px] gap-4 p-8",
+        heading: "text-4xl",
+        bullets: "gap-3 text-3xl",
+    },
+    demonstration: {
+        card: "gap-3 p-6",
+        heading: "text-3xl",
+        bullets: "gap-2 text-2xl",
+    },
+    prompt: {
+        card: "gap-4 p-8",
+        heading: "text-4xl",
+        bullets: "gap-3 text-[27px]",
+    },
+    modelTopic: {
+        card: "min-h-[520px] gap-4 p-8",
+        heading: "text-4xl",
+        bullets: "gap-3 text-3xl",
+    },
+    site: {
+        card: "min-h-72 gap-4 p-8",
+        heading: "text-4xl",
+        bullets: "gap-2 text-3xl",
+    },
     regular: {
         card: "gap-[calc(1rem*min(1,100vh/900px))] p-[calc(2rem*min(1,100vh/900px))]",
         heading: "text-[calc(1.875rem*min(1,100vh/900px))]",
@@ -27,7 +52,7 @@ export function SectionBlock({ section, size = "regular" }: { section: siteSecti
             <h3 className={`font-bold leading-tight text-primary ${classNames.heading}`}>{section.heading}</h3>
             <ul className={`flex list-disc flex-col pl-7 leading-snug text-ink-muted marker:text-primary ${classNames.bullets}`}>
                 {section.bullets.map((bullet) => (
-                    <li key={bullet}><RichText text={bullet} /></li>
+                    <li key={bullet}><RichText text={bullet} highlightModels={size === "modelTopic"} /></li>
                 ))}
             </ul>
         </section>
@@ -38,7 +63,7 @@ export function SectionList({ sections }: { sections: siteSectionType[] }) {
     return (
         <div className="flex flex-col gap-[calc(1.25rem*min(1,100vh/900px))]">
             {sections.map((section) => (
-                <SectionBlock key={section.heading} section={section} />
+                <SectionBlock key={section.heading} section={section} size="site" />
             ))}
         </div>
     );

@@ -42,7 +42,7 @@ export const slides: slideType[] = [
         items: [
             { heading: "Problema", text: "O baixo letramento em saúde reduz a adesão a tratamentos e sobrecarrega os pronto-socorros." },
             { heading: "Proposta", text: "Um assistente de IA que responde apenas a partir de uma base de conhecimento confiável (RAG){ref:rag}." },
-            { heading: "Escopo", text: "Obstetrícia, uma área com quadros bem catalogados e pacientes em geral saudáveis." },
+            { heading: "Dificuldades", text: "Processamento lento, interface contraintuitiva e incapacidade de atender vários usuários simultaneamente." },
             { heading: "Arquitetura", text: "Cinco pilares: base de dados, modelo, engenharia de prompt, verificação e interface." },
         ],
     },
@@ -55,7 +55,7 @@ export const slides: slideType[] = [
             { heading: "Modelo e agente", text: "Um modelo de linguagem (LLM) é um modelo de aprendizado de máquina que, após treinamentos intensivos, prevê o resultado esperado a partir de entradas e dialoga de forma quase humana. Sozinho, ele alucina: inventa respostas não factuais, porque seu treinamento não é composto só de conteúdo factual e sua diretriz principal é agradar o usuário, não ser preciso. Um agente é uma envoltura sobre o modelo que adiciona contextualização e iteração para gerar resultados mais precisos: engenharia de prompt, gerenciamento de contexto e etapas de verificação contornam os maiores problemas do modelo puro." },
             { heading: "Engenharia de prompt", text: "É a camada que contextualiza o modelo para o propósito da ferramenta. No projeto, o prompt apresenta o propósito do assistente, o perfil da paciente e a informação médica disponível, e fixa restrições: responder só com a base, não diagnosticar e não estimar números." },
             { heading: "RAG", text: "O RAG (Retrieval-Augmented Generation) transforma o modelo em um mecanismo de pesquisa: em vez de retornar apenas links, devolve um resumo do conteúdo encontrado, explicado da forma mais conveniente ao usuário{ref:rag}. Ao restringir o contexto a uma base limitada porém confiável, reduz dramaticamente a probabilidade de alucinação. No projeto, a base reúne 16 documentos de obstetrícia." },
-            { heading: "Grounding", text: "Grounding é manter a resposta presa a fontes verificadas: o modelo só afirma o que está nos trechos recuperados, o que garante respostas factuais. Quando a base não traz informação suficiente, o assistente recusa em vez de inventar; diante de uma pergunta ambígua, pergunta antes de responder." },
+            { heading: "Grounding", text: "Grounding busca manter a resposta apoiada em fontes verificadas: o modelo é instruído a usar apenas os trechos recuperados. Se a base não traz informação suficiente, deve recusar em vez de inventar; diante de uma pergunta ambígua, deve pedir esclarecimento. Isso não garante uma resposta correta: as fontes podem estar desatualizadas e o modelo pode interpretar os trechos incorretamente." },
         ],
     },
     {

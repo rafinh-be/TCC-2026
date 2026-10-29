@@ -23,15 +23,16 @@ export function PromptDemoSlide({ slide }: { slide: promptDemoSlideType }) {
         <SlideFrame title={slide.title}>
             <div className="grid h-full grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-10 pb-4">
                 <div className="flex min-h-0 flex-col justify-center gap-5">
-                    <SectionBlock section={slide.section} size="dense" />
+                    <SectionBlock section={slide.section} size="prompt" />
                     <div className="flex flex-col items-start gap-2">
+                        <p className="text-xl font-medium text-ink-muted">Selecione uma pergunta para demonstrar:</p>
                         {slide.prompts.map((prompt) => (
                             <button
                                 key={prompt}
                                 type="button"
                                 disabled={isProcessing}
                                 onClick={() => sendScriptedPrompt(prompt)}
-                                className="rounded-2xl border border-line bg-primary-soft px-4 py-2 text-left text-primary-ink hover:border-primary disabled:opacity-50"
+                                className="rounded-2xl border border-line bg-primary-soft px-4 py-2 text-left text-xl text-primary-ink hover:border-primary disabled:opacity-50"
                             >
                                 {prompt}
                             </button>

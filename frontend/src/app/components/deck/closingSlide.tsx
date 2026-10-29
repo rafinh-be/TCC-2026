@@ -3,8 +3,8 @@ import type { closingSlideType } from "./slides";
 export function ClosingSlide({ slide }: { slide: closingSlideType }) {
     return (
         <div className="mx-auto flex h-full w-full max-w-4xl flex-col justify-center gap-8 px-10">
-            <h1 className="text-6xl font-semibold tracking-tight text-ink">{slide.title}</h1>
-            <p className="border-t border-line pt-6 text-xl text-ink">{slide.authors}</p>
+            <h1 className="translate-y-4 text-[128px] leading-none font-semibold tracking-tight text-ink">{slide.title}</h1>
+            <p className="border-t border-line pt-6 text-2xl text-ink">{slide.authors}</p>
         </div>
     );
 }
