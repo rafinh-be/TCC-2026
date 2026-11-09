@@ -1,0 +1,12 @@
+[
+  {
+    "id": "q001",
+    "question": "O que é abordagem pré-natal?",
+    "reference": "A assistência pré-natal busca melhorar a saúde materna e neonatal por meio da promoção da saúde, prevenção, rastreamento e diagnóstico precoce de patologias.",
+    "source_document": "abordagem_pre_natal.md",
+    "supporting_passages": [
+      "A assistência pré-natal de qualidade é o ponto de partida para a melhoria dos indicadores de saúde materna e neonatal. Constitui uma oportunidade valiosa para a promoção da saúde, prevenção, rastreamento e diagnóstico precoce de diversas patologias."
+    ],
+    "category": "simple"
+  }
+]

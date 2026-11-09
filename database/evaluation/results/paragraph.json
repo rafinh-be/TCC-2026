@@ -1,0 +1,50 @@
+{
+  "started_at": "2026-11-09T15:04:24.638977+00:00",
+  "testset": "C:\\Users\\victo\\Documents\\GitHub\\TCC-2026\\database\\evaluation\\testset_reviewed.json",
+  "configuration": {
+    "provider": "ollama",
+    "verbose": false,
+    "debug_rag": false,
+    "debug_model": false,
+    "chunking": "paragraph",
+    "clean_latex": false,
+    "min_score": null,
+    "label_chunks": false,
+    "source_attribution": [],
+    "attribution_threshold": null,
+    "inline_citations": false,
+    "local": false,
+    "testset": "../database/evaluation/testset_reviewed.json",
+    "testset_output": "../database/evaluation/results/paragraph.json",
+    "reload": false,
+    "agent_prompt": "config_agent.md",
+    "host": "127.0.0.1",
+    "port": 8000
+  },
+  "results": [
+    {
+      "id": "q001",
+      "question": "O que é abordagem pré-natal?",
+      "reference": "A abordagem pré-natal é uma estratégia que visa atender às necessidades da gestante e do bebê.",
+      "source_document": "abordagem_pre_natal.md",
+      "supporting_passages": [
+        "A assistência pré-natal de qualidade é o ponto de partida para a melhoria dos indicadores de saúde materna e neonatal. Constitui uma oportunidade valiosa para a promoção da saúde, prevenção, rastreamento e diagnóstico precoce de diversas patologias."
+      ],
+      "category": "simple",
+      "response": "# O que é Abordagem Pré-Natal?\n\nA abordagem pré-natal é um acompanhamento especializado durante a gravidez, fundamentado em diretrizes da Organização Mundial da Saúde (OMS) e protocolos nacionais como o Programa Nacional de Segurança do Paciente (PNSP). \n\nSua principal finalidade é proporcionar uma **experiência positiva na gestação**, integrando-se diretamente à promoção da saúde, prevenção, rastreamento e diagnóstico precoce de diversas patologias.\n\n## Elementos Fundamentais:\n\n- **Sorologia**: A sorologia (IgG e IgM) deve ser solicitada na primeira consulta de pré-natal\n- **Direito ao Acompanhante**: Garantia legal da presença do acompanhante de escolha durante o pré-natal, parto e puerpério\n- **Letramento em Saúde**: Desenvolvimento da capacidade da gestante de compreender, analisar e tomar decisões informadas sobre os cuidados à sua saúde\n\nA assistência pré-natal de qualidade constitui uma oportunidade valiosa para a melhoria dos indicadores de saúde materna e neonatal, sendo parte essencial da prevenção da mortalidade perinatal e complicações.\n\n⚠️ *Este agente serve como ferramenta de suporte baseada em protocolos. A avaliação clínica individualizada pelo médico assistente é soberana e indispensável.*",
+      "retrieved_contexts": [
+        "Conforme preconizado pela Organização Mundial da Saúde (OMS), o acompanhamento pré-natal deve proporcionar uma **experiência positiva na gestação**, fundamentando-se nas seguintes condutas:",
+        "## 1. Triagem e Interpretação Sorológica (Pré-Natal)\nA sorologia (IgG e IgM) deve ser solicitada na primeira consulta de pré-natal.",
+        "A assistência pré-natal de qualidade é o ponto de partida para a melhoria dos indicadores de saúde materna e neonatal. Constitui uma oportunidade valiosa para a promoção da saúde, prevenção, rastreamento e diagnóstico precoce de diversas patologias.",
+        "O fortalecimento do pré-natal integra-se diretamente às diretrizes do **Programa Nacional de Segurança do Paciente (PNSP)**, visando a otimização contínua das práticas assistenciais em áreas críticas:",
+        "*   **Direito ao Acompanhante:** Garantia legal da presença do acompanhante de escolha da gestante durante o pré-natal, parto e puerpério.\n*   **Letramento em Saúde:** Desenvolvimento da capacidade da gestante de compreender, analisar e tomar decisões informadas sobre os cuidados à sua saúde.",
+        "# Abordagem nas Principais Causas de Óbito Materno e Prematuridade",
+        "# Abordagem no Pré-Natal",
+        "Como parte da prevenção da mortalidade perinatal e complicações neonatais precoces:",
+        "## 1. Rastreamento e Critérios Diagnósticos\nDe acordo com as diretrizes da FEBRASGO e da Sociedade Brasileira de Diabetes (SBD), o rastreio deve ser universal e inicia-se logo na primeira consulta de pré-natal."
+      ],
+      "status": "ok",
+      "elapsed_seconds": 50.110998299999665
+    }
+  ]
+}

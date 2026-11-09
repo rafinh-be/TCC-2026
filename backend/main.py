@@ -49,12 +49,18 @@ parser.add_argument("--source_attribution", nargs="*", choices=["similarity", "c
 parser.add_argument("--attribution_threshold", type=float, default=None, help="Minimum cosine similarity between an answer sentence and a chunk for similarity attribution (default from config.ini)")
 parser.add_argument("--inline_citations", action="store_true", help="Keep citation markers in the answer and return the cited sources so the frontend can link them (requires --source_attribution citations)")
 parser.add_argument("--local", action="store_true", help="Outputs program to CLI for quick testing")
+parser.add_argument("--testset", help="Arquivo JSON com casos revisados para execução em lote")
+parser.add_argument("--testset_output", help="Arquivo JSON de saída da execução em lote")
 parser.add_argument("--reload", action="store_true", help="Enable auto reload on code changes (development only)")
 parser.add_argument("--agent_prompt", action="store", default="config_agent.md", help="Path to the agent system prompt file")
 parser.add_argument("--host", action="store", default="127.0.0.1", help="Configure host address")
 parser.add_argument("--port", action="store", type=int, default=8000, help="Configure host port")
 
 args = parser.parse_args()
+if bool(args.testset) != bool(args.testset_output):
+    parser.error("--testset e --testset_output devem ser usados juntos")
+if args.testset and (args.local or args.reload):
+    parser.error("--testset não pode ser combinado com --local ou --reload")
 if args.inline_citations and "citations" not in args.source_attribution:
     parser.error("--inline_citations requires --source_attribution citations")
 providers.set_provider(args.provider)
@@ -307,7 +313,21 @@ async def start_agent(websocket: WebSocket = None):
                 
 
 if __name__ == "__main__":
-    if (not args.local):
+    if args.testset:
+        from testset_runner import run_testset
+
+        def respond_to_testcase(question):
+            item = ChatRequest(messages=[ChatMessage(sender="user", content=question)])
+            command, payload, chunks, new_chunks = prepare_chat(item)
+            if command:
+                raise ValueError("Casos de avaliação não podem executar comandos de conversa.")
+            contexts = [chunk["text"] for chunk in chunks]
+            answer = providers.chat(payload, verbose=args.verbose, debug_model=args.debug_model)
+            result = finish_chat(answer, chunks, new_chunks)
+            return result["answer"]["message"]["content"], contexts
+
+        run_testset(args.testset, args.testset_output, vars(args), respond_to_testcase)
+    elif (not args.local):
         uvicorn.run("main:app", host=args.host, port=args.port, reload=args.reload, reload_excludes=["*.db", "*.sqlite", "lancedb/*", "*.lancedb"])
     else:
         asyncio.run(start_agent(websocket=None))  # For testing without WebSocket
