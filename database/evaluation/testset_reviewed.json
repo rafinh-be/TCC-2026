@@ -8,5 +8,43 @@
       "A assistência pré-natal de qualidade é o ponto de partida para a melhoria dos indicadores de saúde materna e neonatal. Constitui uma oportunidade valiosa para a promoção da saúde, prevenção, rastreamento e diagnóstico precoce de diversas patologias."
     ],
     "category": "simple"
-  }
-]
+  },
+  {
+    "id": "q002",
+    "question": "O que é a diabetes gestacional?",
+    "reference": "O diabetes gestacional é o aumento crônico no nível de glicose (ou de açúcar no sangue) durante a gravidez.",
+    "source_document": "diabetes_gestacional.md",
+    "supporting_passages": [
+      "O Diabetes Mellitus Gestacional (DMG) é definido como uma intolerância aos carboidratos de gravidade variável, com início ou primeiro reconhecimento diagnosticado durante a gestação atual. Decorre do aumento dos hormônios contrarreguladores da insulina produzidos pela placenta (como o lactogênio placentário humano), gerando resistência insulínica na mãe."
+    ],
+    "category": "simple"
+  },
+  {
+    "id": "q003",
+    "question": "Para que serve o plano de parto e com quem devo compartilhar minhas preferências?",
+    "reference": "O Plano de Parto é um meio de comunicação entre a gestante e a equipe que a atende.",
+    "source_document": "plano_de_parto.md",
+    "supporting_passages": ["O Plano de Parto é um documento legal e terapêutico recomendado pela Organização Mundial da Saúde (OMS) e pelo Ministério da Saúde. Ele serve como um canal de comunicação formal entre a gestante, seu/sua acompanhante e a equipe hospitalar, expressando as preferências da mulher em relação às intervenções médicas durante o trabalho de parto, parto e pós-parto imediato."],"category": "simple"
+    },
+    {
+      "id": "q004",
+      "question": "Li que o banho de banheira pode ajudar durante o parto. No HU tem essa opção? Que outros recursos posso usar para aliviar a dor?",
+      "reference": "O HU não dispõe de banheira. Para aliviar a dor, oferece bolas fisioterápicas, cavalinho, espaldar, chuveirro ou ducha e escalda-pés, além de exercícios de respiração, relaxamento e massagens pelo acompanhante",
+      "source_document": "plano_de_parto_hu.md",
+      "supporting_passages": [
+        "* **Recursos Físicos:** Bolas fisioterápicas, balanço pélvico (cavalinho), espaldar, chuveiro/ducha (banho de aspersão) e escalda-pés. *Não dispõe de banheira.*",
+        "* **Técnicas Comportamentais:** Exercícios de respiração, relaxamento e massagens realizadas pelo acompanhante."
+      ],
+      "category": "reasoning"
+    },
+    {
+      "id": "q005",
+      "question": "Além dos métodos sem medicamentos, quais opções o HU oferece para aliviar a dor no trabalho de parto? Elas estão sempre disponíveis?",
+      "reference": "O HU oferece analgésicos injetáveis e analgesia neuraxial, como raqui, peridural e duplo-bloqueio. Essas opções estão sujeitas à disponibilidade do serviço no momento.",
+      "source_document": "plano_de_parto_hu.md",
+      "supporting_passages": [
+        "* **Opções Farmacológicas:** Analgésicos injetáveis e analgesia neuraxial (raqui/peridural/duplo-bloqueio), sujeitos à disponibilidade do serviço no momento."
+      ],
+      "category": "simple"
+    }
+  ]

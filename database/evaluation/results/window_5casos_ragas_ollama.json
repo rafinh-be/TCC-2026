@@ -1,0 +1,228 @@
+{
+  "started_at": "2026-11-11T23:58:29.461165+00:00",
+  "ragas_version": "0.4.3",
+  "judge": "ollama",
+  "judge_model": "qwen3.5:9b",
+  "evaluation_configuration": {
+    "testset_path": "../database/testset.json",
+    "ollama_judge_model": "qwen3.5:9b",
+    "ollama_judge_reasoning_effort": "none",
+    "gemini_judge_model": "gemini-3.6-flash",
+    "ollama_judge_url": "http://localhost:11434/v1",
+    "gemini_judge_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "judge_timeout_seconds": "180",
+    "judge_max_tokens": "8192",
+    "judge_temperature": "0",
+    "judge_max_retries": "2",
+    "relevancy_strictness": "3",
+    "embedding_local_files_only": "true",
+    "prompt_geracao_testset": "Você gera casos de teste para avaliar um assistente de RAG em Obstetrícia e Ginecologia (pt-BR).\nCom base EXCLUSIVAMENTE no trecho abaixo, escreva perguntas como uma paciente escreveria, em linguagem simples.\n\n1. pergunta_simples: uma pergunta direta sobre um fato do trecho, e resposta_simples com a resposta exata.\n2. pergunta_raciocinio: uma pergunta que exija combinar duas informações do trecho, sem pedir diagnóstico, e resposta_raciocinio com a resposta explicada.\n3. pergunta_fora_escopo: uma pergunta plausível sobre o mesmo tema cuja resposta NÃO esteja no trecho.\n\nDocumento: {fonte}\nTrecho: {trecho}"
+  },
+  "embedding_configuration": {
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "device": "cpu"
+  },
+  "source_results": "C:\\Users\\victo\\Documents\\GitHub\\TCC-2026\\database\\evaluation\\results\\window_5casos.json",
+  "reviewed_testset": "C:\\Users\\victo\\Documents\\GitHub\\TCC-2026\\database\\evaluation\\testset_reviewed.json",
+  "generation_configuration": {
+    "provider": "ollama",
+    "verbose": false,
+    "debug_rag": false,
+    "debug_model": false,
+    "chunking": "window",
+    "clean_latex": false,
+    "min_score": null,
+    "label_chunks": false,
+    "source_attribution": [],
+    "attribution_threshold": null,
+    "inline_citations": false,
+    "local": false,
+    "testset": "../database/evaluation/testset_reviewed.json",
+    "testset_output": "../database/evaluation/results/window_5casos.json",
+    "reload": false,
+    "agent_prompt": "config_agent.md",
+    "host": "127.0.0.1",
+    "port": 8000
+  },
+  "results": [
+    {
+      "id": "q001",
+      "question": "O que é abordagem pré-natal?",
+      "reference": "A assistência pré-natal busca melhorar a saúde materna e neonatal por meio da promoção da saúde, prevenção, rastreamento e diagnóstico precoce de patologias.",
+      "source_document": "abordagem_pre_natal.md",
+      "supporting_passages": [
+        "A assistência pré-natal de qualidade é o ponto de partida para a melhoria dos indicadores de saúde materna e neonatal. Constitui uma oportunidade valiosa para a promoção da saúde, prevenção, rastreamento e diagnóstico precoce de diversas patologias."
+      ],
+      "category": "simple",
+      "response": "A **abordagem pré-natal** é um conjunto de ações integradas que começam logo na primeira consulta e visam garantir uma experiência positiva durante a gestação. Seu objetivo principal é promover a saúde da mãe e do bebê através da prevenção, rastreamento precoce de patologias e diagnóstico oportuno.\n\nEssa abordagem se fundamenta em quatro pilares essenciais:\n1.  **Sorologia:** Realização das exames IgG e IgM na primeira consulta para triagem.\n2.  **Empoderamento da Gestante:** Capacitar a futura mãe para exercer papel ativo no processo gestacional, parto e puerpério.\n3.  **Direito ao Acompanhante:** Garantir legalmente a presença de uma pessoa de escolha durante todo o percurso (pré-natal, parto e pós-parto).\n4.  **Letramento em Saúde:** Desenvolver a capacidade da gestante de compreender informações e tomar decisões informadas sobre seus cuidados.\n\nAlém disso, essa estratégia está diretamente ligada à segurança do paciente, envolvendo identificação correta, uso seguro de medicamentos e prevenção de infecções.\n\n> ⚠️ *Este agente serve como ferramenta de suporte baseada em protocolos. A avaliação clínica individualizada pelo médico assistente é soberana e indispensável.*",
+      "retrieved_contexts": [
+        "# Abordagem no Pré-Natal\n\nA assistência pré-natal de qualidade é o ponto de partida para a melhoria dos indicadores de saúde materna e neonatal. Constitui uma oportunidade valiosa para a promoção da saúde, prevenção, rastreamento e diagnóstico precoce de diversas patologias.\n\n## Pilares da Assistência Integral",
+        "## 1. Triagem e Interpretação Sorológica (Pré-Natal)\nA sorologia (IgG e IgM) deve ser solicitada na primeira consulta de pré-natal.",
+        "Conforme preconizado pela Organização Mundial da Saúde (OMS), o acompanhamento pré-natal deve proporcionar uma **experiência positiva na gestação**, fundamentando-se nas seguintes condutas:",
+        "É fundamental capacitar a gestante para que exerça papel ativo no processo gestacional e no parto, promovendo o envolvimento da família e da comunidade:\n\n*   **Direito ao Acompanhante:** Garantia legal da presença do acompanhante de escolha da gestante durante o pré-natal, parto e puerpério.\n*   **Letramento em Saúde:** Desenvolvimento da capacidade da gestante de compreender, analisar e tomar decisões informadas sobre os cuidados à sua saúde.\n\n## Interface com a Segurança do Paciente",
+        "O fortalecimento do pré-natal integra-se diretamente às diretrizes do **Programa Nacional de Segurança do Paciente (PNSP)**, visando a otimização contínua das práticas assistenciais em áreas críticas:\n\n*   Identificação correta da paciente;\n*   Segurança na prescrição, uso e administração de medicamentos;\n*   Práticas de higienização das mãos e prevenção de infecções relacionadas à assistência;\n*   Prevenção de lesões por pressão e diretrizes para cirurgia segura.",
+        "## 1. Rastreamento e Critérios Diagnósticos\nDe acordo com as diretrizes da FEBRASGO e da Sociedade Brasileira de Diabetes (SBD), o rastreio deve ser universal e inicia-se logo na primeira consulta de pré-natal.",
+        "---\n\n## 3. Pós-Parto Imediato e Cuidados com o Recém-Nascido\nMedidas baseadas em evidências para garantir o vínculo e a estabilidade neonatal:"
+      ],
+      "status": "ok",
+      "elapsed_seconds": 47.543912000001,
+      "scores": {
+        "context_precision": 0.9999999999,
+        "context_recall": 1.0,
+        "faithfulness": 0.782608695652174,
+        "response_relevancy": 0.8328576055453455
+      },
+      "errors": {}
+    },
+    {
+      "id": "q002",
+      "question": "O que é a diabetes gestacional?",
+      "reference": "O diabetes gestacional é o aumento crônico no nível de glicose (ou de açúcar no sangue) durante a gravidez.",
+      "source_document": "diabetes_gestacional.md",
+      "supporting_passages": [
+        "O Diabetes Mellitus Gestacional (DMG) é definido como uma intolerância aos carboidratos de gravidade variável, com início ou primeiro reconhecimento diagnosticado durante a gestação atual. Decorre do aumento dos hormônios contrarreguladores da insulina produzidos pela placenta (como o lactogênio placentário humano), gerando resistência insulínica na mãe."
+      ],
+      "category": "simple",
+      "response": "A **Diabetes Mellitus Gestacional (DMG)** é definida como uma intolerância aos carboidratos de gravidade variável, com início ou primeiro reconhecimento diagnosticado durante a gestação atual.\n\nEste quadro decorre do aumento dos hormônios contrarreguladores da insulina produzidos pela placenta (como o lactogênio placentário humano), gerando resistência insulínica na mãe.\n\n---\n\n⚠️ *Este agente serve como ferramenta de suporte baseada em protocolos. A avaliação clínica individualizada pelo médico assistente é soberana e indispensável.*",
+      "retrieved_contexts": [
+        "# Diabetes Mellitus Gestacional (DMG): Rastreio e Conduta\n\nO **Diabetes Mellitus Gestacional (DMG)** é definido como uma intolerância aos carboidratos de gravidade variável, com início ou primeiro reconhecimento diagnosticado durante a gestação atual. Decorre do aumento dos hormônios contrarreguladores da insulina produzidos pela placenta (como o lactogênio placentário humano), gerando resistência insulínica na mãe.\n\n---",
+        "### Metas Alvo de Glicemia Capilar (Dextro):\n* **Jejum:** menor que 95 mg/dL\n* **1 hora pós-prandial (após refeições):** menor que 140 mg/dL\n* **2 horas pós-prandial (após refeições):** menor que 120 mg/dL\n\n---\n\n## 4. Cuidados Pós-Parto\nApós o descolamento da placenta, os níveis hormonais caem drasticamente e a resistência insulínica diminui. A medicação para diabetes costuma ser suspensa imediatamente no pós-parto, mantendo-se o rastreio na enfermaria.",
+        "* **Reavaliação Pós-Parto:** Toda mulher com diagnóstico de DMG deve realizar um novo TOTG 75g entre **6 e 12 semanas após o parto** (fora do estado gravídico) para avaliar se houve resolução do quadro ou se ela evoluiu para Pré-diabetes ou Diabetes Tipo 2.",
+        "### Quadro Clínico e Diagnóstico:\n* Sangramento vaginal em \"suco de ameixa\", útero maior do que o esperado para a idade gestacional, hiperêmese gravídica grave e desenvolvimento precoce de pré-eclâmpsia (antes de 20 semanas).\n* **Beta-hCG:** Valores massivamente elevados, frequentemente > 100.000 mUI/mL.\n* **USG Transvaginal:** Imagem em \"tempestade de neve\" ou \"em cachos de uva\" na mola completa.",
+        "### Passo 1: Glicemia de Jejum no 1º Trimestre\n* **Menor que 92 mg/dL:** Normal. Segue para o Teste Oral de Tolerância à Glicose (TOTG) entre 24 e 28 semanas.\n* **Entre 92 mg/dL e 125 mg/dL:** Diagnóstico confirmado de **Diabetes Gestacional (DMG)**.\n* **Maior ou igual a 126 mg/dL:** Diagnóstico de Diabetes Mellitus Pré-gestacional (Overt Diabetes).",
+        "# Pré-eclâmpsia: Diagnóstico, Fatores de Risco e Manejo Clínico\n\nA **Pré-eclâmpsia (PE)** é uma síndrome multissistêmica específica da gestação, caracterizada pelo surgimento de hipertensão arterial e disfunção de órgãos-alvo após a 20ª semana de gravidez em mulheres previamente normotensas. Trata-se de uma das principais causas de morbimortalidade materna e perinatal no Brasil.\n\n---",
+        "Antidiabéticos orais (como Metformina) possuem uso restrito a casos específicos de recusa ou impossibilidade de uso da insulina.",
+        "## 2. Riscos Clínicos do DMG Descompensado\nA hiperglicemia materna resulta em hiperinsulinemia fetal crônica, desencadeando diversas complicações:",
+        "# Hemorragia do Primeiro Trimestre: Diagnóstico Diferencial e Conduta\n\nO sangramento vaginal na primeira metade da gestação (até a 20ª ou 22ª semana) é uma queixa frequente em serviços de emergência obstétrica. Os três principais diagnósticos diferenciais patológicos são o Abortamento, a Gestação Ectópica e a Doença Trofoblástica Gestacional (Mola Hydatidiforme).\n\n---\n\n## 1. Abortamento\nDefinido como a interrupção da gravidez antes de 20-22 semanas ou com feto pesando menos de 500g.",
+        "# Restrição de Crescimento Fetal (RCF)\n\nA **Restrição de Crescimento Fetal (RCF)** ocorre quando o feto não atinge o seu potencial biológico de crescimento devido a disfunções genéticas, ambientais ou, mais frequentemente, por insuficiência uteroplacentária crônica. Diferencia-se do feto Pequeno para a Idade Gestacional (PIG) constitucional, que é apenas geneticamente pequeno, porém perfeitamente saudável.\n\n---"
+      ],
+      "status": "ok",
+      "elapsed_seconds": 8.995712099997036,
+      "scores": {
+        "context_precision": 0.699999999965,
+        "context_recall": 1.0,
+        "faithfulness": 0.7142857142857143,
+        "response_relevancy": 0.8207098369766418
+      },
+      "errors": {}
+    },
+    {
+      "id": "q003",
+      "question": "Para que serve o plano de parto e com quem devo compartilhar minhas preferências?",
+      "reference": "O Plano de Parto é um meio de comunicação entre a gestante e a equipe que a atende.",
+      "source_document": "plano_de_parto.md",
+      "supporting_passages": [
+        "O Plano de Parto é um documento legal e terapêutico recomendado pela Organização Mundial da Saúde (OMS) e pelo Ministério da Saúde. Ele serve como um canal de comunicação formal entre a gestante, seu/sua acompanhante e a equipe hospitalar, expressando as preferências da mulher em relação às intervenções médicas durante o trabalho de parto, parto e pós-parto imediato."
+      ],
+      "category": "simple",
+      "response": "O **Plano de Parto** serve como um instrumento formal de comunicação entre você, seus acompanhantes e a equipe de saúde (no caso descrito, da Maternidade HU-USP). Ele expressa suas preferências em relação às intervenções médicas durante o trabalho de parto, parto e puerpério, garantindo que sua vontade seja respeitada sempre que possível.\n\nDe acordo com as diretrizes:\n*   **Com quem compartilhar:** Você deve compartilhar suas preferências com a **gestante, seu/sua acompanhante** e toda a **equipe hospitalar**. O plano fortalece o papel ativo da mulher no processo gestacional e promove o envolvimento da família.\n*   **Direito garantido:** Você tem direito legal à presença do acompanhante de escolha durante o pré-natal, parto e puerpério.\n\n> ⚠️ *Este agente serve como ferramenta de suporte baseada em protocolos. A avaliação clínica individualizada pelo médico assistente é soberana e indispensável.*",
+      "retrieved_contexts": [
+        "# Plano de Parto: Diretrizes e Alinhamento de Expectativas\n\nO **Plano de Parto** é um documento legal e terapêutico recomendado pela Organização Mundial da Saúde (OMS) e pelo Ministério da Saúde. Ele serve como um canal de comunicação formal entre a gestante, seu/sua acompanhante e a equipe hospitalar, expressando as preferências da mulher em relação às intervenções médicas durante o trabalho de parto, parto e pós-parto imediato.\n\n---",
+        "> ⚠️ **Nota de Segurança Médica:** O plano de parto é um guia flexível. Situações de emergência (como descolamento prematuro de placenta, sofrimento fetal agudo ou hemorragia pós-parto) exigem intervenções rápidas que podem divergir do plano original para garantir a segurança da mãe e do bebê.",
+        "# Plano de Parto e Diretrizes Assistenciais: Maternidade HU-USP\n\nO **Plano de Parto** é um instrumento formal de comunicação entre a gestante, seus acompanhantes e a equipe de saúde do Hospital Universitário da USP. O objetivo é estabelecer os desejos, preferências e limites de intervenção para o trabalho de parto, parto e puerpério.\n\n---",
+        "É fundamental capacitar a gestante para que exerça papel ativo no processo gestacional e no parto, promovendo o envolvimento da família e da comunidade:\n\n*   **Direito ao Acompanhante:** Garantia legal da presença do acompanhante de escolha da gestante durante o pré-natal, parto e puerpério.\n*   **Letramento em Saúde:** Desenvolvimento da capacidade da gestante de compreender, analisar e tomar decisões informadas sobre os cuidados à sua saúde.\n\n## Interface com a Segurança do Paciente",
+        "Conforme preconizado pela Organização Mundial da Saúde (OMS), o acompanhamento pré-natal deve proporcionar uma **experiência positiva na gestação**, fundamentando-se nas seguintes condutas:",
+        "### Conduta Médica:\n* **Gestação Prematura com Sangramento Discreto/Cessado:** Internação, repouso, monitoramento, corticoterapia antenatal (entre 24 e 34 semanas) para maturação pulmonar fetal e sulfatação para neuroproteção se parto iminente < 32 semanas.\n* **Gestação a Termo ou Sangramento Grave Incontrolável:** Indicação de **Cesariana**. Na placenta prévia centro-total (que recobre totalmente o orifício interno), a via de parto é obrigatoriamente cesariana eletiva entre 36 e 37 semanas.",
+        "* Centro Obstétrico (salas de parto).\n* Quarto Pré-Parto, Parto e Puerpério (PPP) e enfermarias.\n* Esclarecimento de dúvidas sobre a admissão, pertences e fluxos de atendimento.\n\n---\n\n## 3. Agendamento\n* **Inscrição On-line:** O agendamento é obrigatório e realizado via formulário digital.\n* **Link de Cadastro:** [Agendar Visita Monitorada à Maternidade do HU](https://docs.google.com/forms/d/1rdqnAqNwGcqVVHucozmz6Z4BQuK1uA8cRRXglMuiemU/edit)",
+        "* **Mobilidade e Posição:** Liberdade para caminhar, mudar de posição (ficar de cócoras, de joelhos ou de quatro apoios) e utilizar métodos como a bola suíça e o banquinho de parto.\n* **Ambiente:** Preferência por iluminação reduzida (penumbra), controle de ruídos na sala de parto e permissão para playlist musical personalizada.\n* **Alívio Não Farmacológico da Dor:** Acesso livre a banhos de chuveiro mornos, uso de banheira de imersão (se disponível), massagens na região lombossacral e técnicas",
+        "- CIVD). O parto vaginal é a via preferencial se as condições maternas permitirem, pois a cesariana em vigência de distúrbio de coagulação aumenta a mortalidade materna.\n* **Complicação Cirúrgica:** Útero de Couvelaire (apoplexia uteroplacentária). Se houver atonia refratária após o parto, realizar massagem, uterotônicos (ocitocina, metilergometrina, misoprostol), sutura de B-Lynch ou, em última análise, histrectomia subtotal ou total.",
+        "### Metas Alvo de Glicemia Capilar (Dextro):\n* **Jejum:** menor que 95 mg/dL\n* **1 hora pós-prandial (após refeições):** menor que 140 mg/dL\n* **2 horas pós-prandial (após refeições):** menor que 120 mg/dL\n\n---\n\n## 4. Cuidados Pós-Parto\nApós o descolamento da placenta, os níveis hormonais caem drasticamente e a resistência insulínica diminui. A medicação para diabetes costuma ser suspensa imediatamente no pós-parto, mantendo-se o rastreio na enfermaria."
+      ],
+      "status": "ok",
+      "elapsed_seconds": 28.229773399994883,
+      "scores": {
+        "context_precision": 0.999999999975,
+        "context_recall": 1.0,
+        "faithfulness": 0.8333333333333334,
+        "response_relevancy": 0.8167823923179091
+      },
+      "errors": {}
+    },
+    {
+      "id": "q004",
+      "question": "Li que o banho de banheira pode ajudar durante o parto. No HU tem essa opção? Que outros recursos posso usar para aliviar a dor?",
+      "reference": "O HU não dispõe de banheira. Para aliviar a dor, oferece bolas fisioterápicas, cavalinho, espaldar, chuveirro ou ducha e escalda-pés, além de exercícios de respiração, relaxamento e massagens pelo acompanhante",
+      "source_document": "plano_de_parto_hu.md",
+      "supporting_passages": [
+        "* **Recursos Físicos:** Bolas fisioterápicas, balanço pélvico (cavalinho), espaldar, chuveiro/ducha (banho de aspersão) e escalda-pés. *Não dispõe de banheira.*",
+        "* **Técnicas Comportamentais:** Exercícios de respiração, relaxamento e massagens realizadas pelo acompanhante."
+      ],
+      "category": "reasoning",
+      "response": "Sobre o banho de imersão em banheira: no HU, **não dispomos de banheiras** para imersão durante o parto. As opções disponíveis focam em outros recursos físicos e comportamentais eficazes para alívio da dor na fase ativa do trabalho de parto:\n\n*   **Chuveiro/ducha:** Você pode usar o chuveiro ou aspersão com água morna, que ajuda a relaxar a musculatura e alivia a dor lombar.\n*   **Balanço pélvico (cavalinho):** Um equipamento para você se posicionar em pé, permitindo movimentos suaves que facilitam a dilatação e o conforto.\n*   **Bolas fisioterápicas:** Ideais para sentar sobre elas e apoiar os pés no chão ou numa cadeira, ajudando a sustentar o peso e abrir as articulações pélvicas.\n*   **Espaldar:** Uma maca com apoio ergonômico que permite ficar em decúbito lateral ou semi-sentada, otimizando o conforto.\n*   **Escalda-pés:** Para relaxamento local e circulação sanguínea.\n*   **Técnicas comportamentais:** Exercícios de respiração guiada, relaxamento e massagens realizadas pelo seu acompanhante na região lombossacral.\n\nEssas medidas visam maximizar seu conforto e autonomia durante o processo.\n\n⚠️ *Este agente serve como ferramenta de suporte baseada em protocolos. A avaliação clínica individualizada pelo médico assistente é soberana e indispensável.*",
+      "retrieved_contexts": [
+        "---\n\n## 3. Manejo da Dor e Recursos Não Farmacológicos\nO HU oferece opções para alívio do desconforto durante a fase ativa do trabalho de parto:",
+        "* **Recursos Físicos:** Bolas fisioterápicas, balanço pélvico (cavalinho), espaldar, chuveiro/ducha (banho de aspersão) e escalda-pés. *Não dispõe de banheira.*\n* **Técnicas Comportamentais:** Exercícios de respiração, relaxamento e massagens realizadas pelo acompanhante.\n* **Opções Farmacológicas:** Analgésicos injetáveis e analgesia neuraxial (raqui/peridural/duplo-bloqueio), sujeitos à disponibilidade do serviço no momento.\n\n---",
+        "mornos, uso de banheira de imersão (se disponível), massagens na região lombossacral e técnicas de respiração guiada.\n* **Acompanhante:** Direito assegurado por lei (Lei nº 11.108/2005) à presença de um acompanhante de livre escolha durante todo o período de internação, além da presença de Doula, caso contratada.\n* **Alimentação:** Permissão para ingestão de líquidos claros e dieta leve para manutenção energética, evitando o jejum prolongado desnecessário em gestações de baixo risco.",
+        "- CIVD). O parto vaginal é a via preferencial se as condições maternas permitirem, pois a cesariana em vigência de distúrbio de coagulação aumenta a mortalidade materna.\n* **Complicação Cirúrgica:** Útero de Couvelaire (apoplexia uteroplacentária). Se houver atonia refratária após o parto, realizar massagem, uterotônicos (ocitocina, metilergometrina, misoprostol), sutura de B-Lynch ou, em última análise, histrectomia subtotal ou total.",
+        "* **Mobilidade e Posição:** Liberdade para caminhar, mudar de posição (ficar de cócoras, de joelhos ou de quatro apoios) e utilizar métodos como a bola suíça e o banquinho de parto.\n* **Ambiente:** Preferência por iluminação reduzida (penumbra), controle de ruídos na sala de parto e permissão para playlist musical personalizada.\n* **Alívio Não Farmacológico da Dor:** Acesso livre a banhos de chuveiro mornos, uso de banheira de imersão (se disponível), massagens na região lombossacral e técnicas",
+        "Utilizado apenas em emergências para acelerar a saída do feto ($3,5\\%$ em 2025). *O serviço não utiliza vácuo-extrator.*\n* **Ocitocina Pós-Parto:** Administrada de rotina após o nascimento para profilaxia de atonia uterina e hemorragia pós-parto.",
+        "# Visita Monitorada à Maternidade do HU-USP\n\nOferecida desde o ano 2000, a **Visita Monitorada à Maternidade do HU-USP** é uma atividade de acolhimento direcionada às gestantes e seus acompanhantes. O objetivo é familiarizar a mulher com a infraestrutura do hospital, esclarecer dúvidas assistenciais e promover uma experiência positiva durante o parto.\n\n---",
+        "## 1. Ambiente e Trabalho de Parto (Fase de Dilatação)\nDurante a fase activa do trabalho de parto, busca-se otimizar o conforto materno e a progressão fisiológica do parto através de métodos não farmacológicos e autonomia de movimentação:",
+        "É fundamental capacitar a gestante para que exerça papel ativo no processo gestacional e no parto, promovendo o envolvimento da família e da comunidade:\n\n*   **Direito ao Acompanhante:** Garantia legal da presença do acompanhante de escolha da gestante durante o pré-natal, parto e puerpério.\n*   **Letramento em Saúde:** Desenvolvimento da capacidade da gestante de compreender, analisar e tomar decisões informadas sobre os cuidados à sua saúde.\n\n## Interface com a Segurança do Paciente"
+      ],
+      "status": "ok",
+      "elapsed_seconds": 30.36662310000247,
+      "scores": {
+        "context_precision": 0.5888888888692593,
+        "context_recall": 1.0,
+        "faithfulness": 0.2222222222222222,
+        "response_relevancy": 0.6429671938161146
+      },
+      "errors": {}
+    },
+    {
+      "id": "q005",
+      "question": "Além dos métodos sem medicamentos, quais opções o HU oferece para aliviar a dor no trabalho de parto? Elas estão sempre disponíveis?",
+      "reference": "O HU oferece analgésicos injetáveis e analgesia neuraxial, como raqui, peridural e duplo-bloqueio. Essas opções estão sujeitas à disponibilidade do serviço no momento.",
+      "source_document": "plano_de_parto_hu.md",
+      "supporting_passages": [
+        "* **Opções Farmacológicas:** Analgésicos injetáveis e analgesia neuraxial (raqui/peridural/duplo-bloqueio), sujeitos à disponibilidade do serviço no momento."
+      ],
+      "category": "simple",
+      "response": "Além dos métodos sem medicamentos (como banhos de chuveiro mornos, massagens, exercícios respiratórios e uso de bolas ou balanço pélvico), o HU oferece **opções farmacológicas** para alívio da dor:\n\n*   **Analgésicos injetáveis:** Disponíveis conforme a necessidade.\n*   **Analgesia Neuraxial:** Inclui raqui-anestesia, peridural e duplo-bloqueio, que bloqueiam a sensação de dor na região pélvica e abdominal.\n\n**Sobre a disponibilidade:**\nO uso desses recursos farmacológicos é **sujeito à disponibilidade do serviço no momento**. A equipe avalia cada caso individualmente antes da administração.\n\n> ⚠️ *Este agente serve como ferramenta de suporte baseada em protocolos. A avaliação clínica individualizada pelo médico assistente é soberana e indispensável.*",
+      "retrieved_contexts": [
+        "---\n\n## 3. Manejo da Dor e Recursos Não Farmacológicos\nO HU oferece opções para alívio do desconforto durante a fase ativa do trabalho de parto:",
+        "## 1. Ambiente e Trabalho de Parto (Fase de Dilatação)\nDurante a fase activa do trabalho de parto, busca-se otimizar o conforto materno e a progressão fisiológica do parto através de métodos não farmacológicos e autonomia de movimentação:",
+        "* **Recursos Físicos:** Bolas fisioterápicas, balanço pélvico (cavalinho), espaldar, chuveiro/ducha (banho de aspersão) e escalda-pés. *Não dispõe de banheira.*\n* **Técnicas Comportamentais:** Exercícios de respiração, relaxamento e massagens realizadas pelo acompanhante.\n* **Opções Farmacológicas:** Analgésicos injetáveis e analgesia neuraxial (raqui/peridural/duplo-bloqueio), sujeitos à disponibilidade do serviço no momento.\n\n---",
+        "Utilizado apenas em emergências para acelerar a saída do feto ($3,5\\%$ em 2025). *O serviço não utiliza vácuo-extrator.*\n* **Ocitocina Pós-Parto:** Administrada de rotina após o nascimento para profilaxia de atonia uterina e hemorragia pós-parto.",
+        "# Plano de Parto e Diretrizes Assistenciais: Maternidade HU-USP\n\nO **Plano de Parto** é um instrumento formal de comunicação entre a gestante, seus acompanhantes e a equipe de saúde do Hospital Universitário da USP. O objetivo é estabelecer os desejos, preferências e limites de intervenção para o trabalho de parto, parto e puerpério.\n\n---",
+        "* **Mobilidade e Posição:** Liberdade para caminhar, mudar de posição (ficar de cócoras, de joelhos ou de quatro apoios) e utilizar métodos como a bola suíça e o banquinho de parto.\n* **Ambiente:** Preferência por iluminação reduzida (penumbra), controle de ruídos na sala de parto e permissão para playlist musical personalizada.\n* **Alívio Não Farmacológico da Dor:** Acesso livre a banhos de chuveiro mornos, uso de banheira de imersão (se disponível), massagens na região lombossacral e técnicas",
+        "---\n\n## 2. Princípios Assistenciais e Práticas de Rotina\nO serviço adota os preceitos do parto humanizado e a Iniciativa Hospital Amigo da Criança:",
+        "* **Reavaliação Pós-Parto:** Toda mulher com diagnóstico de DMG deve realizar um novo TOTG 75g entre **6 e 12 semanas após o parto** (fora do estado gravídico) para avaliar se houve resolução do quadro ou se ela evoluiu para Pré-diabetes ou Diabetes Tipo 2.",
+        "> ⚠️ **Nota de Segurança Médica:** O plano de parto é um guia flexível. Situações de emergência (como descolamento prematuro de placenta, sofrimento fetal agudo ou hemorragia pós-parto) exigem intervenções rápidas que podem divergir do plano original para garantir a segurança da mãe e do bebê.",
+        "### C. Pielonefrite Aguda\nInfecção do trato urinário superior (parênquima renal). Constitui uma urgência médica com alto risco de sepse materna, choque endotóxico, TPP e anemia.\n* **Quadro Clínico:** Febre alta ($> 38^\\circ\\text{C}$), calafrios, náuseas, vômitos e **Sinal de Giordano positivo** (dor à punho-percussão lombar).\n\n---\n\n## 2. Diretrizes de Tratamento\n\n> **Atenção:** Na gestação, a Bacteriúria Assintomática **SEMPRE** deve ser tratada com o mesmo esquema antimicrobiano da Cistite."
+      ],
+      "status": "ok",
+      "elapsed_seconds": 27.76476410000032,
+      "scores": {
+        "context_precision": 0.3333333333,
+        "context_recall": 1.0,
+        "faithfulness": 0.75,
+        "response_relevancy": 0.801954889453409
+      },
+      "errors": {}
+    }
+  ],
+  "summary": {
+    "context_precision": {
+      "mean": 0.7244444444018519,
+      "valid_count": 5,
+      "error_count": 0
+    },
+    "context_recall": {
+      "mean": 1.0,
+      "valid_count": 5,
+      "error_count": 0
+    },
+    "faithfulness": {
+      "mean": 0.6604899930986887,
+      "valid_count": 5,
+      "error_count": 0
+    },
+    "response_relevancy": {
+      "mean": 0.783054383621884,
+      "valid_count": 5,
+      "error_count": 0
+    }
+  }
+}
