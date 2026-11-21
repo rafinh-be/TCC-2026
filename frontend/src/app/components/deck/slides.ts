@@ -145,7 +145,7 @@ export const slides: slideType[] = [
                 heading: "Na prática",
                 bullets: [
                     "O nível de raciocínio é configurável (minimal, low, medium, high): mais raciocínio, mais latência.",
-                    "A interface usa o nível medium e mostra o resumo ao vivo enquanto o modelo pensa.",
+                    "Na demonstração, o modelo local responde à mesma pergunta com e sem thinking.",
                 ],
             },
         ],

@@ -4,8 +4,9 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from pathlib import Path
+from typing import Literal
 
 from database_utility import needs_indexing, index_data, retrieve_context, fetch_chunks, merge_chunks, format_context, embed_sources, load_documents
 
@@ -25,7 +26,7 @@ prompt_refinamento = config.get('prompts', 'prompt_refinamento')
 prompt_validacao_ferramenta = config.get('prompts', 'prompt_validacao_ferramenta')
 frase_sem_dados = config.get('prompts_termino', 'prompt_restricao_1')
 
-allowed_origins = [origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",") if origin.strip()]
+allowed_origins = [origin.strip() for origin in os.getenv("ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",") if origin.strip()]
 
 app = FastAPI()
 app.add_middleware(
@@ -82,6 +83,10 @@ class ChatMessage(BaseModel):
 
 class ChatRequest(BaseModel):
     messages: list[ChatMessage]
+    provider: Literal["ollama", "gemini"] | None = None
+    think: bool | None = None
+    model_variant: Literal["base"] | None = None
+    seed: int | None = Field(default=None, ge=0, le=2147483647)
 
 def attribute_sources(answer, candidates):
     content = answer["message"]["content"]
@@ -183,7 +188,7 @@ async def process_message(item: ChatRequest):
         # Alguns comandos que "terminam" o processo devem usar 'continue' para nao encerrar o loop
         return command
 
-    answer = providers.chat(payload, verbose=args.verbose, debug_model=args.debug_model)
+    answer = providers.chat(payload, verbose=args.verbose, debug_model=args.debug_model, provider=item.provider, think=item.think, model_variant=item.model_variant, seed=item.seed)
 
     return finish_chat(answer, chunks_contexto, chunks_novos)
 
@@ -193,7 +198,7 @@ def chat_events(item: ChatRequest):
         if command:
             yield error_event("Comandos não são suportados nesta interface.")
             return
-        for event in providers.chat_stream(payload, verbose=args.verbose, debug_model=args.debug_model):
+        for event in providers.chat_stream(payload, verbose=args.verbose, debug_model=args.debug_model, provider=item.provider, think=item.think, model_variant=item.model_variant, seed=item.seed):
             if event["type"] == "answer":
                 result = finish_chat(event["answer"], chunks_contexto, chunks_novos)
                 yield final_event(result["answer"], result["sources"], result["citations"])

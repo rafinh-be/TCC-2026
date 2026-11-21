@@ -17,3 +17,4 @@ ollama run qwen2.5:7b
 - cd frontend
 - npm install
 - npm run dev
+As demonstrações de chat usam o backend local; a comparação de provedores também envia a pergunta ao Gemini. A seleção de provedor e thinking não altera as restrições de acesso do backend, que deve permanecer em uma rede confiável.

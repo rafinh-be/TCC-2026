@@ -28,13 +28,23 @@ def get_provider():
     return _active_provider
 
 
-def chat(payload, verbose=False, debug_model=False, provider=None):
+def chat(payload, verbose=False, debug_model=False, provider=None, think=None, model_variant=None, seed=None):
     module = import_module(PROVIDER_MODULES[provider or get_provider()])
-    return module.chat(payload, verbose=verbose, debug_model=debug_model)
+    kwargs = {"think": think} if (provider or get_provider()) == "ollama" and think is not None else {}
+    if model_variant is not None and (provider or get_provider()) == "ollama":
+        kwargs["model_variant"] = model_variant
+    if seed is not None and (provider or get_provider()) == "ollama":
+        kwargs["seed"] = seed
+    return module.chat(payload, verbose=verbose, debug_model=debug_model, **kwargs)
 
-def chat_stream(payload, verbose=False, debug_model=False, provider=None):
+def chat_stream(payload, verbose=False, debug_model=False, provider=None, think=None, model_variant=None, seed=None):
     module = import_module(PROVIDER_MODULES[provider or get_provider()])
-    return module.chat_stream(payload, verbose=verbose, debug_model=debug_model)
+    kwargs = {"think": think} if (provider or get_provider()) == "ollama" and think is not None else {}
+    if model_variant is not None and (provider or get_provider()) == "ollama":
+        kwargs["model_variant"] = model_variant
+    if seed is not None and (provider or get_provider()) == "ollama":
+        kwargs["seed"] = seed
+    return module.chat_stream(payload, verbose=verbose, debug_model=debug_model, **kwargs)
 
 def create_embedding_model():
     module = import_module(EMBEDDING_MODULES[get_provider()])
