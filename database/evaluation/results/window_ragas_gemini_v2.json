@@ -1,0 +1,105 @@
+{
+  "started_at": "2026-11-09T17:40:21.749722+00:00",
+  "ragas_version": "0.4.3",
+  "judge": "gemini",
+  "judge_model": "gemini-3.6-flash",
+  "evaluation_configuration": {
+    "testset_path": "../database/testset.json",
+    "ollama_judge_model": "qwen3.5:9b",
+    "ollama_judge_reasoning_effort": "none",
+    "gemini_judge_model": "gemini-3.6-flash",
+    "ollama_judge_url": "http://localhost:11434/v1",
+    "gemini_judge_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "judge_timeout_seconds": "180",
+    "judge_max_tokens": "8192",
+    "judge_temperature": "0",
+    "judge_max_retries": "2",
+    "relevancy_strictness": "3",
+    "embedding_local_files_only": "true",
+    "prompt_geracao_testset": "Você gera casos de teste para avaliar um assistente de RAG em Obstetrícia e Ginecologia (pt-BR).\nCom base EXCLUSIVAMENTE no trecho abaixo, escreva perguntas como uma paciente escreveria, em linguagem simples.\n\n1. pergunta_simples: uma pergunta direta sobre um fato do trecho, e resposta_simples com a resposta exata.\n2. pergunta_raciocinio: uma pergunta que exija combinar duas informações do trecho, sem pedir diagnóstico, e resposta_raciocinio com a resposta explicada.\n3. pergunta_fora_escopo: uma pergunta plausível sobre o mesmo tema cuja resposta NÃO esteja no trecho.\n\nDocumento: {fonte}\nTrecho: {trecho}"
+  },
+  "embedding_configuration": {
+    "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "device": "cpu"
+  },
+  "source_results": "C:\\Users\\victo\\Documents\\GitHub\\TCC-2026\\database\\evaluation\\results\\window.json",
+  "reviewed_testset": "C:\\Users\\victo\\Documents\\GitHub\\TCC-2026\\database\\evaluation\\testset_reviewed.json",
+  "generation_configuration": {
+    "provider": "ollama",
+    "verbose": false,
+    "debug_rag": false,
+    "debug_model": false,
+    "chunking": "window",
+    "clean_latex": false,
+    "min_score": null,
+    "label_chunks": false,
+    "source_attribution": [],
+    "attribution_threshold": null,
+    "inline_citations": false,
+    "local": false,
+    "testset": "../database/evaluation/testset_reviewed.json",
+    "testset_output": "../database/evaluation/results/window.json",
+    "reload": false,
+    "agent_prompt": "config_agent.md",
+    "host": "127.0.0.1",
+    "port": 8000
+  },
+  "results": [
+    {
+      "id": "q001",
+      "question": "O que é abordagem pré-natal?",
+      "reference": "A assistência pré-natal busca melhorar a saúde materna e neonatal por meio da promoção da saúde, prevenção, rastreamento e diagnóstico precoce de patologias.",
+      "source_document": "abordagem_pre_natal.md",
+      "supporting_passages": [
+        "A assistência pré-natal de qualidade é o ponto de partida para a melhoria dos indicadores de saúde materna e neonatal. Constitui uma oportunidade valiosa para a promoção da saúde, prevenção, rastreamento e diagnóstico precoce de diversas patologias."
+      ],
+      "category": "simple",
+      "response": "A **abordagem no pré-natal**, conforme descrita nas diretrizes da FEBRASGO, SBD e OMS, constitui o ponto de partida essencial para a melhoria dos indicadores de saúde materna e neonatal. Ela vai além do simples acompanhamento clínico, atuando como uma oportunidade valiosa para:\n\n*   **Promoção da Saúde:** Capacitar a gestante para que exerça um papel ativo no processo gestacional e no parto.\n*   **Prevenção e Diagnóstico Precoce:** Rastrear diversas patologias desde a primeira consulta.\n*   **Experiência Positiva:** Fundamentar-se na garantia do direito ao acompanhante de escolha, na promoção do letramento em saúde (capacidade de compreender e tomar decisões informadas) e no envolvimento da família e comunidade.\n\nAlém disso, essa abordagem integra-se diretamente ao Programa Nacional de Segurança do Paciente, focando na identificação correta da paciente, segurança no uso de medicamentos e prevenção de infecções. O rastreio para complicações deve ser universal e iniciado logo na primeira consulta.\n\n⚠️ *Este agente serve como ferramenta de suporte baseada em protocolos. A avaliação clínica individualizada pelo médico assistente é soberana e indispensável.*",
+      "retrieved_contexts": [
+        "# Abordagem no Pré-Natal\n\nA assistência pré-natal de qualidade é o ponto de partida para a melhoria dos indicadores de saúde materna e neonatal. Constitui uma oportunidade valiosa para a promoção da saúde, prevenção, rastreamento e diagnóstico precoce de diversas patologias.\n\n## Pilares da Assistência Integral",
+        "## 1. Triagem e Interpretação Sorológica (Pré-Natal)\nA sorologia (IgG e IgM) deve ser solicitada na primeira consulta de pré-natal.",
+        "Conforme preconizado pela Organização Mundial da Saúde (OMS), o acompanhamento pré-natal deve proporcionar uma **experiência positiva na gestação**, fundamentando-se nas seguintes condutas:",
+        "É fundamental capacitar a gestante para que exerça papel ativo no processo gestacional e no parto, promovendo o envolvimento da família e da comunidade:\n\n*   **Direito ao Acompanhante:** Garantia legal da presença do acompanhante de escolha da gestante durante o pré-natal, parto e puerpério.\n*   **Letramento em Saúde:** Desenvolvimento da capacidade da gestante de compreender, analisar e tomar decisões informadas sobre os cuidados à sua saúde.\n\n## Interface com a Segurança do Paciente",
+        "O fortalecimento do pré-natal integra-se diretamente às diretrizes do **Programa Nacional de Segurança do Paciente (PNSP)**, visando a otimização contínua das práticas assistenciais em áreas críticas:\n\n*   Identificação correta da paciente;\n*   Segurança na prescrição, uso e administração de medicamentos;\n*   Práticas de higienização das mãos e prevenção de infecções relacionadas à assistência;\n*   Prevenção de lesões por pressão e diretrizes para cirurgia segura.",
+        "## 1. Rastreamento e Critérios Diagnósticos\nDe acordo com as diretrizes da FEBRASGO e da Sociedade Brasileira de Diabetes (SBD), o rastreio deve ser universal e inicia-se logo na primeira consulta de pré-natal.",
+        "---\n\n## 3. Pós-Parto Imediato e Cuidados com o Recém-Nascido\nMedidas baseadas em evidências para garantir o vínculo e a estabilidade neonatal:"
+      ],
+      "status": "ok",
+      "elapsed_seconds": 87.43671429999995,
+      "scores": {
+        "context_precision": null,
+        "context_recall": null,
+        "faithfulness": null,
+        "response_relevancy": null
+      },
+      "errors": {
+        "context_precision": "Error code: 429 - [{'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash, description: Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.\\nPlease retry in 14h18m45.919527449s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://aistudio.google.com/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'description': 'Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.', 'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.6-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '51525s'}]}}]",
+        "context_recall": "Error code: 429 - [{'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash, description: Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.\\nPlease retry in 14h18m43.307842307s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://aistudio.google.com/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'description': 'Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.', 'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.6-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '51523s'}]}}]",
+        "faithfulness": "Error code: 429 - [{'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash, description: Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.\\nPlease retry in 14h18m12.09924372s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://aistudio.google.com/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'description': 'Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.', 'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-3.6-flash'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '51492s'}]}}]",
+        "response_relevancy": "Error code: 429 - [{'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://aistudio.google.com/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.6-flash, description: Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.\\nPlease retry in 14h18m9.930284317s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://aistudio.google.com/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'description': 'Generate content requests per day limit exceeded on Free Tier. See https://aistudio.google.com/docs/rate-limits.', 'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-3.6-flash', 'location': 'global'}, 'quotaValue': '20'}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '51489s'}]}}]"
+      }
+    }
+  ],
+  "summary": {
+    "context_precision": {
+      "mean": null,
+      "valid_count": 0,
+      "error_count": 1
+    },
+    "context_recall": {
+      "mean": null,
+      "valid_count": 0,
+      "error_count": 1
+    },
+    "faithfulness": {
+      "mean": null,
+      "valid_count": 0,
+      "error_count": 1
+    },
+    "response_relevancy": {
+      "mean": null,
+      "valid_count": 0,
+      "error_count": 1
+    }
+  }
+}

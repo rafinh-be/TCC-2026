@@ -16,48 +16,41 @@ This file is the single source of truth — `CLAUDE.md` imports it.
 
 Undergraduate thesis (TCC) project from Escola Politécnica da USP (PSI department), in partnership with the HU-USP maternity ward. It is a pt-BR obstetrics and gynecology assistant for patients that answers strictly from a local knowledge base (RAG) and never diagnoses or invents dosages.
 
-- `backend/` — FastAPI app (`main.py`) exposing `POST /chat` (stateless: the client sends the message history, accumulated context and sources) and `WS /ws/chat`. Talks to a local Ollama model.
-  - `database_utility.py` — indexes `database/data_files/*.md` into LanceDB (paragraph chunks, multilingual sentence-transformers embeddings) and retrieves context. Re-indexes when file mtimes or chunking options differ from `database/index_memory.json`. `--chunking window` uses `CHUNK_SIZE` and `CHUNK_OVERLAP` from `config.ini`.
-  - `ollama_interaction.py` — builds the prompt payload and calls the model with a thinking-token limit and a fallback synthesis step.
+- `backend/` — FastAPI app (`main.py`) exposing `POST /api/chat` (the client sends `message` and `historico_conversa`) and `WS /ws/chat`. Uses the Google Gemini API.
+  - `database_utility.py` — indexes `database/data_files/*.md` into LanceDB using overlapping text chunks and Gemini embeddings, and retrieves context through hybrid vector and full-text search. Re-indexes when source files or the embedding configuration change, or the vector table is missing.
+  - `gemini_interaction.py` — builds the prompt payload and calls Gemini with configured thinking and output limits.
+  - `google_models.py` / `google_embeddings.py` — shared Gemini client, environment-based model settings and remote embeddings.
   - `user_prompt_proccessing.py` / `functions.py` — slash commands (`/clear`, `/reset`) and message I/O.
   - `config.ini` — model names, all LLM prompts (system, critique, refinement, tool validation) and database paths. `config_agent.md` overrides the system prompt when present.
-- `frontend/` — Next.js (App Router) + React + TypeScript, Tailwind CSS v4 + daisyUI, `react-markdown` for rendering answers. Chat page at `src/app/chat/page.tsx`, components under `src/app/components/`.
+- `frontend/` — Streamlit app (`app.py`) communicating with the backend through `ws://127.0.0.1:8000/ws/chat`. Keeps messages and conversation history in session state.
 - `database/data_files/` — knowledge base: Markdown files with YAML frontmatter (`id`, `titulo`, `tags`).
-- Root-level Python files (`app.py`, `buscador.py`, `indexador.py`, `memoria.py`, `ferramentas.py`, `config.py`) are an earlier version of the backend; current work happens in `backend/`.
 
 ## Setup & Commands
 
-Prerequisites: Python, Node.js, and [Ollama](https://ollama.com) with the model configured in `backend/config.ini` pulled (e.g. `ollama pull qwen3.5:9b`).
+Prerequisites: Python and a Google Gemini API key configured as `GEMINI_API_KEY` or `GOOGLE_API_KEY` in the environment, root `.env`, or `backend/.env`. Model settings live in `backend/config.ini` and can be overridden by matching uppercase environment variables. Never commit API keys.
 
-Backend (must run from `backend/` — config and data paths are relative):
+Backend (commands from the repository root; configuration and database paths resolve relative to the backend directory):
 
 ```bash
 pip install -r requirements.txt
 cd backend
-python main.py            # flags: -v/--verbose, --debug_rag, --debug_model, --local (CLI mode), --chunking paragraph|window, --clean_latex
-python generate_testset.py  # Gemini-generated RAG test set from data_files; flags: --chunking, --chunks_per_document, --output, --csv
+python main.py            # flags: -v/--verbose, --debug_rag, --debug_model, --local (CLI mode)
 ```
 
-Frontend (expects the backend at `http://127.0.0.1:8000`):
+Frontend (run in a separate terminal from the repository root; expects the backend at `127.0.0.1:8000`):
 
 ```bash
-cd frontend
-npm install
-npm run dev               # http://localhost:3000
-npm run lint
-npm run build
+streamlit run frontend/app.py  # http://localhost:8501
 ```
 
 There is no automated test suite yet.
 
 ## Conventions
 
+- Whenever writing or revising text for the monograph, read and apply the Humanizer instructions at https://github.com/blader/humanizer/blob/main/SKILL.md. Adapt the guidance to academic Portuguese (pt-BR), preserving technical accuracy, citations, and the intended meaning. Do not invent facts or references.
 - Commits follow Conventional Commits (`feat: ...`, `fix: ...`).
 - User-facing text, LLM prompts and knowledge-base content are in Portuguese (pt-BR).
 - LLM prompts live in `backend/config.ini`, not hardcoded in Python.
 - Backend modules read `config.ini` via `configparser`; new settings go there.
-- Frontend components live in `src/app/components/<feature>/` with camelCase file names (`chatInput.tsx`) and PascalCase exports (`ChatInput`). Style with Tailwind/daisyUI classes.
-- Frontend visual style: simple and elegant. Avoid generic AI-generated looks: no unnecessary text or decoration, and no high-contrast or saturated colour blocks (soft tints and hairline borders instead; text must still meet WCAG AA).
-- Take inspiration from Brazil's Sistema Único de Saúde (SUS) palette and the gov.br design philosophy: plain language, accessibility, consistency, sober radii, calm institutional blue.
-- Colours come from theme tokens in `frontend/src/app/globals.css` (selected with `NEXT_PUBLIC_THEME`); never hardcode colour values in components.
-- New knowledge-base documents go in `database/data_files/` as Markdown with `id`, `titulo` and `tags` frontmatter; paragraphs are separated by blank lines, since indexing splits on them.
+- Frontend UI lives in `frontend/app.py`; use Streamlit and its session state for conversation state.
+- New knowledge-base documents go in `database/data_files/` as Markdown with `id`, `titulo` and `tags` frontmatter. Chunk size and overlap are configured in `backend/config.ini`.

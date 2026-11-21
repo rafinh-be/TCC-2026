@@ -1,6 +1,7 @@
 poliTeX
 backend/.env
 backend/__pycache__/
+.venv-ragas/
 __pycache__/
 lancedb_obgyn/
 
