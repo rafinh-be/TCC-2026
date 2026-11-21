@@ -6,7 +6,7 @@ import { readChatStream } from "@/utils/chatStream";
 import { API_URL } from "@/config/api";
 import { STREAM_THINKING } from "@/config/chat";
 
-export function useChat() {
+export function useChat(provider?: "ollama") {
     const [messages, setMessages] = useState<messageType[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
     const [liveThinking, setLiveThinking] = useState<string[]>([]);
@@ -19,7 +19,7 @@ export function useChat() {
             setIsProcessing(true);
             const response = await fetch(`${API_URL}/chat`, {
                 method: "POST",
-                body: JSON.stringify({ messages: payload }),
+                body: JSON.stringify({ messages: payload, provider }),
                 headers: { "Content-Type": "application/json" }
             });
             const data = await response.json();
@@ -39,7 +39,7 @@ export function useChat() {
         try {
             const response = await fetch(`${API_URL}/chat/stream`, {
                 method: "POST",
-                body: JSON.stringify({ messages: history }),
+                body: JSON.stringify({ messages: history, provider }),
                 headers: { "Content-Type": "application/json" }
             });
             if (!response.ok) throw new Error(`Falha ${response.status}`);

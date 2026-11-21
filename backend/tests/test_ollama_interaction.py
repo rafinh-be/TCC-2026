@@ -92,3 +92,39 @@ def test_stream_answer_event_carries_the_plain_answer(scripted_chat):
     scripted_chat([typed_response("resposta")])
     events = list(ollama_interaction.chat_stream(PAYLOAD))
     assert events == [{"type": "answer", "answer": {"message": {"role": "assistant", "content": "resposta"}}}]
+
+
+def test_reasoning_can_be_disabled_without_thinking_fallback(scripted_chat):
+    calls = scripted_chat([response('resposta')])
+    result = ollama_interaction.chat_with_thought_limit(PAYLOAD, think=False)
+    assert calls[0]['think'] is False
+    assert 'num_predict' not in calls[0]['options']
+    assert result['message']['content'] == 'resposta'
+    assert len(calls) == 1
+
+
+def test_reasoning_can_be_enabled_explicitly(scripted_chat):
+    calls = scripted_chat([response('resposta', thinking='pensamento')])
+    result = ollama_interaction.chat_with_thought_limit(PAYLOAD, think=True)
+    assert calls[0]['think'] is True
+    assert result['message']['thinking'] == 'pensamento'
+
+
+def test_disabled_reasoning_rejects_unexpected_thinking(scripted_chat):
+    scripted_chat([response('resposta', thinking='pensamento inesperado')])
+    with pytest.raises(ValueError, match='thinking desativado'):
+        ollama_interaction.chat_with_thought_limit(PAYLOAD, think=False)
+
+
+def test_base_model_is_selected_for_non_thinking_demo(scripted_chat):
+    calls = scripted_chat([response('resposta')])
+    result = ollama_interaction.chat_with_thought_limit(PAYLOAD, think=False, model_variant='base')
+    assert calls[0]['model'] == ollama_interaction.config.get('model', 'model_base')
+    assert calls[0]['think'] is False
+    assert result['message']['content'] == 'resposta'
+
+
+def test_seed_is_forwarded_to_ollama(scripted_chat):
+    calls = scripted_chat([response('resposta')])
+    ollama_interaction.chat_with_thought_limit(PAYLOAD, think=False, model_variant='base', seed=1)
+    assert calls[0]['options']['seed'] == 1

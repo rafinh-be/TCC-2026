@@ -11,7 +11,7 @@ import { SlideFrame } from "./slideFrame";
 import type { promptDemoSlideType } from "./slides";
 
 export function PromptDemoSlide({ slide }: { slide: promptDemoSlideType }) {
-    const { messages, isProcessing, liveThinking, sendMessage } = useChat();
+    const { messages, isProcessing, liveThinking, sendMessage } = useChat("ollama");
     const [openedDocument, setOpenedDocument] = useState<documentTarget | null>(null);
 
     const sendScriptedPrompt = (prompt: string) => {

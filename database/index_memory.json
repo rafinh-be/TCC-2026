@@ -1,16 +1,30 @@
 {
-    "deslocamento_prematuro_placenta.md": 1789259976.8113098,
-    "diabetes_gestacional.md": 1789259976.8143094,
-    "hemorragia_pos_parto.md": 1789259976.8153105,
-    "hemorragia_primeiro_trimestre.md": 1789259976.8153105,
-    "infeccao_trato_urinario.md": 1789259976.8153105,
-    "plano_de_parto.md": 1789259976.8163178,
-    "plano_de_parto_hu.md": 1789259976.8173115,
-    "pos_parto_hu.md": 1789259976.818311,
-    "pre_eclampsia.md": 1789259976.818311,
-    "restricao_crescimento_fetal.md": 1789259976.818311,
-    "ruptura_prematura_membranas.md": 1789259976.8193111,
-    "toxoplasmose_gestacional.md": 1789259976.8203106,
-    "trabalho_parto_prematuro.md": 1789259976.8213108,
-    "visita_monitorada_hu.md": 1789259976.8213108
+    "embedding": {
+        "provider": "sentence-transformers",
+        "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+    },
+    "chunking": {
+        "strategy": "paragraph",
+        "size": 500,
+        "overlap": 100,
+        "clean_latex": false
+    },
+    "files": {
+        "pos_parto_hu.md": 1792721002.5915098,
+        "visita_monitorada_hu.md": 1792721002.5922365,
+        "hemorragia_pos_parto.md": 1792721002.5906682,
+        "toxoplasmose_gestacional.md": 1792721002.5920131,
+        "diabetes_gestacional.md": 1792721002.5904942,
+        "plano_de_parto.md": 1792721002.591163,
+        "restricao_crescimento_fetal.md": 1792721002.5917726,
+        "trabalho_parto_prematuro.md": 1792721002.5921333,
+        "pre_eclampsia.md": 1792721002.5916426,
+        "infeccao_trato_urinario.md": 1792721002.5910106,
+        "ruptura_prematura_membranas.md": 1792721002.5918982,
+        "abordagem_pre_natal.md": 1793284415.8203938,
+        "deslocamento_prematuro_placenta.md": 1792721002.5893784,
+        "hemorragia_primeiro_trimestre.md": 1792721002.5908449,
+        "plano_de_parto_hu.md": 1792721002.5913608,
+        "causas_obito_materno_e_prematuridade.md": 1793284415.820525
+    }
 }

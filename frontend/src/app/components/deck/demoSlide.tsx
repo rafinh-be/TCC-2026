@@ -10,7 +10,7 @@ import { PointCards } from "./pointCards";
 import type { demoSlideType } from "./slides";
 
 export function DemoSlide({ slide }: { slide: demoSlideType }) {
-    const { messages, isProcessing, liveThinking, sendMessage } = useChat();
+    const { messages, isProcessing, liveThinking, sendMessage } = useChat("ollama");
     const [openedDocument, setOpenedDocument] = useState<documentTarget | null>(null);
 
     const sendScriptedPrompt = () => {

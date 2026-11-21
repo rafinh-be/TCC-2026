@@ -18,6 +18,7 @@ import type { slideType } from "./slides";
 import { SourcesSlide } from "./sourcesSlide";
 import { TextSlide } from "./textSlide";
 import { TitleSlide } from "./titleSlide";
+import { ThinkingSlide } from "./thinkingSlide";
 import { TopicSlide } from "./topicSlide";
 
 export function SlideView({ slide, step }: { slide: slideType, step: number }) {
@@ -35,7 +36,7 @@ export function SlideView({ slide, step }: { slide: slideType, step: number }) {
         case "promptDemo":
             return <PromptDemoSlide slide={slide} />;
         case "topic":
-            return <TopicSlide slide={slide} />;
+            return slide.id === "thinking" ? <ThinkingSlide slide={slide} /> : <TopicSlide slide={slide} />;
         case "model":
             return <ModelSlide slide={slide} />;
         case "site":

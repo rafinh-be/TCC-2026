@@ -45,27 +45,32 @@ def plain_answer(response):
     return {"message": message}
 
 
-def chat_with_thought_limit(payload, MAX_THINK_TOKENS=config.getint("model", "max_think_tokens", fallback=300), verbose=False, debug_model=False):
+def chat_with_thought_limit(payload, MAX_THINK_TOKENS=config.getint("model", "max_think_tokens", fallback=300), verbose=False, debug_model=False, think=None, model_variant=None, seed=None):
     messages = payload.copy()
     
     # Safely retrieve model name with explicit fallback syntax
-    model_name = config.get("model", "model_test", fallback="qwen3.5:9b")
+    model_name = config.get("model", "model_base" if model_variant == "base" else "model_test")
     
     if (debug_model):
         print("Starting model", model_name)
         
+    options = {"presence_penalty": 1.6, "temperature": 0.6}
+    if seed is not None:
+        options["seed"] = seed
+    if think is not False:
+        options["num_predict"] = MAX_THINK_TOKENS
     stream = ollama.chat(
         model=model_name,
         messages=messages,
-        options={
-            "num_predict": MAX_THINK_TOKENS,
-            "presence_penalty": 1.6, 
-            "temperature": 0.6,
-        },
+        options=options,
+        think=think,
         stream=False
     )
     
-    if (stream['message']['content'].strip() == "" or stream["done_reason"] != 'stop'):
+    if think is False and stream["message"].get("thinking"):
+        raise ValueError("O modelo retornou raciocínio com thinking desativado")
+
+    if think is not False and (stream['message']['content'].strip() == "" or stream["done_reason"] != 'stop'):
         if (verbose or debug_model):
             print("Loop detected. Fetching non-streaming final response...")
         
@@ -104,5 +109,5 @@ def chat_with_thought_limit(payload, MAX_THINK_TOKENS=config.getint("model", "ma
 chat = chat_with_thought_limit
 
 
-def chat_stream(payload, verbose=False, debug_model=False):
-    yield {"type": "answer", "answer": chat_with_thought_limit(payload, verbose=verbose, debug_model=debug_model)}
+def chat_stream(payload, verbose=False, debug_model=False, think=None, model_variant=None, seed=None):
+    yield {"type": "answer", "answer": chat_with_thought_limit(payload, verbose=verbose, debug_model=debug_model, think=think, model_variant=model_variant, seed=seed)}
